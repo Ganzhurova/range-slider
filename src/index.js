@@ -1,13 +1,7 @@
+import './range-slider.scss';
 import './style.scss';
+import RangeSlider from './range-slider';
 
-console.log('hi');
-console.log(123);
+const slider1 = new RangeSlider();
 
-class MyClass {
-  constructor(name) {
-    this.name = name;
-  }
-}
-
-const b = new MyClass('l');
-console.log(b);
+console.log(slider1);
