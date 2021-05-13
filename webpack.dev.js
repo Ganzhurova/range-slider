@@ -15,6 +15,10 @@ module.exports = merge(common, {
   devtool: 'inline-source-map',
   devServer: {
     contentBase: path.resolve(__dirname, './dist'),
+    overlay: {
+      warnings: true,
+      errors: true,
+    },
   },
   plugins: [
     new StylelintPlugin({
