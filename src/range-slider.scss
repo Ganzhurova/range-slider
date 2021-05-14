@@ -3,6 +3,11 @@ $grey: #696969;
 $green: #4eb7a8;
 $white: #fff;
 
+//Variables
+$line-thickness: 6px;
+$thumb-width: 20px;
+$thumb-height: 20px;
+
 *,
 *::after,
 *::before {
@@ -12,6 +17,8 @@ $white: #fff;
 }
 
 .range-slider {
+  display: flex;
+  flex-wrap: wrap;
   font-family: Arial, sans-serif;
   font-weight: bold;
   white-space: nowrap;
@@ -20,7 +27,8 @@ $white: #fff;
 
 .range-slider__line {
   position: relative;
-  height: 6px;
+  width: 100%;
+  height: $line-thickness;
   background-color: $white;
   border-radius: 3px;
   box-shadow: inset 0 0 0 1px $grey;
@@ -36,58 +44,19 @@ $white: #fff;
   border-radius: 3px;
 }
 
-//данные для изменения при двойном слайдере
-#slider-2 .range-slider__bar {
-  left: 25%;
-  width: 50%;
-}
-
-.range-slider__pin {
-  position: absolute;
-  top: -40px;
-  left: calc(50% - 17.5px);
-  z-index: 1;
-  min-width: 35px;
-  padding: 5px 5px 6px;
-  font-size: 13px;
-  line-height: 1;
-  color: $white;
-  text-align: center;
-  background-color: $green;
-  border-radius: 3px;
-
-  &::before {
-    position: absolute;
-    top: calc(100% - 4px);
-    left: 50%;
-    width: 8px;
-    height: 8px;
-    content: "";
-    background-color: $green;
-    transform: translateX(-50%) rotate(45deg);
-  }
-
-  &.from {
-    left: calc(25% - 17.5px);
-  }
-
-  &.to {
-    left: calc(75% - 17.5px);
-  }
-}
-
 .range-slider__thumb {
   position: absolute;
-  top: -7px;
-  left: calc(50% - 10px);
+  top: calc((#{$thumb-height} - #{$line-thickness}) / -2);
+  left: 50%;
   z-index: 1;
-  width: 20px;
-  height: 20px;
+  width: $thumb-width;
+  height: $thumb-height;
   cursor: pointer;
   background-color: $green;
   border: 2px solid $white;
   border-radius: 50%;
   opacity: 0.5;
+  transform: translateX(-50%);
 
   &::before {
     position: absolute;
@@ -102,16 +71,52 @@ $white: #fff;
   }
 
   &.from {
-    left: calc(25% - 10px);
+    left: 25%;
   }
 
   &.to {
-    left: calc(75% - 10px);
+    left: 75%;
+  }
+}
+
+.range-slider__label {
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  z-index: 1;
+  min-width: 35px;
+  padding: 5px 5px 6px;
+  font-size: 13px;
+  line-height: 1;
+  color: $white;
+  text-align: center;
+  background-color: $green;
+  border-radius: 3px;
+  transform: translateX(-50%);
+
+  &::before {
+    position: absolute;
+    top: calc(100% - 4px);
+    left: 50%;
+    width: 8px;
+    height: 8px;
+    content: "";
+    background-color: $green;
+    transform: translateX(-50%) rotate(45deg);
+  }
+
+  &.from {
+    left: 25%;
+  }
+
+  &.to {
+    left: 75%;
   }
 }
 
 .range-slider__scale {
   position: relative;
+  width: 100%;
   height: 25px;
 }
 
@@ -143,4 +148,76 @@ $white: #fff;
   &:nth-child(5) {
     left: 100%;
   }
+}
+
+.range-slider.vertical {
+  height: 100%;
+
+  .range-slider__line {
+    width: $line-thickness;
+    height: 100%;
+  }
+
+  .range-slider__bar {
+    width: 100%;
+    height: 50%;
+  }
+
+  .range-slider__thumb {
+    top: 50%;
+    left: calc((#{$thumb-width} - #{$line-thickness}) / -2);
+    transform: translateX(0) translateY(-50%);
+  }
+
+  .range-slider__label {
+    top: 50%;
+    left: 21px;
+    transform: translateX(0) translateY(-50%);
+
+    &::before {
+      top: 50%;
+      left: -4px;
+      transform: translateX(0) translateY(-50%) rotate(45deg);
+    }
+  }
+
+  .range-slider__scale {
+    flex-wrap: nowrap;
+    order: -1;
+    width: auto;
+    height: 100%;
+  }
+
+  .range-slder__scale-value {
+    right: 10px;
+    bottom: auto;
+    left: auto;
+    transform: translateX(0) translateY(-50%);
+
+    &:nth-child(1) {
+      top: 0;
+    }
+
+    &:nth-child(2) {
+      top: 25%;
+    }
+
+    &:nth-child(3) {
+      top: 50%;
+    }
+
+    &:nth-child(4) {
+      top: 75%;
+    }
+
+    &:nth-child(5) {
+      top: 100%;
+    }
+  }
+}
+
+//данные для изменения при двойном слайдере
+#slider-2 .range-slider__bar {
+  left: 25%;
+  width: 50%;
 }

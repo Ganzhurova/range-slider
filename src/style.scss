@@ -17,6 +17,12 @@
     background-color: #dcdcdc;
   }
 
+  &__example--vertical {
+    width: auto;
+    height: 400px;
+    padding: 20px;
+  }
+
   &__panel {
     width: 100%;
     height: 30px; //временно
