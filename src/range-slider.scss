@@ -12,9 +12,6 @@ $white: #fff;
 }
 
 .range-slider {
-  padding-top: 40px;
-  padding-right: 10px;
-  padding-left: 10px;
   font-family: Arial, sans-serif;
   font-weight: bold;
   white-space: nowrap;
@@ -90,7 +87,7 @@ $white: #fff;
 
 .range-slider__scale {
   position: relative;
-  height: 23px;
+  height: 25px;
 }
 
 .range-slder__scale-value {
@@ -100,29 +97,25 @@ $white: #fff;
   line-height: 1;
   color: $grey;
   cursor: pointer;
+  transform: translateX(-50%);
 
   &:nth-child(1) {
     left: 0;
-    transform: translateX(-50%);
   }
 
   &:nth-child(2) {
     left: 25%;
-    transform: translateX(-50%);
   }
 
   &:nth-child(3) {
     left: 50%;
-    transform: translateX(-50%);
   }
 
   &:nth-child(4) {
     left: 75%;
-    transform: translateX(-50%);
   }
 
   &:nth-child(5) {
     left: 100%;
-    transform: translateX(-50%);
   }
 }
