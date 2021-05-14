@@ -1,6 +1,7 @@
 //Colors
-$grey: #e5e5e5;
+$grey: #696969;
 $green: #4eb7a8;
+$white: #fff;
 
 *,
 *::after,
@@ -11,20 +12,21 @@ $green: #4eb7a8;
 }
 
 .range-slider {
-  position: relative;
-  width: 100%;
-  padding: 39.5px 0 0;
+  padding-top: 40px;
+  padding-right: 10px;
+  padding-left: 10px;
   font-family: Arial, sans-serif;
-  font-size: 11px;
   font-weight: bold;
+  white-space: nowrap;
   user-select: none;
 }
 
 .range-slider__line {
-  height: 5px;
-  margin-bottom: 12px;
-  background-color: $grey;
+  position: relative;
+  height: 6px;
+  background-color: $white;
   border-radius: 3px;
+  box-shadow: inset 0 0 0 1px $grey;
 }
 
 .range-slider__bar {
@@ -36,14 +38,14 @@ $green: #4eb7a8;
 
 .range-slider__pin {
   position: absolute;
-  top: 0;
+  top: -40px;
   left: calc(50% - 17.5px);
   z-index: 1;
   min-width: 35px;
   padding: 5px 5px 6px;
   font-size: 13px;
   line-height: 1;
-  color: #fff;
+  color: $white;
   text-align: center;
   background-color: $green;
   border-radius: 3px;
@@ -62,13 +64,14 @@ $green: #4eb7a8;
 
 .range-slider__thumb {
   position: absolute;
-  top: 32px;
+  top: -7px;
   left: calc(50% - 10px);
   z-index: 1;
   width: 20px;
   height: 20px;
   cursor: pointer;
   background-color: $green;
+  border: 2px solid $white;
   border-radius: 50%;
   opacity: 0.5;
 
@@ -87,16 +90,20 @@ $green: #4eb7a8;
 
 .range-slider__scale {
   position: relative;
-  display: flex;
-  justify-content: space-between;
+  height: 23px;
 }
 
 .range-slder__scale-value {
   position: absolute;
-  top: 0;
+  bottom: 0;
+  font-size: 11px;
+  line-height: 1;
+  color: $grey;
+  cursor: pointer;
 
   &:nth-child(1) {
     left: 0;
+    transform: translateX(-50%);
   }
 
   &:nth-child(2) {
@@ -115,6 +122,7 @@ $green: #4eb7a8;
   }
 
   &:nth-child(5) {
-    right: 0;
+    left: 100%;
+    transform: translateX(-50%);
   }
 }
