@@ -24,6 +24,7 @@ $thumb-height-half: #{$thumb-height} / 2;
   position: relative;
   width: 100%;
   height: $line-thickness;
+  margin: 0 calc(#{$thumb-width-half});
   background-color: $white;
   border-radius: 3px;
   box-shadow: inset 0 0 0 1px $grey;
@@ -115,6 +116,8 @@ $thumb-height-half: #{$thumb-height} / 2;
   position: relative;
   width: 100%;
   height: 25px;
+  margin: 0 calc(#{$thumb-width-half});
+  background-color: green;
 }
 
 .range-slder__scale-value {
@@ -148,11 +151,14 @@ $thumb-height-half: #{$thumb-height} / 2;
 }
 
 .range-slider.vertical {
+  align-items: stretch;
+  width: auto;
   height: 100%;
 
   .range-slider__line {
     width: $line-thickness;
-    height: 100%;
+    height: auto;
+    margin: calc(#{$thumb-height-half}) 0;
   }
 
   .range-slider__bar {
@@ -198,7 +204,8 @@ $thumb-height-half: #{$thumb-height} / 2;
     flex-wrap: nowrap;
     order: -1;
     width: auto;
-    height: 100%;
+    height: auto;
+    margin: calc(#{$thumb-height-half}) 0;
   }
 
   .range-slder__scale-value {
