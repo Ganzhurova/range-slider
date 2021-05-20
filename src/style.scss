@@ -5,12 +5,13 @@
 }
 
 .slider {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  // display: flex;
+  // flex-wrap: wrap;
+  // justify-content: center;
   padding: 50px 0;
 
   &__example {
+    width: 200px;
     padding: 40px 20px 0;
     margin-bottom: 30px;
     background-color: #dcdcdc;
