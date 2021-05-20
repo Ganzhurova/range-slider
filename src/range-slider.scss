@@ -7,6 +7,8 @@ $white: #fff;
 $line-thickness: 6px;
 $thumb-width: 20px;
 $thumb-height: 20px;
+$thumb-width-half: #{$thumb-width} / 2;
+$thumb-height-half: #{$thumb-height} / 2;
 
 .range-slider {
   display: flex;
