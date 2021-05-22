@@ -7,8 +7,16 @@ $white: #fff;
 $line-thickness: 6px;
 $thumb-width: 20px;
 $thumb-height: 20px;
-$thumb-width-half: #{$thumb-width} / 2;
-$thumb-height-half: #{$thumb-height} / 2;
+//при ширине линии 200px;
+$line-width: 200px;
+$thumb-width-percent: $thumb-width * 100% / $line-width;
+$scale-width: 100% - $thumb-width-percent;
+$ratio-width: $scale-width / 100%;
+//при высоте линии 400px;
+$line-height: 400px;
+$thumb-height-percent: $thumb-height * 100% / $line-height;
+$scale-height: 100% - $thumb-height-percent;
+$ratio-height: $scale-height / 100%;
 
 .range-slider {
   display: flex;
@@ -24,7 +32,6 @@ $thumb-height-half: #{$thumb-height} / 2;
   position: relative;
   width: 100%;
   height: $line-thickness;
-  margin: 0 calc(#{$thumb-width-half});
   background-color: $white;
   border-radius: 3px;
   box-shadow: inset 0 0 0 1px $grey;
@@ -34,7 +41,7 @@ $thumb-height-half: #{$thumb-height} / 2;
   position: absolute;
   top: 0;
   left: 0;
-  width: 50%;
+  width: calc(50% * #{$ratio-width} + #{$thumb-width-percent} / 2);
   height: 100%;
   background-color: $green;
   border-radius: 3px;
@@ -43,7 +50,7 @@ $thumb-height-half: #{$thumb-height} / 2;
 .range-slider__thumb {
   position: absolute;
   top: calc((#{$thumb-height} - #{$line-thickness}) / -2);
-  left: 50%;
+  left: calc(50% * #{$ratio-width});
   z-index: 1;
   box-sizing: border-box;
   width: $thumb-width;
@@ -53,7 +60,6 @@ $thumb-height-half: #{$thumb-height} / 2;
   border: 2px solid $white;
   border-radius: 50%;
   opacity: 0.5;
-  transform: translateX(-50%);
 
   &::before {
     position: absolute;
@@ -68,18 +74,18 @@ $thumb-height-half: #{$thumb-height} / 2;
   }
 
   &.from {
-    left: 25%;
+    left: calc(25% * #{$ratio-width});
   }
 
   &.to {
-    left: 75%;
+    left: calc(75% * #{$ratio-width});
   }
 }
 
 .range-slider__label {
   position: absolute;
   top: -40px;
-  left: 50%;
+  left: calc(50% * #{$ratio-width} + #{$thumb-width-percent} / 2);
   z-index: 1;
   box-sizing: border-box;
   min-width: 35px;
@@ -104,29 +110,32 @@ $thumb-height-half: #{$thumb-height} / 2;
   }
 
   &.from {
-    left: 25%;
+    left: calc(25% * #{$ratio-width} + #{$thumb-width-percent} / 2);
   }
 
   &.to {
-    left: 75%;
+    left: calc(75% * #{$ratio-width} + #{$thumb-width-percent} / 2);
   }
 }
 
 .range-slider__scale {
   position: relative;
-  width: 100%;
+  width: $scale-width;
   height: 25px;
-  margin: 0 calc(#{$thumb-width-half});
+  margin: 0 auto;
   background-color: green;
 }
 
 .range-slder__scale-value {
   position: absolute;
-  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   font-size: 11px;
   line-height: 1;
-  color: $grey;
-  cursor: pointer;
+  // color: $grey;
+  background-color: red;
+  opacity: 0.7;
   transform: translateX(-50%);
 
   &:nth-child(1) {
@@ -150,6 +159,18 @@ $thumb-height-half: #{$thumb-height} / 2;
   }
 }
 
+.range-slider__point {
+  width: 1px;
+  height: 10px;
+  margin: 0 auto auto;
+  // background-color: $grey;
+  background-color: black;
+}
+
+.range-slider__scale-number {
+  cursor: pointer;
+}
+
 .range-slider.vertical {
   align-items: stretch;
   width: auto;
@@ -158,30 +179,28 @@ $thumb-height-half: #{$thumb-height} / 2;
   .range-slider__line {
     width: $line-thickness;
     height: auto;
-    margin: calc(#{$thumb-height-half}) 0;
   }
 
   .range-slider__bar {
     width: 100%;
-    height: 50%;
+    height: calc(50% * #{$ratio-height} + #{$thumb-height-percent} / 2);
   }
 
   .range-slider__thumb {
-    top: 50%;
+    top: calc(50% * #{$ratio-height});
     left: calc((#{$thumb-width} - #{$line-thickness}) / -2);
-    transform: translateX(0) translateY(-50%);
 
     &.from {
-      top: 25%;
+      top: calc(25% * #{$ratio-height});
     }
 
     &.to {
-      top: 75%;
+      top: calc(75% * #{$ratio-height});
     }
   }
 
   .range-slider__label {
-    top: 50%;
+    top: calc(50% * #{$ratio-height} + #{$thumb-height-percent} / 2);
     left: 21px;
     transform: translateX(0) translateY(-50%);
 
@@ -192,11 +211,11 @@ $thumb-height-half: #{$thumb-height} / 2;
     }
 
     &.from {
-      top: 25%;
+      top: calc(25% * #{$ratio-height} + #{$thumb-height-percent} / 2);
     }
 
     &.to {
-      top: 75%;
+      top: calc(75% * #{$ratio-height} + #{$thumb-height-percent} / 2);
     }
   }
 
@@ -204,14 +223,15 @@ $thumb-height-half: #{$thumb-height} / 2;
     flex-wrap: nowrap;
     order: -1;
     width: auto;
-    height: auto;
-    margin: calc(#{$thumb-height-half}) 0;
+    height: $scale-height;
+    margin: auto 0;
   }
 
   .range-slder__scale-value {
-    right: 10px;
-    bottom: auto;
+    right: 0;
     left: auto;
+    flex-direction: row;
+    height: auto;
     transform: translateX(0) translateY(-50%);
 
     &:nth-child(1) {
@@ -234,16 +254,33 @@ $thumb-height-half: #{$thumb-height} / 2;
       top: 100%;
     }
   }
+
+  .range-slider__point {
+    align-self: center;
+    width: 10px;
+    height: 1px;
+    margin: 0 0 0 4px;
+  }
+
+  .range-slider__scale-number {
+    order: -1;
+  }
 }
 
 //данные для изменения при двойном слайдере
 #slider-22 .range-slider__bar {
-  left: 25%;
-  width: 50%;
+  left: calc(25% * #{$ratio-width} + #{$thumb-width-percent} / 2);
+  width: calc(
+    (75% * #{$ratio-width} + #{$thumb-width-percent} / 2) -
+      (25% * #{$ratio-width} + #{$thumb-width-percent} / 2)
+  );
 }
 
 //данные для изменения при двойном вертикальном слайдере
 #slider-44 .range-slider__bar {
-  top: 25%;
-  height: 50%;
+  top: calc(25% * #{$ratio-height} + #{$thumb-height-percent} / 2);
+  height: calc(
+    (75% * #{$ratio-height} + #{$thumb-height-percent} / 2) -
+      (25% * #{$ratio-height} + #{$thumb-height-percent} / 2)
+  );
 }
