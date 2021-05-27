@@ -1,7 +1,9 @@
 import './range-slider.scss';
 import './style.scss';
 
-import Model from './Model/Model';
+import Model from './ts/Model/Model';
+import View from './ts/View/View';
+import Presenter from './ts/Presenter/Presenter';
 // import RangeSlider from './range-slider';
 //
 // const slider1 = new RangeSlider('#slider-1', {});
@@ -18,7 +20,9 @@ import Model from './Model/Model';
 // console.log(slider2);
 // console.log(slider3);
 
-const model = new Model({
+const options = {
   type: 'double',
-});
-console.log(model);
+  vertical: true,
+};
+
+console.log(new Presenter(new View('#slider-1'), new Model(options)));
