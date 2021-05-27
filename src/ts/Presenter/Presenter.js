@@ -6,13 +6,14 @@ class Presenter {
     this.#initView();
   }
 
-  getIsVertical() {
-    return this.model.getVertical();
-  }
-
   #initView() {
-    this.view.registerWith(this);
-    this.view.init();
+    const viewModel = {
+      type: this.model.getType(),
+      isVertical: this.model.getVertical(),
+      label: this.model.getLabel(),
+    };
+
+    this.view.init(viewModel);
   }
 }
 
