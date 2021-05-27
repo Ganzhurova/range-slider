@@ -6,22 +6,13 @@ import LineView from './subViews/LineView';
 class View extends EventEmitter {
   constructor(selector) {
     super();
-    this.presenter = null;
     this.el = document.querySelector(selector);
   }
 
-  registerWith(presenter) {
-    this.presenter = presenter;
-  }
-
-  init() {
+  init(options) {
     this.el.classList.add(HTMLDefaults.rootClass);
-    this.#setDirection(this.#getIsVertical());
+    this.#setDirection(options.isVertical);
     this.#render();
-  }
-
-  #getIsVertical() {
-    return this.presenter.getIsVertical();
   }
 
   #setDirection(isVertical) {
