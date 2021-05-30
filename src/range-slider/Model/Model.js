@@ -7,6 +7,10 @@ class Model extends EventEmitter {
     vertical: false,
     label: false,
     scale: false,
+    min: 0,
+    max: 100,
+    from: null,
+    to: null,
   };
 
   constructor(options = {}) {
@@ -44,6 +48,50 @@ class Model extends EventEmitter {
 
   getScale() {
     return this.scale;
+  }
+
+  setMin(value) {
+    if (value < this.max) {
+      this.min = value;
+    }
+  }
+
+  getMin() {
+    return this.min;
+  }
+
+  setMax(value) {
+    if (value > this.min) {
+      this.max = value;
+    }
+  }
+
+  getMax() {
+    return this.max;
+  }
+
+  isInRange(value) {
+    return value >= this.min && value <= this.max;
+  }
+
+  setFrom(value) {
+    if (this.isInRange(value)) {
+      this.from = value;
+    }
+  }
+
+  getFrom() {
+    return this.from;
+  }
+
+  setTo(value) {
+    if (this.isInRange(value)) {
+      this.to = value;
+    }
+  }
+
+  getTo() {
+    return this.to;
   }
 }
 
