@@ -10,7 +10,7 @@ class Presenter {
     const viewModel = {
       type: this.model.getType(),
       isVertical: this.model.getVertical(),
-      label: this.model.getLabel(),
+      isLabel: this.model.getLabel(),
     };
 
     this.view.init(viewModel);
