@@ -7,6 +7,7 @@ import LineView from './subViews/LineView';
 import BarView from './subViews/BarView';
 import ThumbView from './subViews/ThumbView';
 import LabelView from './subViews/LabelView';
+import ScaleView from './subViews/ScaleView';
 
 class View extends EventEmitter {
   constructor(selector) {
@@ -19,6 +20,7 @@ class View extends EventEmitter {
     this.bar = new BarView(viewModel);
     this.thumb = new ThumbView(viewModel);
     this.label = new LabelView(viewModel);
+    this.scale = new ScaleView(viewModel);
     console.log(this.line);
     console.log(this.bar);
     console.log(this.thumb);
@@ -29,6 +31,7 @@ class View extends EventEmitter {
       bar: this.bar.getEl(),
       thumbs: this.thumb.getEl(),
       labels: this.label.getEl(),
+      scale: this.scale.getEl(),
     };
 
     console.log(this.elements);
@@ -48,7 +51,7 @@ class View extends EventEmitter {
       this.elements.labels ?? ''
     );
 
-    this.el.append(this.elements.line);
+    this.el.append(this.elements.line, this.elements.scale ?? '');
   }
 
   #setDirection(isVertical) {

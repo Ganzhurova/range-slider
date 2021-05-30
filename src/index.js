@@ -1,9 +1,9 @@
 import './range-slider.scss';
 import './style.scss';
 
-import Model from './ts/Model/Model';
-import View from './ts/View/View';
-import Presenter from './ts/Presenter/Presenter';
+import Model from './range-slider/Model/Model';
+import View from './range-slider/View/View';
+import Presenter from './range-slider/Presenter/Presenter';
 // import RangeSlider from './range-slider';
 //
 // const slider1 = new RangeSlider('#slider-1', {});
@@ -22,7 +22,9 @@ import Presenter from './ts/Presenter/Presenter';
 
 const options = {
   type: 'double',
-  vertical: true,
+  // vertical: true,
+  label: true,
+  // scale: true,
 };
 
 console.log(new Presenter(new View('#slider-1'), new Model(options)));

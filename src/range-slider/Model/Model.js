@@ -6,6 +6,7 @@ class Model extends EventEmitter {
     type: types.SINGLE,
     vertical: false,
     label: false,
+    scale: false,
   };
 
   constructor(options = {}) {
@@ -35,6 +36,14 @@ class Model extends EventEmitter {
 
   getLabel() {
     return this.label;
+  }
+
+  setScale(isScale) {
+    this.scale = isScale;
+  }
+
+  getScale() {
+    return this.scale;
   }
 }
 

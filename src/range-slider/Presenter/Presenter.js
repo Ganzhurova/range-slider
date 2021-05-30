@@ -11,6 +11,7 @@ class Presenter {
       type: this.model.getType(),
       isVertical: this.model.getVertical(),
       isLabel: this.model.getLabel(),
+      isScale: this.model.getScale(),
     };
 
     this.view.init(viewModel);
