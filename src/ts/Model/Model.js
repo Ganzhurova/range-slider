@@ -1,10 +1,11 @@
 import EventEmitter from '../EventEmitter';
+import types from '../defaults';
 
 class Model extends EventEmitter {
   #defaults = {
-    type: 'single',
+    type: types.SINGLE,
     vertical: false,
-    label: true,
+    label: false,
   };
 
   constructor(options = {}) {
