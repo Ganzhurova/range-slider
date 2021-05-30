@@ -50,7 +50,7 @@ $ratio-height: $scale-height / 100%;
 .range-slider__thumb {
   position: absolute;
   top: calc((#{$thumb-height} - #{$line-thickness}) / -2);
-  left: 45%;
+  // left: 45%;
   z-index: 1;
   box-sizing: border-box;
   width: $thumb-width;
@@ -187,7 +187,7 @@ $ratio-height: $scale-height / 100%;
   }
 
   .range-slider__thumb {
-    top: calc(50% * #{$ratio-height});
+    // top: calc(50% * #{$ratio-height});
     left: calc((#{$thumb-width} - #{$line-thickness}) / -2);
 
     &.from {
