@@ -34,7 +34,7 @@ class View extends EventEmitter {
       scale: this.scale.getEl(),
     };
 
-    console.log(this.elements);
+    // console.log(this.elements);
     // const template = new Template(viewModel).init();
     // this.el.innerHTML = template;
 
@@ -55,11 +55,7 @@ class View extends EventEmitter {
   }
 
   #setDirection(isVertical) {
-    if (isVertical) {
-      this.el.classList.add(HTMLDefaults.directionModifier);
-    } else {
-      this.el.classList.remove(HTMLDefaults.directionModifier);
-    }
+    this.el.classList.toggle(HTMLDefaults.directionModifier, isVertical);
   }
 }
 
