@@ -4,15 +4,8 @@ import { types, defaults } from '../defaults';
 class Model extends EventEmitter {
   constructor(options = {}) {
     super();
-    this.settings = {
-      type: defaults.type,
-      vertical: defaults.vertical,
-      label: defaults.label,
-      scale: defaults.scale,
-      min: defaults.min,
-      max: defaults.max,
-      from: defaults.from,
-    };
+    this.settings = {};
+    Object.assign(this.settings, defaults);
 
     this.#init(options);
   }
@@ -98,12 +91,30 @@ class Model extends EventEmitter {
     return this.to;
   }
 
+  setStep(step) {
+    if (Model.isNumber(step)) {
+      this.settings.step = Model.getInteger(step);
+    }
+  }
+
+  getStep() {
+    return this.settings.step;
+  }
+
   static isBoolean(value) {
     return typeof value === 'boolean';
   }
 
   isInRange(value) {
     return value >= this.min && value <= this.max;
+  }
+
+  static isNumber(value) {
+    return typeof value === 'number' && !Number.isNaN(value);
+  }
+
+  static getInteger(number) {
+    return +number.toFixed();
   }
 
   #init(options) {
@@ -120,6 +131,22 @@ class Model extends EventEmitter {
         this[action](value);
       }
     });
+
+    this.#validateStep(options);
+  }
+
+  #validateStep(options) {
+    const isScale = this.getScale();
+    const step = options?.step;
+
+    if (isScale && step !== undefined) {
+      this.setStep(step);
+    }
+
+    if (!isScale) {
+      delete this.settings.step;
+    }
+    console.log(step);
   }
 }
 
