@@ -1,58 +1,65 @@
 import EventEmitter from '../EventEmitter';
-import types from '../defaults';
+import { types, defaults } from '../defaults';
 
 class Model extends EventEmitter {
-  #defaults = {
-    type: types.SINGLE,
-    vertical: false,
-    label: false,
-    scale: false,
-    min: 0,
-    max: 100,
-    from: null,
-    to: null,
-  };
-
   constructor(options = {}) {
     super();
-    Object.assign(this, this.#defaults, options);
+    this.settings = {
+      type: defaults.type,
+      vertical: defaults.vertical,
+      label: defaults.label,
+      scale: defaults.scale,
+      min: defaults.min,
+      max: defaults.max,
+      from: defaults.from,
+    };
+
+    this.#init(options);
   }
 
   setType(type) {
-    this.type = type;
+    if (type === types.SINGLE || type === types.DOUBLE) {
+      this.settings.type = type;
+    }
   }
 
   getType() {
-    return this.type;
+    return this.settings.type;
   }
 
   setVertical(isVertical) {
-    this.vertical = isVertical;
+    if (Model.isBoolean(isVertical)) {
+      this.settings.vertical = isVertical;
+    }
   }
 
   getVertical() {
-    return this.vertical;
+    return this.settings.vertical;
   }
 
   setLabel(isLabel) {
-    this.label = isLabel;
+    if (Model.isBoolean(isLabel)) {
+      this.settings.label = isLabel;
+    }
   }
 
   getLabel() {
-    return this.label;
+    return this.settings.label;
   }
 
   setScale(isScale) {
-    this.scale = isScale;
+    if (Model.isBoolean(isScale)) {
+      this.settings.scale = isScale;
+    }
   }
 
   getScale() {
-    return this.scale;
+    return this.settings.scale;
   }
 
-  setMin(value) {
-    if (value < this.max) {
-      this.min = value;
+  setMin(minValue) {
+    if (minValue < this.max) {
+      this.min = minValue;
     }
   }
 
@@ -60,9 +67,9 @@ class Model extends EventEmitter {
     return this.min;
   }
 
-  setMax(value) {
-    if (value > this.min) {
-      this.max = value;
+  setMax(maxValue) {
+    if (maxValue > this.min) {
+      this.max = maxValue;
     }
   }
 
@@ -70,13 +77,10 @@ class Model extends EventEmitter {
     return this.max;
   }
 
-  isInRange(value) {
-    return value >= this.min && value <= this.max;
-  }
-
-  setFrom(value) {
-    if (this.isInRange(value)) {
-      this.from = value;
+  setFrom(fromValue) {
+    if (this.isInRange(fromValue)) {
+      // if (this.type === types.DOUBLE && fromValue )
+      this.from = fromValue;
     }
   }
 
@@ -84,14 +88,38 @@ class Model extends EventEmitter {
     return this.from;
   }
 
-  setTo(value) {
-    if (this.isInRange(value)) {
-      this.to = value;
+  setTo(toValue) {
+    if (this.isInRange(toValue)) {
+      this.to = toValue;
     }
   }
 
   getTo() {
     return this.to;
+  }
+
+  static isBoolean(value) {
+    return typeof value === 'boolean';
+  }
+
+  isInRange(value) {
+    return value >= this.min && value <= this.max;
+  }
+
+  #init(options) {
+    const baseOptions = {
+      type: options?.type,
+      vertical: options?.vertical,
+      label: options?.label,
+      scale: options?.scale,
+    };
+
+    Object.entries(baseOptions).forEach(([key, value]) => {
+      if (value !== undefined) {
+        const action = `set${key[0].toUpperCase() + key.slice(1)}`;
+        this[action](value);
+      }
+    });
   }
 }
 
