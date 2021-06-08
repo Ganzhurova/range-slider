@@ -1,9 +1,10 @@
 {
   "parser": "@babel/eslint-parser",
   "env": {
-    "browser": true
+    "browser": true,
+    "jest": true
   },
-  "extends": ["airbnb-base", "prettier"],
+  "extends": ["airbnb-base", "prettier", "plugin:jest/recommended"],
   "parserOptions": {
     "ecmaVersion": 6
   },
