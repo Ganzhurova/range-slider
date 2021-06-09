@@ -41,29 +41,14 @@ describe('Model: getType', () => {
 
 describe('Model: setVertical', () => {
   const model = new Model();
-  const { vertical } = model.settings;
 
   test.each([
-    { value: 1, expected: vertical },
-    { value: 'string', expected: vertical },
-  ])(
-    'the vertical value should not change. Add invalid value $value',
-    ({ value, expected }) => {
-      const spy = jest.spyOn(model, 'setVertical');
-      model.setVertical(value);
-
-      expect(spy).toHaveBeenCalled();
-      expect(model.settings.vertical).toBe(expected);
-
-      spy.mockRestore();
-    }
-  );
-
-  test.each([
+    { value: 1, expected: false },
+    { value: 'string', expected: false },
     { value: true, expected: true },
     { value: false, expected: false },
   ])(
-    'must change the vertical. Add a valid value $value',
+    'vertical must have the correct value(true or false). Add value $value',
     ({ value, expected }) => {
       const spy = jest.spyOn(model, 'setVertical');
       model.setVertical(value);
@@ -82,5 +67,91 @@ describe('Model: setVertical', () => {
 
     expect(isBooleanSpy).toHaveBeenCalled();
     expect(isBooleanSpy).toHaveBeenCalledWith(arg);
+  });
+});
+
+describe('Model: getVertical', () => {
+  const model = new Model();
+
+  test('must return a value of the vertical', () => {
+    const spy = jest.spyOn(model, 'getVertical');
+    const originalVertical = model.settings.vertical;
+
+    const isVertical = model.getVertical();
+
+    expect(spy).toHaveBeenCalled();
+    expect(isVertical).toBe(originalVertical);
+  });
+});
+
+describe('Model: setLabel', () => {
+  const model = new Model();
+
+  test.each([
+    { value: 1, expected: false },
+    { value: 'string', expected: false },
+    { value: true, expected: true },
+    { value: false, expected: false },
+  ])(
+    'label must have the correct value(true or false). Add value $value',
+    ({ value, expected }) => {
+      const spy = jest.spyOn(model, 'setLabel');
+      model.setLabel(value);
+
+      expect(spy).toHaveBeenCalled();
+      expect(model.settings.label).toBe(expected);
+
+      spy.mockRestore();
+    }
+  );
+});
+
+describe('Model: getLabel', () => {
+  const model = new Model();
+
+  test('must return a value of the label', () => {
+    const spy = jest.spyOn(model, 'getLabel');
+    const originalLabel = model.settings.label;
+
+    const isLabel = model.getLabel();
+
+    expect(spy).toHaveBeenCalled();
+    expect(isLabel).toBe(originalLabel);
+  });
+});
+
+describe('Model: setScale', () => {
+  const model = new Model();
+
+  test.each([
+    { value: 1, expected: false },
+    { value: 'string', expected: false },
+    { value: true, expected: true },
+    { value: false, expected: false },
+  ])(
+    'scale must have the correct value(true or false). Add value $value',
+    ({ value, expected }) => {
+      const spy = jest.spyOn(model, 'setScale');
+      model.setScale(value);
+
+      expect(spy).toHaveBeenCalled();
+      expect(model.settings.scale).toBe(expected);
+
+      spy.mockRestore();
+    }
+  );
+});
+
+describe('Model: getScale', () => {
+  const model = new Model();
+
+  test('must return a value of the scale', () => {
+    const spy = jest.spyOn(model, 'getScale');
+    const originalScale = model.settings.scale;
+
+    const isScale = model.getScale();
+
+    expect(spy).toHaveBeenCalled();
+    expect(isScale).toBe(originalScale);
   });
 });
