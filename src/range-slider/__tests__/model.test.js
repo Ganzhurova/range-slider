@@ -37,3 +37,17 @@ describe('Model: setType', () => {
     }
   );
 });
+
+describe('Model: getType', () => {
+  const model = new Model();
+
+  test('must return a value of the type', () => {
+    const spy = jest.spyOn(model, 'getType');
+    const originalType = model.settings.type;
+
+    const type = model.getType();
+
+    expect(spy).toHaveBeenCalled();
+    expect(type).toBe(originalType);
+  });
+});
