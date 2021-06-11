@@ -55,8 +55,8 @@ class Model extends EventEmitter {
       return;
     }
 
-    let min = Model.isNumber(minVal) ? minVal : this.getMin();
-    let max = Model.isNumber(maxVal) ? maxVal : this.getMax();
+    let min = Model.isNumber(minVal) ? Model.getInteger(minVal) : this.getMin();
+    let max = Model.isNumber(maxVal) ? Model.getInteger(maxVal) : this.getMax();
 
     if (min === max) {
       return;

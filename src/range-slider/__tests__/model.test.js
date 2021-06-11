@@ -176,6 +176,7 @@ describe('Model: setLimits', () => {
     { min: 2, max: 2, expected: limits },
     { min: 40, max: 5, expected: { min: 5, max: 40 } },
     { min: 0, max: 6, expected: { min: 0, max: 6 } },
+    { min: 1.2, max: 22.5, expected: { min: 1, max: 23 } },
   ])(
     'must assign valid min and max values. Add values min: $min, max: $max',
     ({ min, max, expected }) => {
