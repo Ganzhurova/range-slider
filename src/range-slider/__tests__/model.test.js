@@ -1,5 +1,7 @@
 import Model from '../Model/Model';
 
+// const descOnly = describe.only;
+
 describe('Model: setType', () => {
   const model = new Model();
 
@@ -16,7 +18,7 @@ describe('Model: setType', () => {
       model.setType(value);
 
       expect(spy).toHaveBeenCalled();
-      expect(model.settings.type).toBe(expected);
+      expect(model.state.type).toBe(expected);
 
       spy.mockRestore();
     }
@@ -28,7 +30,7 @@ describe('Model: getType', () => {
 
   test('must return a value of the type', () => {
     const spy = jest.spyOn(model, 'getType');
-    const originalType = model.settings.type;
+    const originalType = model.state.type;
 
     const type = model.getType();
 
@@ -54,7 +56,7 @@ describe('Model: setVertical', () => {
       model.setVertical(value);
 
       expect(spy).toHaveBeenCalled();
-      expect(model.settings.vertical).toBe(expected);
+      expect(model.state.vertical).toBe(expected);
 
       spy.mockRestore();
     }
@@ -75,7 +77,7 @@ describe('Model: getVertical', () => {
 
   test('must return a value of the vertical', () => {
     const spy = jest.spyOn(model, 'getVertical');
-    const originalVertical = model.settings.vertical;
+    const originalVertical = model.state.vertical;
 
     const isVertical = model.getVertical();
 
@@ -99,7 +101,7 @@ describe('Model: setLabel', () => {
       model.setLabel(value);
 
       expect(spy).toHaveBeenCalled();
-      expect(model.settings.label).toBe(expected);
+      expect(model.state.label).toBe(expected);
 
       spy.mockRestore();
     }
@@ -111,7 +113,7 @@ describe('Model: getLabel', () => {
 
   test('must return a value of the label', () => {
     const spy = jest.spyOn(model, 'getLabel');
-    const originalLabel = model.settings.label;
+    const originalLabel = model.state.label;
 
     const isLabel = model.getLabel();
 
@@ -135,7 +137,7 @@ describe('Model: setScale', () => {
       model.setScale(value);
 
       expect(spy).toHaveBeenCalled();
-      expect(model.settings.scale).toBe(expected);
+      expect(model.state.scale).toBe(expected);
 
       spy.mockRestore();
     }
@@ -147,11 +149,48 @@ describe('Model: getScale', () => {
 
   test('must return a value of the scale', () => {
     const spy = jest.spyOn(model, 'getScale');
-    const originalScale = model.settings.scale;
+    const originalScale = model.state.scale;
 
     const isScale = model.getScale();
 
     expect(spy).toHaveBeenCalled();
     expect(isScale).toBe(originalScale);
   });
+});
+
+describe('Model: setLimits', () => {
+  let model;
+  const limits = {
+    min: 0,
+    max: 100,
+  };
+
+  beforeEach(() => {
+    model = new Model();
+  });
+
+  test.each([
+    { min: undefined, max: undefined, expected: limits },
+    { min: NaN, max: 'one', expected: limits },
+    { min: 50, max: undefined, expected: { min: 50, max: 100 } },
+    { min: 2, max: 2, expected: limits },
+    { min: 40, max: 5, expected: { min: 5, max: 40 } },
+    { min: 0, max: 6, expected: { min: 0, max: 6 } },
+  ])(
+    'must assign valid min and max values. Add values min: $min, max: $max',
+    ({ min, max, expected }) => {
+      const spy = jest.spyOn(model, 'setLimits');
+      model.setLimits(min, max);
+
+      const limitsAfterCall = {
+        min: model.state.min,
+        max: model.state.max,
+      };
+
+      expect(spy).toHaveBeenCalled();
+      expect(limitsAfterCall).toEqual(expected);
+
+      spy.mockRestore();
+    }
+  );
 });
