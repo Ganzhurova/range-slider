@@ -7,7 +7,23 @@ class Model extends EventEmitter {
     this.state = {};
     Object.assign(this.state, defaults);
 
-    this.#init(options);
+    this.update(options);
+  }
+
+  update(options = {}) {
+    const { type, vertical, label, scale, min, max, step, from, to } = options;
+    this.setType(type);
+    this.setVertical(vertical);
+    this.setLabel(label);
+    this.setScale(scale);
+    this.setLimits(min, max);
+    this.setStep(step);
+
+    if (this.getType === types.SINGLE) {
+      this.setFrom(from);
+    } else {
+      this.setPos(from, to);
+    }
   }
 
   setType(type) {
@@ -78,44 +94,47 @@ class Model extends EventEmitter {
     return this.state.max;
   }
 
-  // setFrom(fromValue) {
-  //   if (this.isInRange(fromValue)) {
-  //     // if (this.type === types.DOUBLE && fromValue )
-  //     this.from = fromValue;
-  //   }
-  // }
-  //
-  // getFrom() {
-  //   return this.from;
-  // }
-  //
-  // setTo(toValue) {
-  //   if (this.isInRange(toValue)) {
-  //     this.to = toValue;
-  //   }
-  // }
-  //
-  // getTo() {
-  //   return this.to;
-  // }
-  //
-  // setStep(step) {
-  //   if (Model.isNumber(step)) {
-  //     this.state.step = Model.getInteger(step);
-  //   }
-  // }
-  //
-  // getStep() {
-  //   return this.state.step;
-  // }
+  setFrom(fromValue) {
+    const isSingleType = this.getType() === types.SINGLE;
+
+    if (!Model.isNumber(fromValue) || !isSingleType) {
+      return;
+    }
+
+    if (this.isInRange(fromValue)) {
+      this.state.from = Model.getInteger(fromValue);
+    }
+  }
+
+  getFrom() {
+    return this.state.from;
+  }
+
+  getTo() {
+    return this.state.to;
+  }
+
+  setStep(step) {
+    if (!Model.isNumber(step)) {
+      return;
+    }
+
+    if (step > 0 && step < this.getMax()) {
+      this.state.step = Model.getInteger(step);
+    }
+  }
+
+  getStep() {
+    return this.state.step;
+  }
+
+  isInRange(value) {
+    return value >= this.state.min && value <= this.state.max;
+  }
 
   static isBoolean(value) {
     return typeof value === 'boolean';
   }
-
-  // isInRange(value) {
-  //   return value >= this.min && value <= this.max;
-  // }
 
   static isNumber(value) {
     return typeof value === 'number' && !Number.isNaN(value);
@@ -124,43 +143,6 @@ class Model extends EventEmitter {
   static getInteger(number) {
     return +number.toFixed();
   }
-
-  #init(options) {
-    const baseOptions = {
-      type: options?.type,
-      vertical: options?.vertical,
-      label: options?.label,
-      scale: options?.scale,
-    };
-
-    Object.entries(baseOptions).forEach(([key, value]) => {
-      if (value !== undefined) {
-        const action = `set${key[0].toUpperCase() + key.slice(1)}`;
-        this[action](value);
-      }
-    });
-
-    const min = options?.min;
-    const max = options?.max;
-
-    this.setLimits(min, max);
-
-    // this.#validateStep(options);
-  }
-
-  // #validateStep(options) {
-  //   const isScale = this.getScale();
-  //   const step = options?.step;
-  //
-  //   if (isScale && step !== undefined) {
-  //     this.setStep(step);
-  //   }
-  //
-  //   if (!isScale) {
-  //     delete this.state.step;
-  //   }
-  //   console.log(step);
-  // }
 }
 
 export default Model;
