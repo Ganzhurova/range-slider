@@ -1,69 +1,39 @@
 import EventEmitter from '../EventEmitter';
-import { types, defaults } from '../defaults';
+import defaults from '../lib/defaults';
+import types from '../lib/constants';
 
 class Model extends EventEmitter {
-  constructor(options = {}) {
+  constructor(options) {
     super();
-    this.state = {};
-    Object.assign(this.state, defaults);
+    this.state = { ...defaults, range: null };
 
-    this.update(options);
+    this.setState(options);
   }
 
-  update(options = {}) {
-    const { type, vertical, label, scale, min, max, step, from, to } = options;
-    this.setType(type);
-    this.setVertical(vertical);
-    this.setLabel(label);
-    this.setScale(scale);
-    this.setLimits(min, max);
-    this.setStep(step);
+  setState(options) {
+    if (options === undefined) return;
 
-    if (this.getType === types.SINGLE) {
-      this.setFrom(from);
-    } else {
-      this.setPos(from, to);
-    }
+    const { type, min, max, step, from, to, ...otherOptions } = options;
+
+    this.state = { ...this.state, ...otherOptions };
+
+    this.setLimits(min, max);
+    this.setRange();
+    this.setStep(step);
+    this.setType(type);
+    this.setPos(from, to);
+  }
+
+  getState() {
+    return this.state;
   }
 
   setType(type) {
+    if (!type) return;
+
     if (type === types.SINGLE || type === types.DOUBLE) {
       this.state.type = type;
     }
-  }
-
-  getType() {
-    return this.state.type;
-  }
-
-  setVertical(isVertical) {
-    if (Model.isBoolean(isVertical)) {
-      this.state.vertical = isVertical;
-    }
-  }
-
-  getVertical() {
-    return this.state.vertical;
-  }
-
-  setLabel(isLabel) {
-    if (Model.isBoolean(isLabel)) {
-      this.state.label = isLabel;
-    }
-  }
-
-  getLabel() {
-    return this.state.label;
-  }
-
-  setScale(isScale) {
-    if (Model.isBoolean(isScale)) {
-      this.state.scale = isScale;
-    }
-  }
-
-  getScale() {
-    return this.state.scale;
   }
 
   setLimits(minVal, maxVal) {
@@ -71,8 +41,10 @@ class Model extends EventEmitter {
       return;
     }
 
-    let min = Model.isNumber(minVal) ? Model.getInteger(minVal) : this.getMin();
-    let max = Model.isNumber(maxVal) ? Model.getInteger(maxVal) : this.getMax();
+    let min =
+      minVal !== undefined ? Model.getRoundedNumber(minVal) : this.state.min;
+    let max =
+      maxVal !== undefined ? Model.getRoundedNumber(maxVal) : this.state.max;
 
     if (min === max) {
       return;
@@ -86,62 +58,71 @@ class Model extends EventEmitter {
     this.state.max = max;
   }
 
-  getMin() {
-    return this.state.min;
+  setRange() {
+    this.state.range = this.state.max - this.state.min;
   }
 
-  getMax() {
-    return this.state.max;
-  }
+  setStep(stepVal) {
+    let step =
+      stepVal !== undefined
+        ? Math.abs(Model.getRoundedNumber(stepVal))
+        : this.state.step;
 
-  setFrom(fromValue) {
-    const isSingleType = this.getType() === types.SINGLE;
+    const isValidStep = step > 0 && step < this.state.max;
 
-    if (!Model.isNumber(fromValue) || !isSingleType) {
-      return;
+    if (!isValidStep) {
+      step = this.state.range * 0.1;
     }
 
-    if (this.isInRange(fromValue)) {
-      this.state.from = Model.getInteger(fromValue);
+    this.state.step = step;
+  }
+
+  setPos(fromVal, toVal) {
+    const isDouble = this.state.type === types.DOUBLE;
+    let from =
+      fromVal !== undefined ? Model.getRoundedNumber(fromVal) : this.state.from;
+
+    let to =
+      toVal !== undefined ? Model.getRoundedNumber(toVal) : this.state.to;
+
+    const isFromInRange = this.isInRange(from);
+    const isToInRange = this.isInRange(to);
+
+    // const isFromDoubleInRange = isFromInRange && from < to;
+    // const isToDoubleInRange = this.isInRange(to) && to > from;
+
+    if (!isDouble) {
+      if (isFromInRange) {
+        this.state.from = from;
+      } else {
+        this.state.from = this.state.range * 0.5 + this.state.min;
+      }
     }
-  }
 
-  getFrom() {
-    return this.state.from;
-  }
+    if (isDouble) {
+      if (!isFromInRange) {
+        from = this.state.range * 0.25 + this.state.min;
+      } else if (from > to) {
+        from = this.state.range * 0.25 + this.state.min;
+      }
 
-  getTo() {
-    return this.state.to;
-  }
+      this.state.from = from;
 
-  setStep(step) {
-    if (!Model.isNumber(step)) {
-      return;
+      if (!isToInRange) {
+        to = this.state.range * 0.75 + this.state.min;
+      } else if (to < from) {
+        to = this.state.range * 0.75 + this.state.min;
+      }
+      this.state.to = to;
     }
-
-    if (step > 0 && step < this.getMax()) {
-      this.state.step = Model.getInteger(step);
-    }
-  }
-
-  getStep() {
-    return this.state.step;
   }
 
   isInRange(value) {
     return value >= this.state.min && value <= this.state.max;
   }
 
-  static isBoolean(value) {
-    return typeof value === 'boolean';
-  }
-
-  static isNumber(value) {
-    return typeof value === 'number' && !Number.isNaN(value);
-  }
-
-  static getInteger(number) {
-    return +number.toFixed();
+  static getRoundedNumber(number, fractionLength = 5) {
+    return +number.toFixed(fractionLength);
   }
 }
 

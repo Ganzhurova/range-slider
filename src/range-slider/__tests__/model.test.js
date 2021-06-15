@@ -1,8 +1,8 @@
 import Model from '../Model/Model';
 
-// const descOnly = describe.only;
+const descOnly = describe.only;
 
-describe('Model: update', () => {
+describe('Model: setState', () => {
   let model;
 
   beforeEach(() => {
@@ -24,32 +24,11 @@ describe('Model: update', () => {
         step: 1,
       },
     },
-    {
-      options: {
-        type: 'double',
-        vertical: true,
-        label: true,
-        scale: true,
-        min: '6000',
-        max: 158.9,
-      },
-      expected: {
-        type: 'double',
-        vertical: true,
-        label: true,
-        scale: true,
-        min: 0,
-        max: 159,
-        from: null,
-        to: null,
-        step: 1,
-      },
-    },
   ])(
-    'must update the current state. Add options: $options',
+    'should assign valid values to the object state. Add options: $options',
     ({ options, expected }) => {
-      const spy = jest.spyOn(model, 'update');
-      model.update(options);
+      const spy = jest.spyOn(model, 'setState');
+      model.setState(options);
 
       expect(spy).toHaveBeenCalled();
       expect(model.state).toEqual(expected);
@@ -60,16 +39,22 @@ describe('Model: update', () => {
 });
 
 describe('Model: setType', () => {
-  const model = new Model();
+  let model;
+  const defaultType = 'single';
+
+  beforeEach(() => {
+    model = new Model();
+  });
 
   test.each([
-    { value: 1, expected: 'single' },
-    { value: true, expected: 'single' },
-    { value: 'string', expected: 'single' },
+    { value: undefined, expected: defaultType },
+    { value: 1, expected: defaultType },
+    { value: true, expected: defaultType },
+    { value: 'string', expected: defaultType },
     { value: 'double', expected: 'double' },
     { value: 'single', expected: 'single' },
   ])(
-    'type must have the correct value("double" or "single"). Add value $value',
+    'should return valid value("double" or "single"). Add value: $value',
     ({ value, expected }) => {
       const spy = jest.spyOn(model, 'setType');
       model.setType(value);
@@ -82,142 +67,9 @@ describe('Model: setType', () => {
   );
 });
 
-describe('Model: getType', () => {
-  const model = new Model();
-
-  test('must return a value of the type', () => {
-    const spy = jest.spyOn(model, 'getType');
-    const originalType = model.state.type;
-
-    const type = model.getType();
-
-    expect(spy).toHaveBeenCalled();
-    expect(type).toBe(originalType);
-
-    spy.mockRestore();
-  });
-});
-
-describe('Model: setVertical', () => {
-  const model = new Model();
-
-  test.each([
-    { value: 1, expected: false },
-    { value: 'string', expected: false },
-    { value: true, expected: true },
-    { value: false, expected: false },
-  ])(
-    'vertical must have the correct value(true or false). Add value $value',
-    ({ value, expected }) => {
-      const spy = jest.spyOn(model, 'setVertical');
-      model.setVertical(value);
-
-      expect(spy).toHaveBeenCalled();
-      expect(model.state.vertical).toBe(expected);
-
-      spy.mockRestore();
-    }
-  );
-
-  test('isBoolean method must be called', () => {
-    const isBooleanSpy = jest.spyOn(Model, 'isBoolean');
-    const arg = true;
-    model.setVertical(arg);
-
-    expect(isBooleanSpy).toHaveBeenCalled();
-    expect(isBooleanSpy).toHaveBeenCalledWith(arg);
-  });
-});
-
-describe('Model: getVertical', () => {
-  const model = new Model();
-
-  test('must return a value of the vertical', () => {
-    const spy = jest.spyOn(model, 'getVertical');
-    const originalVertical = model.state.vertical;
-
-    const isVertical = model.getVertical();
-
-    expect(spy).toHaveBeenCalled();
-    expect(isVertical).toBe(originalVertical);
-  });
-});
-
-describe('Model: setLabel', () => {
-  const model = new Model();
-
-  test.each([
-    { value: 1, expected: false },
-    { value: 'string', expected: false },
-    { value: true, expected: true },
-    { value: false, expected: false },
-  ])(
-    'label must have the correct value(true or false). Add value $value',
-    ({ value, expected }) => {
-      const spy = jest.spyOn(model, 'setLabel');
-      model.setLabel(value);
-
-      expect(spy).toHaveBeenCalled();
-      expect(model.state.label).toBe(expected);
-
-      spy.mockRestore();
-    }
-  );
-});
-
-describe('Model: getLabel', () => {
-  const model = new Model();
-
-  test('must return a value of the label', () => {
-    const spy = jest.spyOn(model, 'getLabel');
-    const originalLabel = model.state.label;
-
-    const isLabel = model.getLabel();
-
-    expect(spy).toHaveBeenCalled();
-    expect(isLabel).toBe(originalLabel);
-  });
-});
-
-describe('Model: setScale', () => {
-  const model = new Model();
-
-  test.each([
-    { value: 1, expected: false },
-    { value: 'string', expected: false },
-    { value: true, expected: true },
-    { value: false, expected: false },
-  ])(
-    'scale must have the correct value(true or false). Add value $value',
-    ({ value, expected }) => {
-      const spy = jest.spyOn(model, 'setScale');
-      model.setScale(value);
-
-      expect(spy).toHaveBeenCalled();
-      expect(model.state.scale).toBe(expected);
-
-      spy.mockRestore();
-    }
-  );
-});
-
-describe('Model: getScale', () => {
-  const model = new Model();
-
-  test('must return a value of the scale', () => {
-    const spy = jest.spyOn(model, 'getScale');
-    const originalScale = model.state.scale;
-
-    const isScale = model.getScale();
-
-    expect(spy).toHaveBeenCalled();
-    expect(isScale).toBe(originalScale);
-  });
-});
-
 describe('Model: setLimits', () => {
   let model;
-  const limits = {
+  const defaultLimits = {
     min: 0,
     max: 100,
   };
@@ -227,26 +79,26 @@ describe('Model: setLimits', () => {
   });
 
   test.each([
-    { min: undefined, max: undefined, expected: limits },
-    { min: NaN, max: 'one', expected: limits },
+    { min: undefined, max: undefined, expected: defaultLimits },
+    // { min: NaN, max: 'one', expected: defaultLimits },
     { min: 50, max: undefined, expected: { min: 50, max: 100 } },
-    { min: 2, max: 2, expected: limits },
+    { min: 2, max: 2, expected: defaultLimits },
     { min: 40, max: 5, expected: { min: 5, max: 40 } },
     { min: 0, max: 6, expected: { min: 0, max: 6 } },
-    { min: 1.2, max: 22.5, expected: { min: 1, max: 23 } },
+    { min: 1.2, max: 22.5, expected: { min: 1.2, max: 22.5 } },
   ])(
-    'must assign valid min and max values. Add values min: $min, max: $max',
+    'should assign a valid values. Add values min: $min, max: $max',
     ({ min, max, expected }) => {
       const spy = jest.spyOn(model, 'setLimits');
       model.setLimits(min, max);
 
-      const limitsAfterCall = {
+      const limits = {
         min: model.state.min,
         max: model.state.max,
       };
 
       expect(spy).toHaveBeenCalled();
-      expect(limitsAfterCall).toEqual(expected);
+      expect(limits).toEqual(expected);
 
       spy.mockRestore();
     }
@@ -255,19 +107,21 @@ describe('Model: setLimits', () => {
 
 describe('Model: setStep', () => {
   let model;
-  const defaultValue = 1;
+  const defaultValue = 5;
 
   beforeEach(() => {
     model = new Model();
   });
 
   test.each([
-    { value: 'one', expected: defaultValue },
-    { value: NaN, expected: defaultValue },
+    // { value: 'one', expected: defaultValue },
+    // { value: NaN, expected: defaultValue },
     { value: undefined, expected: defaultValue },
-    { value: 2.5, expected: 3 },
+    { value: 0, expected: 10 },
+    { value: 105, expected: 10 },
+    { value: 2.5, expected: 2.5 },
     { value: 40, expected: 40 },
-  ])('must assign a valid value. Add value $value', ({ value, expected }) => {
+  ])('should assign a valid value. Add value $value', ({ value, expected }) => {
     const spy = jest.spyOn(model, 'setStep');
     model.setStep(value);
 
@@ -277,12 +131,11 @@ describe('Model: setStep', () => {
     spy.mockRestore();
   });
 
-  test.each([
-    { value: -10, expected: defaultValue },
-    { value: 0, expected: defaultValue },
-    { value: 150, expected: defaultValue },
-  ])('must be a positive number. Add value $value', ({ value, expected }) => {
+  test('must be a positive number', () => {
     const spy = jest.spyOn(model, 'setStep');
+    const value = -3.6;
+    const expected = 3.6;
+
     model.setStep(value);
 
     expect(spy).toHaveBeenCalled();
@@ -293,9 +146,9 @@ describe('Model: setStep', () => {
 
   test('must be less than the max value', () => {
     const spy = jest.spyOn(model, 'setStep');
-    const max = model.getMax();
+    const { max } = model.state;
 
-    model.setStep(60);
+    model.setStep(200);
 
     expect(spy).toHaveBeenCalled();
     expect(model.state.step).toBeLessThan(max);
@@ -304,56 +157,105 @@ describe('Model: setStep', () => {
   });
 });
 
-describe('Model: setFrom', () => {
+descOnly('Model: setPos', () => {
   let model;
-  const defaultValue = null;
 
   beforeEach(() => {
     model = new Model();
   });
 
   test.each([
-    { value: 'one', expected: defaultValue },
-    { value: NaN, expected: defaultValue },
-    { value: undefined, expected: defaultValue },
-    { value: 2.5, expected: 3 },
-    { value: 40, expected: 40 },
-  ])('must assign a valid value. Add value $value', ({ value, expected }) => {
-    const spy = jest.spyOn(model, 'setFrom');
-    model.setFrom(value);
-
-    expect(spy).toHaveBeenCalled();
-    expect(model.state.from).toBe(expected);
-
-    spy.mockRestore();
-  });
-
-  test('value must be in the range between min and max', () => {
-    const spy = jest.spyOn(model, 'setFrom');
-    const max = model.getMax();
-    const min = model.getMin();
-
-    model.setFrom(60);
-
-    expect(spy).toHaveBeenCalled();
-    expect(model.state.from).toBeLessThanOrEqual(max);
-    expect(model.state.from).toBeGreaterThanOrEqual(min);
-
-    spy.mockRestore();
-  });
-
-  test.each([
-    { value: 40, type: 'double', expected: defaultValue },
-    { value: 40, type: 'single', expected: 40 },
+    {
+      min: 5,
+      max: 10,
+      from: undefined,
+      to: undefined,
+      expected: { from: 7.5, to: 75 },
+    },
+    {
+      min: -8,
+      max: 66,
+      from: -10,
+      to: undefined,
+      expected: { from: 29, to: 75 },
+    },
+    // { from: 'one', to: 'ten', expected: defaultPos },
+    { min: 16, max: 66, from: -10, to: 60, expected: { from: 41, to: 75 } },
+    {
+      min: 10,
+      max: 50,
+      from: 25,
+      to: undefined,
+      expected: { from: 25, to: 75 },
+    },
+    { min: 5, max: 200, from: 40, to: 60, expected: { from: 40, to: 75 } },
   ])(
-    'must assign a value only for a single type. Add type $type',
-    ({ value, type, expected }) => {
-      const spy = jest.spyOn(model, 'setFrom');
-      model.setType(type);
-      model.setFrom(value);
+    'should assign a valid values. Type: single. Add from: $from, to: $to',
+    ({ min, max, from, to, expected }) => {
+      const spy = jest.spyOn(model, 'setPos');
+      model.setLimits(min, max);
+      model.setRange();
+      model.setPos(from, to);
+
+      const pos = {
+        from: model.state.from,
+        to: model.state.to,
+      };
 
       expect(spy).toHaveBeenCalled();
-      expect(model.state.from).toBe(expected);
+      expect(pos).toEqual(expected);
+
+      spy.mockRestore();
+    }
+  );
+
+  test.each([
+    {
+      min: 5,
+      max: 10,
+      from: undefined,
+      to: undefined,
+      expected: { from: 6.25, to: 8.75 },
+    },
+    // { from: 'one', to: 'ten', expected: defaultPos },
+    {
+      min: -66,
+      max: -16,
+      from: 10,
+      to: -20,
+      expected: { from: -53.5, to: -20 },
+    },
+    {
+      min: -66,
+      max: -16,
+      from: -18,
+      to: -20,
+      expected: { from: -53.5, to: -20 },
+    },
+    {
+      min: 10,
+      max: 50,
+      from: 25,
+      to: undefined,
+      expected: { from: 25, to: 40 },
+    },
+    { min: 5, max: 200, from: 40, to: 60, expected: { from: 40, to: 60 } },
+  ])(
+    'should assign a valid values. Type: double. Add from: $from, to: $to',
+    ({ min, max, from, to, expected }) => {
+      const spy = jest.spyOn(model, 'setPos');
+      model.setType('double');
+      model.setLimits(min, max);
+      model.setRange();
+      model.setPos(from, to);
+
+      const pos = {
+        from: model.state.from,
+        to: model.state.to,
+      };
+
+      expect(spy).toHaveBeenCalled();
+      expect(pos).toEqual(expected);
 
       spy.mockRestore();
     }
