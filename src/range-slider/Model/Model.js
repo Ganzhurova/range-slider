@@ -5,76 +5,60 @@ import types from '../lib/constants';
 class Model extends EventEmitter {
   constructor(options) {
     super();
-    this.state = { ...defaults, range: null };
+    this.state = { ...defaults };
 
     this.setState(options);
   }
 
   setState(options) {
-    if (options === undefined) return;
+    const state = this.getState();
+    const newState = { ...state, ...options };
+    let { min, max } = newState;
 
-    const { type, min, max, step, from, to, ...otherOptions } = options;
+    ({ min, max } = Model.validateLimits(min, max));
+    // const range = Model.getRange(limits);
+    // const provenStep = Model.validateStep(step, limits.max, range);
+    //
+    // newState = { ...newState, ...limits, step: provenStep };
+    // console.log(min, max);
+    console.log(newState);
+    // console.log(range);
 
-    this.state = { ...this.state, ...otherOptions };
-
-    this.setLimits(min, max);
-    this.setRange();
-    this.setStep(step);
-    this.setType(type);
-    this.setPos(from, to);
+    this.state = { ...newState };
   }
 
   getState() {
     return this.state;
   }
 
-  setType(type) {
-    if (!type) return;
-
-    if (type === types.SINGLE || type === types.DOUBLE) {
-      this.state.type = type;
-    }
-  }
-
-  setLimits(minVal, maxVal) {
-    if (minVal === undefined && maxVal === undefined) {
-      return;
-    }
-
-    let min =
-      minVal !== undefined ? Model.getRoundedNumber(minVal) : this.state.min;
-    let max =
-      maxVal !== undefined ? Model.getRoundedNumber(maxVal) : this.state.max;
+  static validateLimits(minVal, maxVal) {
+    let min = Model.toFixed(minVal);
+    let max = Model.toFixed(maxVal);
 
     if (min === max) {
-      return;
+      max += 1;
     }
 
     if (min > max) {
       [min, max] = [max, min];
     }
 
-    this.state.min = min;
-    this.state.max = max;
+    return {
+      min,
+      max,
+    };
   }
 
-  setRange() {
-    this.state.range = this.state.max - this.state.min;
-  }
+  static validateStep(stepVal, max, range) {
+    let step = Math.abs(Model.toFixed(stepVal));
 
-  setStep(stepVal) {
-    let step =
-      stepVal !== undefined
-        ? Math.abs(Model.getRoundedNumber(stepVal))
-        : this.state.step;
-
-    const isValidStep = step > 0 && step < this.state.max;
+    const isValidStep = step > 0 && step < max;
 
     if (!isValidStep) {
-      step = this.state.range * 0.1;
+      step = Model.toFixed(range * 0.1);
     }
 
-    this.state.step = step;
+    return step;
   }
 
   setPos(fromVal, toVal) {
@@ -121,7 +105,11 @@ class Model extends EventEmitter {
     return value >= this.state.min && value <= this.state.max;
   }
 
-  static getRoundedNumber(number, fractionLength = 5) {
+  static getRange({ min, max }) {
+    return max - min;
+  }
+
+  static toFixed(number, fractionLength = 5) {
     return +number.toFixed(fractionLength);
   }
 }

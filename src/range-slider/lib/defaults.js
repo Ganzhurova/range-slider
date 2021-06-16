@@ -8,8 +8,8 @@ const defaults = {
   min: 0,
   max: 100,
   from: 50,
-  to: 75,
-  step: 5,
+  to: 0,
+  step: 25,
 };
 
 export default defaults;
