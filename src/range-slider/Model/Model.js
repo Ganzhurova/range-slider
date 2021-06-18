@@ -8,6 +8,7 @@ class Model extends EventEmitter {
     this.state = { ...defaults };
 
     this.setState(options);
+    console.log(this.state);
   }
 
   setState(options) {
@@ -17,7 +18,6 @@ class Model extends EventEmitter {
     stateModel.set(newState);
 
     this.state = stateModel.get();
-    console.log(this.state);
   }
 
   getState() {
