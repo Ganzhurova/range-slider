@@ -1,6 +1,6 @@
 import EventEmitter from '../EventEmitter';
+import stateModel from './stateModel';
 import defaults from '../lib/defaults';
-import types from '../lib/constants';
 
 class Model extends EventEmitter {
   constructor(options) {
