@@ -115,9 +115,9 @@ const stateModel = {
       this.state.scaleRange = scaleRange;
     };
 
-    const { scale, min, max, step } = this.state;
+    const { isScale, min, max, step } = this.state;
 
-    if (!scale) {
+    if (!isScale) {
       setScaleRange();
       return;
     }
