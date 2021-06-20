@@ -3,18 +3,26 @@ class Presenter {
     this.view = view;
     this.model = model;
 
-    this.#initView();
+    this.initView();
   }
 
-  #initView() {
-    const viewModel = {
-      type: this.model.getType(),
-      isVertical: this.model.getVertical(),
-      isLabel: this.model.getLabel(),
-      isScale: this.model.getScale(),
+  initView() {
+    const state = this.model.getState();
+
+    const viewState = {
+      // решить за счет интерфейсов ?
+      isDouble: state.isDouble,
+      isVertical: state.isVertical,
+      isLabel: state.isLabel,
+      isScale: state.isScale,
+      min: state.min,
+      max: state.max,
+      from: state.from,
+      to: state.to,
+      scaleRange: state.scaleRange,
     };
 
-    this.view.init(viewModel);
+    this.view.init(viewState);
   }
 }
 
