@@ -1,10 +1,10 @@
-import HTMLDefaults from '../HTMLDefaults';
-import HTMLElement from '../HTMLElement';
+import Component from '../Component';
+import html from '../../lib/html';
 
-class BarView extends HTMLElement {
+class BarView extends Component {
   constructor() {
     super();
-    this.createEl({ className: `${HTMLDefaults.rootClass}__bar` });
+    this.el = BarView.createEl(html.bar);
   }
 }
 

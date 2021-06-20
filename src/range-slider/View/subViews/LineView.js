@@ -1,11 +1,15 @@
-import HTMLDefaults from '../HTMLDefaults';
-import HTMLElement from '../HTMLElement';
+import Component from '../Component';
+import html from '../../lib/html';
 
-class LineView extends HTMLElement {
-  constructor() {
+class LineView extends Component {
+  constructor(options) {
     super();
-    this.createEl({ className: `${HTMLDefaults.rootClass}__line` });
+    this.el = LineView.createEl(html.line);
+    console.log(options);
+    console.log(this.el.className);
   }
+
+  // render() {}
 }
 
 export default LineView;
