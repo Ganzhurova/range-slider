@@ -1,5 +1,5 @@
 import EventEmitter from '../EventEmitter';
-import SubViewsList from './subViews/SubViewsList';
+import * as subViews from './SubViews';
 import html from '../lib/html';
 
 class View extends EventEmitter {
@@ -7,55 +7,58 @@ class View extends EventEmitter {
     super();
     this.el = document.querySelector(selector);
     this.subViews = {};
+    this.elements = new Map();
   }
 
-  init(state) {
+  init(options) {
     if (this.el.nodeName.toLowerCase() !== html.rootEl.tag) {
       console?.warn('Base element should be <div>!');
       return;
     }
 
-    this.initSubViews(state);
-    this.render(state);
+    this.initSubViews(options);
+    console.log(this.elements);
+    // this.setElements();
+    // this.render(options);
   }
 
-  initSubViews(state) {
-    this.subViews = new SubViewsList(state).get();
+  initSubViews(options) {
+    Object.entries(subViews).forEach(([key, Component]) => {
+      this.subViews[key] = new Component(options);
+    });
   }
 
-  render(visualState) {
+  setElements() {
+    Object.values(this.subViews).forEach(subView => {
+      subView.assignEl(this.elements);
+    });
+  }
+
+  render(visual) {
     // visualState - интерфейс ? - содержит опции отображения шкалы, ярлыков и вертикали
     this.el.classList.add(html.rootEl.className);
-    this.setDirection(visualState.isVertical);
+    this.setDirection(visual.isVertical);
 
-    const elements = this.getElements();
-    const fragment = document.createDocumentFragment();
-    Object.values(this.subViews).forEach(item => {
-      item.render(elements);
-    });
+    const { line, bar, from, to } = this.elements;
+    const elem = [line];
+    elem[0].append(bar, from);
 
-    console.log(fragment);
-    console.log(elements);
-  }
+    if (visual.isDouble) {
+      elem[0].append(to);
+    }
 
-  getElements() {
-    return Object.values(this.subViews).map(item => item.getEl());
+    this.el.append(...elem);
+
+    console.log(line);
+    console.log(this.elements.line);
+    console.log(elem);
   }
 
   setDirection(isVertical) {
     this.el.classList.toggle(html.rootEl.directionModifier, isVertical);
   }
 }
-// import HTMLDefaults from './HTMLDefaults';
-// // import types from '../defaults';
-// // import Template from './Template';
-//
-//
-// import BarView from './subViews/BarView';
-// import ThumbView from './subViews/ThumbView';
-// import LabelView from './subViews/LabelView';
-// import ScaleView from './subViews/ScaleView';
-//
+
 // class View extends EventEmitter {
 //   constructor(selector) {
 //     super();
