@@ -17,10 +17,16 @@ class Model extends EventEmitter {
     stateModel.set(newState);
 
     this.state = stateModel.get();
+    this.emit('updateState', this.state);
+    console.log(this.state);
   }
 
   getState() {
     return this.state;
+  }
+
+  update(options) {
+    this.setState(options);
   }
 }
 
