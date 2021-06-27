@@ -1,28 +1,44 @@
-class Presenter {
-  constructor(view, model) {
-    this.view = view;
-    this.model = model;
+// import EventEmitter from '../EventEmitter';
 
-    this.initView();
+class Presenter {
+  constructor(model, view) {
+    this.model = model;
+    this.view = view;
+
+    model.subscribe('initSlader', options => this.updateView(options));
+    model.subscribe('updateState', options => this.updateView(options));
+
+    model.emit('initSlader', model.getState());
   }
 
-  initView() {
-    const state = this.model.getState();
+  // initView() {
+  //   this.view.init();
+  // }
 
-    const viewState = {
-      // решить за счет интерфейсов ?
-      isDouble: state.isDouble,
-      isVertical: state.isVertical,
-      isLabel: state.isLabel,
-      isScale: state.isScale,
-      min: state.min,
-      max: state.max,
-      from: state.from,
-      to: state.to,
-      scaleRange: state.scaleRange,
-    };
+  // getState() {
+  //   const state = this.model.getState();
+  //
+  //   return {
+  //     // решить за счет интерфейсов ?
+  //     isDouble: state.isDouble,
+  //     isVertical: state.isVertical,
+  //     isLabel: state.isLabel,
+  //     isScale: state.isScale,
+  //     min: state.min,
+  //     max: state.max,
+  //     from: state.from,
+  //     to: state.to,
+  //     scaleRange: state.scaleRange,
+  //   };
+  // }
 
-    this.view.init(viewState);
+  updateView(options) {
+    this.view.update(options);
+  }
+
+  update(options) {
+    this.model.update(options);
+    // this.view.update(this.getState());
   }
 }
 

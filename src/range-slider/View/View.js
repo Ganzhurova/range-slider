@@ -1,61 +1,104 @@
 import EventEmitter from '../EventEmitter';
-import * as subViews from './SubViews';
-import html from '../lib/html';
+import RootView from './subViews/RootView';
+// import LineView from './subViews/LineView';
+// import BarView from './subViews/BarView';
+// import ThumbView from './subViews/ThumbView';
+import vDom from './vDom';
+// import * as subViews from './SubViews';
+import { html } from '../lib/html';
 
 class View extends EventEmitter {
   constructor(selector) {
     super();
     this.el = document.querySelector(selector);
+    // this.options = {};
     this.subViews = {};
-    this.elements = new Map();
+
+    this.init();
   }
 
-  init(options) {
+  init() {
     if (this.el.nodeName.toLowerCase() !== html.rootEl.tag) {
       console?.warn('Base element should be <div>!');
       return;
     }
 
-    this.initSubViews(options);
-    console.log(this.elements);
-    // this.setElements();
+    // this.initRoot();
+    this.setSubViews();
+
+    // const vNode = this.subViews.root.getVNode();
+    // const vNodeUnbind = { ...vNode };
+    // this.el = vDom.update(vNodeUnbind, this.el);
+    // this.setEl();
     // this.render(options);
+    // console.log(this.elements);
   }
 
-  initSubViews(options) {
-    Object.entries(subViews).forEach(([key, Component]) => {
-      this.subViews[key] = new Component(options);
-    });
+  setSubViews() {
+    this.subViews = {
+      root: new RootView(html),
+    };
+    // this.from = new ThumbView(this.options);
+    // this.to = new ThumbView(this.options);
+    // this.bar = new BarView(this.options);
+    // this.line = new LineView(this.options);
+    // console.log(this.subViews.from === this.subViews.to);
   }
 
-  setElements() {
+  update(options) {
+    // this.options = options;
+    this.subViews.root.update(options);
+    // console.log(this.el.v);
+    const vNode = this.subViews.root.getVNode();
+    const vNodeUnbind = { ...vNode };
+    this.el = vDom.update(vNodeUnbind, this.el);
+    // console.log(this.el.v);
+  }
+
+  initRoot() {
+    this.root = new RootView(this.options, html);
+    vDom.update(this.root.getVNode(), this.el);
+  }
+
+  setEl() {
     Object.values(this.subViews).forEach(subView => {
       subView.assignEl(this.elements);
     });
   }
 
-  render(visual) {
+  render() {
     // visualState - интерфейс ? - содержит опции отображения шкалы, ярлыков и вертикали
-    this.el.classList.add(html.rootEl.className);
-    this.setDirection(visual.isVertical);
 
-    const { line, bar, from, to } = this.elements;
-    const elem = [line];
-    elem[0].append(bar, from);
+    const { line, bar, from } = this.elements;
 
-    if (visual.isDouble) {
-      elem[0].append(to);
-    }
+    // const elem = Object.fromEntries(this.elements.entries());
+    // const el = { ...elem };
+    //
+    // // console.log(line);
+    line.append(bar, from);
 
-    this.el.append(...elem);
+    this.checkDoubleElement();
 
-    console.log(line);
-    console.log(this.elements.line);
-    console.log(elem);
+    // if (visual.isDouble) {
+    //   elem[0].append(to);
+    // }
+    //
+    this.el.append(line);
+    //
+    // console.log(line);
+    // console.log(this.elements.line);
+    // console.log(elem);
   }
 
-  setDirection(isVertical) {
-    this.el.classList.toggle(html.rootEl.directionModifier, isVertical);
+  checkDoubleElement() {
+    const { line, from, to } = this.elements;
+    const { isDouble } = this.options;
+
+    // const containsTo = line.contains(from);
+
+    console.log(line);
+    console.log(from === to);
+    console.log(isDouble);
   }
 }
 
