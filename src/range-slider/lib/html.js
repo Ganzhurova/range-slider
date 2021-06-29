@@ -1,13 +1,12 @@
 const root = 'range-slider';
-const directionMix = 'vertical';
+
+const mix = {
+  direction: 'vertical',
+  from: 'from',
+  to: 'to',
+};
 
 const html = {
-  // modifiers: {
-  //   direction: 'vertical',
-  //   from: 'from',
-  //   to: 'to',
-  // },
-
   rootEl: {
     tag: 'div',
     className: root,
@@ -30,4 +29,4 @@ const html = {
   },
 };
 
-export { html, directionMix };
+export { html, mix };
