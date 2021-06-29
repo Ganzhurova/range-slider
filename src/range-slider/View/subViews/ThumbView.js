@@ -1,16 +1,11 @@
-import Component from '../Component';
-import html from '../../lib/html';
+import Component from './Component';
+import { html } from '../../lib/html';
 
 class ThumbView extends Component {
-  constructor(options) {
-    super(options);
-    this.createEl(html.thumb, options.modifier);
-    this.setChildren(options.children);
-  }
+  constructor() {
+    super();
 
-  assignEl(obj) {
-    obj.from = this.el;
-    obj.to = this.el;
+    this.init(html.thumb);
   }
 }
 

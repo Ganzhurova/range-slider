@@ -1,15 +1,11 @@
-import Component from '../Component';
-import html from '../../lib/html';
+import Component from './Component';
+import { html } from '../../lib/html';
 
 class BarView extends Component {
-  constructor(options) {
-    super(options);
-    this.createEl(html.bar, options.modifier);
-    this.setChildren(options.children);
-  }
+  constructor() {
+    super();
 
-  assignEl(obj) {
-    obj.bar = this.el;
+    this.init(html.bar);
   }
 }
 
