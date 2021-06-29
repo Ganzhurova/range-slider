@@ -12,15 +12,10 @@
 
   &__example {
     width: 200px;
-    padding: 40px 20px 0;
+    height: 200px;
+    padding: 20px;
     margin-bottom: 30px;
     background-color: #dcdcdc;
-  }
-
-  &__example--vertical {
-    width: auto;
-    height: 400px;
-    padding: 20px;
   }
 
   &__panel {
