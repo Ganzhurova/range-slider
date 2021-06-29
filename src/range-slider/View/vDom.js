@@ -26,24 +26,28 @@ const vDom = {
     return node;
   },
 
+  getNewNode(node, newVNode) {
+    const newNode = this.createDOMNode(newVNode);
+    node.replaceWith(newNode);
+    return newNode;
+  },
+
   updateNode(node, vNode, newVNode) {
     if (newVNode === undefined) {
       node.remove();
-      // return;
+      return undefined;
     }
 
     if (typeof vNode === 'string' || typeof newVNode === 'string') {
       if (vNode !== newVNode) {
-        const newNode = this.createDOMNode(newVNode);
-        node.replaceWith(newNode);
+        const newNode = this.getNewNode(node, newVNode);
         return newNode;
       }
       return node;
     }
 
     if (vNode.tag !== newVNode.tag) {
-      const newNode = this.createDOMNode(newVNode);
-      node.replaceWith(newNode);
+      const newNode = this.getNewNode(node, newVNode);
       return newNode;
     }
 
@@ -107,13 +111,14 @@ const vDom = {
 
   update(newVNode, node) {
     let nodeEl = node;
+
     const vNode = nodeEl.v || this.recycleNode(node);
-    console.log(vNode);
+    // console.log(vNode);
 
     nodeEl = this.updateNode(nodeEl, vNode, newVNode);
 
     nodeEl.v = newVNode;
-    console.log(newVNode);
+    // console.log(newVNode);
 
     return nodeEl;
   },
