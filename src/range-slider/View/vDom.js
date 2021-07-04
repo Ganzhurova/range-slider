@@ -113,12 +113,9 @@ const vDom = {
     let nodeEl = node;
 
     const vNode = nodeEl.v || this.recycleNode(node);
-    // console.log(vNode);
 
     nodeEl = this.updateNode(nodeEl, vNode, newVNode);
-
     nodeEl.v = newVNode;
-    // console.log(newVNode);
 
     return nodeEl;
   },
