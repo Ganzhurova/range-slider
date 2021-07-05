@@ -1,127 +1,96 @@
+// import Component from './subViews/Component';
+
 const vDom = {
-  TEXT_NODE_TYPE: 3,
-
   createVNode(tag, attrs = {}, children = []) {
-    return {
-      tag,
-      attrs,
-      children,
-    };
+    return { tag, attrs, children };
   },
 
-  createDOMNode(vNode) {
-    if (typeof vNode === 'string') {
-      return document.createTextNode(vNode);
-    }
-
-    const { tag, attrs, children } = vNode;
-    const node = document.createElement(tag);
-
-    this.updateAttrs(node, {}, attrs);
-
-    children.forEach(child => {
-      node.appendChild(this.createDOMNode(child));
-    });
-
-    return node;
-  },
-
-  getNewNode(node, newVNode) {
-    const newNode = this.createDOMNode(newVNode);
-    node.replaceWith(newNode);
-    return newNode;
-  },
-
-  updateNode(node, vNode, newVNode) {
-    if (newVNode === undefined) {
-      node.remove();
-      return undefined;
-    }
-
-    if (typeof vNode === 'string' || typeof newVNode === 'string') {
-      if (vNode !== newVNode) {
-        const newNode = this.getNewNode(node, newVNode);
-        return newNode;
-      }
-      return node;
-    }
-
-    if (vNode.tag !== newVNode.tag) {
-      const newNode = this.getNewNode(node, newVNode);
-      return newNode;
-    }
-
-    this.updateAttrs(node, vNode.attrs, newVNode.attrs);
-    this.updateChildren(node, vNode.children, newVNode.children);
-
-    return node;
-  },
-
-  updateAttr(node, key, value, newValue) {
-    if (key.startsWith('on')) {
-      const eventName = key.slice(2);
-
-      node[eventName] = newValue;
-
-      if (!newValue) {
-        node.removeEventListener(eventName, this.listener);
-      } else if (!value) {
-        node.addEventListener(eventName, this.listener);
-      }
-      return;
-    }
-
+  updateAttr($node, key, value, newValue) {
     if (newValue === null || newValue === false) {
-      node.removeAttribute(key);
+      $node.removeAttribute(key);
       return;
     }
-    node.setAttribute(key, newValue);
+
+    $node.setAttribute(key, newValue);
   },
 
-  updateAttrs(node, attrs, newAttrs) {
+  updateAttrs($node, attrs, newAttrs) {
     const jointAttrs = { ...attrs, ...newAttrs };
 
     Object.keys(jointAttrs).forEach(key => {
       if (attrs[key] !== newAttrs[key]) {
-        this.updateAttr(node, key, attrs[key], newAttrs[key]);
+        this.updateAttr($node, key, attrs[key], newAttrs[key]);
       }
     });
   },
 
-  updateChildren(parent, vChildren, newVChildren) {
-    parent.childNodes.forEach((childNode, i) => {
-      this.updateNode(childNode, vChildren[i], newVChildren[i]);
-    });
-    newVChildren.slice(vChildren.length).forEach(vChild => {
-      parent.appendChild(this.createDOMNode(vChild));
-    });
+  updateChildren($parent, vChildren, newVChildren) {
+    console.log($parent);
+    console.log(vChildren);
+    console.log(newVChildren);
+    // $parent.childNodes.forEach((childNode, i) => {
+    //   this.updateNode(childNode, vChildren[i], newVChildren[i]);
+    // });
+    // newVChildren.slice(vChildren.length).forEach(vChild => {
+    //   $parent.appendChild(this.createDOMNode(vChild));
+    // });
   },
 
-  recycleNode(node) {
-    if (node.nodeType === this.TEXT_NODE_TYPE) {
-      return node.nodeValue;
+  // getNewNode($node, newVNode) {
+  //   const $newNode = this.createDOMNode();
+  // },
+
+  updateNode($node, vNode, newVNode) {
+    if (newVNode === undefined) {
+      $node.remove();
+      return undefined;
     }
 
-    const tag = node.nodeName.toLowerCase();
+    // if (typeof vNode === 'string' || typeof newVNode === 'string') {
+    //   if (vNode !== newVNode) {
+    //     const $newNode = this.getNewNode($node, newVNode);
+    //     return $newNode;
+    //   }
+    //   return $node;
+    // }
+    //
+    // if (vNode.tag !== newVNode.tag) {
+    //   const $newNode = this.getNewNode($node, newVNode);
+    //   return $newNode;
+    // }
 
-    const children = [].map.call(node.childNodes, this.recycleNode);
+    this.updateAttrs($node, vNode.attrs, newVNode.attrs);
+    this.updateChildren($node, vNode.children, newVNode.children);
 
-    return this.createVNode(tag, {}, children);
+    return $node;
   },
 
-  update(newVNode, node) {
-    let nodeEl = node;
+  recycleNode($node) {
+    const tag = $node.nodeName.toLowerCase();
 
-    const vNode = nodeEl.v || this.recycleNode(node);
-
-    nodeEl = this.updateNode(nodeEl, vNode, newVNode);
-    nodeEl.v = newVNode;
-
-    return nodeEl;
+    return this.createVNode(tag, {}, []);
   },
 
-  listener(event) {
-    return this[event.type](event);
+  update(component, node) {
+    let $node = node;
+
+    if (!$node.instance) {
+      $node.instance = component;
+      $node.instance.el = $node;
+    }
+
+    const vNode = $node.v || this.recycleNode($node);
+    const newVNode = $node.instance.getVNode();
+
+    $node = this.updateNode($node, vNode, newVNode);
+
+    $node.v = newVNode;
+
+    // console.log(vNode);
+    // console.log(newVNode);
+    console.log($node.instance);
+
+    return $node;
   },
 };
 
