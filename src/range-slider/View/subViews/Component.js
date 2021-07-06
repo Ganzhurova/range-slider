@@ -30,8 +30,20 @@ class Component {
     this.children.splice(childIndex, 1);
   }
 
+  getEl() {
+    if (!this.el) {
+      this.el = document.querySelector(`.${this.attrs.class}`);
+    }
+    return this.el;
+  }
+
   getVNode() {
-    return JSON.parse(JSON.stringify(this));
+    const vNode = {
+      tag: this.tag,
+      attrs: this.attrs,
+      children: this.children,
+    };
+    return JSON.parse(JSON.stringify(vNode));
   }
 }
 
