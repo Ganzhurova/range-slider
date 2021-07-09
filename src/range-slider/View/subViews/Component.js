@@ -30,9 +30,13 @@ class Component {
     this.children.splice(childIndex, 1);
   }
 
+  setEl() {
+    this.el = document.querySelector(`[class = "${this.attrs.class}"]`);
+  }
+
   getEl() {
     if (!this.el) {
-      this.el = document.querySelector(`.${this.attrs.class}`);
+      this.setEl();
     }
     return this.el;
   }
