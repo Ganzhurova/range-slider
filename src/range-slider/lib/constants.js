@@ -3,4 +3,14 @@ const types = {
   DOUBLE: 'double',
 };
 
-export default types;
+const size = {
+  WIDTH: 'width',
+  HEIGHT: 'height',
+};
+
+const directions = {
+  LEFT: 'left',
+  TOP: 'top',
+};
+
+export { types, size, directions };
