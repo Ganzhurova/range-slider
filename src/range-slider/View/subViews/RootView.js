@@ -1,19 +1,20 @@
-import Component from './Component';
-import { html } from '../../lib/html';
+import Component from '../Component';
+import { html, mix } from '../../lib/html';
 
 class RootView extends Component {
-  constructor() {
+  constructor(el) {
     super();
+    this.el = el;
 
-    this.init(html.rootEl);
+    this.init();
   }
 
-  setDirection(className, boolean) {
-    if (boolean) {
-      this.addClass(className);
-    } else {
-      this.removeClass(className);
-    }
+  init() {
+    this.addClass(html.rootEl.className);
+  }
+
+  setDirection(isVertical) {
+    this.el.classList.toggle(mix.direction, isVertical);
   }
 }
 
