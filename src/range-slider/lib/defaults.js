@@ -1,4 +1,4 @@
-import types from './constants';
+import { types } from './constants';
 
 const defaults = {
   type: types.SINGLE,
