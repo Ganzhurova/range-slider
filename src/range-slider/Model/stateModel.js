@@ -1,4 +1,4 @@
-import types from '../lib/constants';
+import { types } from '../lib/constants';
 
 const stateModel = {
   state: {},
