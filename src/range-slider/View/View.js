@@ -86,21 +86,23 @@ class View {
 
   calcUnit() {
     const { min, max } = this.options;
-    this.unit = this.lineCoords.end / (max - min);
+    this.unit = this.lineCoords.end / Math.abs(max - min);
   }
 
-  pxValueToPosition(pxValue) {
-    return (pxValue - this.options.min) * this.unit;
+  positionToPxValue(position) {
+    return (position - this.options.min) * this.unit;
   }
 
-  setPos() {
-    const pos = [this.pxValueToPosition(this.options.from)];
-    if (this.options.isDouble) {
-      pos.push(this.pxValueToPosition(this.options.to));
-    }
+  getPositionIndex(i) {
+    return i === 0 ? this.options.from : this.options.to;
+  }
 
+  setThumbs() {
     this.thumbs.forEach((thumb, i) => {
-      thumb.setPos(pos[i], this.direction.name);
+      thumb.setEl(
+        this.positionToPxValue(this.getPositionIndex(i)),
+        this.direction.name
+      );
     });
   }
 
@@ -111,7 +113,30 @@ class View {
 
     this.calcLineCoords();
     this.calcUnit();
-    this.setPos();
+    this.setThumbs();
+  }
+
+  getLimitCoords(i) {
+    const limitCoords = { ...this.lineCoords };
+
+    if (this.options.isDouble) {
+      if (i === 0) {
+        limitCoords.start = this.lineCoords.start;
+        limitCoords.end =
+          this.thumbs[1].getPxValue() - this.thumbs[1].el.offsetWidth;
+        console.log(limitCoords);
+        return limitCoords;
+      }
+      if (i === 1) {
+        limitCoords.start =
+          this.thumbs[0].getPxValue() + this.thumbs[0].el.offsetWidth;
+        limitCoords.end = this.lineCoords.end;
+        console.log(limitCoords);
+        return limitCoords;
+      }
+    }
+
+    return limitCoords;
   }
 
   setHandlers() {
@@ -124,52 +149,11 @@ class View {
     e.preventDefault();
     if (!e.target.classList.contains(html.thumb.className)) return;
 
-    const activeThumbEl = e.target;
-    const thumbBox = activeThumbEl.getBoundingClientRect();
+    const children = [...e.target.parentElement.children];
+    const i = children.indexOf(e.target);
+    const coords = this.getLimitCoords(i);
 
-    const thumbCoords = {
-      x: thumbBox.left + window.pageXOffset,
-      y: thumbBox.top + window.pageYOffset,
-    };
-
-    const shift = {
-      x: e.pageX - thumbCoords.x,
-      y: e.pageY - thumbCoords.y,
-    };
-
-    const handlerThumbDrag = this.handlerThumbDrag.bind(
-      this,
-      activeThumbEl,
-      shift
-    );
-
-    const handlerThumbDragEnd = () => {
-      document.removeEventListener('mousemove', handlerThumbDrag);
-      document.removeEventListener('mouseup', handlerThumbDragEnd);
-    };
-
-    document.addEventListener('mousemove', handlerThumbDrag);
-    document.addEventListener('mouseup', handlerThumbDragEnd);
-  }
-
-  handlerThumbDrag(activeThumbEl, shift, e) {
-    console.log(activeThumbEl);
-    const newCoords = {
-      left: e.pageX - shift.x - this.lineCoords.left,
-      top: e.pageY - shift.y - this.lineCoords.top,
-    };
-
-    if (newCoords[this.direction.name] < this.lineCoords.start) {
-      newCoords[this.direction.name] = this.lineCoords.start;
-    }
-
-    if (newCoords[this.direction.name] > this.lineCoords.end) {
-      newCoords[this.direction.name] = this.lineCoords.end;
-    }
-
-    activeThumbEl.style[this.direction.name] = `${
-      newCoords[this.direction.name]
-    }px`;
+    this.thumbs[i].handlerThumbDragStart(coords, e);
   }
 }
 
