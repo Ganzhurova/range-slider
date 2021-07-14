@@ -20,7 +20,26 @@ class ThumbView extends Component {
     this.direction = direction;
   }
 
-  setEl(pxValue, mainDirection) {
+  setSizeName(sizeName) {
+    this.sizeName = sizeName;
+  }
+
+  calcLimitSize(parentSize) {
+    const thumbSize = this.getSize(this.sizeName);
+    this.limitSize = parentSize - thumbSize;
+  }
+
+  calcUnit(range) {
+    this.unit = this.limitSize / range;
+  }
+
+  positionToPxValue(position) {
+    return position * this.unit;
+  }
+
+  setEl(position, mainDirection) {
+    const pxValue = this.positionToPxValue(position);
+
     this.setPxValue(pxValue);
     this.setDirection(mainDirection);
 
@@ -31,6 +50,7 @@ class ThumbView extends Component {
         this.el.style[direction] = '';
       }
     });
+    console.log(this);
   }
 
   handlerThumbDragStart(coords, e) {
