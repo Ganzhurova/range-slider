@@ -6,11 +6,10 @@ import { size, directions } from '../lib/constants';
 
 class View {
   constructor(selector) {
-    this.options = {};
     this.el = document.querySelector(selector);
-    this.direction = {};
-    this.lineCoords = {};
-    this.unit = 0;
+    this.options = {};
+    this.direction = '';
+    this.sizeName = '';
 
     this.init();
   }
@@ -44,24 +43,6 @@ class View {
     this.line.removeChild(instance);
   }
 
-  setDirection({ isVertical }) {
-    if (this.options.isVertical === isVertical) return;
-
-    this.root.setDirection(isVertical);
-
-    if (isVertical) {
-      this.direction = {
-        name: directions.TOP,
-        size: size.HEIGHT,
-      };
-    } else {
-      this.direction = {
-        name: directions.LEFT,
-        size: size.WIDTH,
-      };
-    }
-  }
-
   setDoubleElements({ isDouble }) {
     if (this.options.isDouble === isDouble) return;
 
@@ -72,47 +53,74 @@ class View {
     }
   }
 
-  calcLineCoords() {
-    const lineBox = this.line.getBox();
-    const thumbBox = this.thumbs[0].getBox();
-
-    this.lineCoords = {
-      left: lineBox.left + window.pageXOffset,
-      top: lineBox.top + window.pageYOffset,
-      start: 0,
-      end: lineBox[this.direction.size] - thumbBox[this.direction.size],
-    };
+  setDirection(isVertical) {
+    this.direction = isVertical ? directions.TOP : directions.LEFT;
   }
 
-  calcUnit() {
-    const { min, max } = this.options;
-    this.unit = this.lineCoords.end / Math.abs(max - min);
+  setSizeName(isVertical) {
+    this.sizeName = isVertical ? size.HEIGHT : size.WIDTH;
   }
 
-  positionToPxValue(position) {
-    return (position - this.options.min) * this.unit;
+  getSizeName() {
+    return this.sizeName;
   }
 
-  getPositionIndex(i) {
-    return i === 0 ? this.options.from : this.options.to;
+  calcLimitSize(sizeName) {
+    const sizePx = this.line.getSize(sizeName);
+    this.thumbs.forEach(thumb => {
+      thumb.setSizeName(sizeName);
+      thumb.calcLimitSize(sizePx);
+    });
+  }
+
+  calcUnit(min, max) {
+    const range = Math.abs(max - min);
+    this.thumbs.forEach(thumb => {
+      thumb.calcUnit(range);
+    });
+  }
+
+  correctPosition(position) {
+    return position - this.options.min;
+  }
+
+  getPosition(index) {
+    return index === 0 ? this.options.from : this.options.to;
   }
 
   setThumbs() {
     this.thumbs.forEach((thumb, i) => {
-      thumb.setEl(
-        this.positionToPxValue(this.getPositionIndex(i)),
-        this.direction.name
-      );
+      thumb.setEl(this.correctPosition(this.getPosition(i)), this.direction);
     });
   }
 
+  updateDirection({ isVertical }) {
+    if (this.options.isVertical === isVertical) return;
+
+    this.setDirection(isVertical);
+    this.setSizeName(isVertical);
+    this.root.setDirection(isVertical);
+    this.calcLimitSize(this.getSizeName());
+  }
+
+  updateUnit({ isVertical, min, max }) {
+    if (
+      this.options.isVertical === isVertical &&
+      this.options.min === min &&
+      this.options.max === max
+    )
+      return;
+
+    this.calcUnit(min, max);
+  }
+
   update(options) {
-    this.setDirection(options);
     this.setDoubleElements(options);
+    this.updateDirection(options);
+    this.updateUnit(options);
+
     this.options = { ...options };
 
-    this.calcLineCoords();
-    this.calcUnit();
     this.setThumbs();
   }
 
@@ -151,9 +159,9 @@ class View {
 
     const children = [...e.target.parentElement.children];
     const i = children.indexOf(e.target);
-    const coords = this.getLimitCoords(i);
+    // const coords = this.getLimitCoords(i);
 
-    this.thumbs[i].handlerThumbDragStart(coords, e);
+    this.thumbs[i].handlerThumbDragStart(this.line.getCoords, e);
   }
 }
 
