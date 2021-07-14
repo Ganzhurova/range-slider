@@ -25,6 +25,21 @@ class Component {
   getBox() {
     return this.el.getBoundingClientRect();
   }
+
+  getSize(sizeName) {
+    const box = this.getBox();
+
+    return box[sizeName];
+  }
+
+  getCoords() {
+    const box = this.getBox();
+
+    return {
+      left: box.left + window.pageXOffset,
+      top: box.top + window.pageYOffset,
+    };
+  }
 }
 
 export default Component;
