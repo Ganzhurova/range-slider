@@ -1,3 +1,4 @@
+import Component from './Component';
 import RootView from './subViews/RootView';
 import LineView from './subViews/LineView';
 import ThumbView from './subViews/ThumbView';
@@ -5,6 +6,7 @@ import { positionIndex } from '../lib/constants';
 
 class Template {
   constructor(el) {
+    this.options = {};
     this.root = new RootView(el);
     this.line = new LineView();
     this.thumbs = [];
@@ -29,6 +31,8 @@ class Template {
   }
 
   setType(isDouble, arr, callback) {
+    if (this.compareOptions({ isDouble })) return;
+
     const total = {
       DOUBLE: 2,
       SINGLE: 1,
@@ -42,16 +46,17 @@ class Template {
     }
 
     if (!isDouble && isTypeDouble()) {
-      console.log(isTypeDouble());
       this.removeInstanceForDouble(arr);
     }
   }
 
   setDirection({ isVertical }) {
+    if (this.compareOptions({ isVertical })) return;
+    Component.setDirection(isVertical);
     this.root.setDirection(isVertical);
   }
 
-  setThumbs({ isDouble }) {
+  renderThumbs({ isDouble }) {
     this.setType(isDouble, this.thumbs, Template.createThumb);
   }
 
@@ -63,9 +68,26 @@ class Template {
     return new ThumbView();
   }
 
+  compareOptions(options) {
+    let result;
+    const keys = Object.keys(options);
+
+    for (let i = 0; i < keys.length; i += 1) {
+      const key = keys[i];
+      if (this.options[key] !== options[key]) {
+        result = false;
+        break;
+      }
+      result = true;
+    }
+
+    return result;
+  }
+
   build(options) {
     this.setDirection(options);
-    this.setThumbs(options);
+    this.renderThumbs(options);
+    this.options = { ...options };
   }
 }
 
