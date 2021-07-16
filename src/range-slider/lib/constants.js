@@ -13,4 +13,9 @@ const directions = {
   TOP: 'top',
 };
 
-export { types, size, directions };
+const positionIndex = {
+  0: 'from',
+  1: 'to',
+};
+
+export { types, size, directions, positionIndex };
