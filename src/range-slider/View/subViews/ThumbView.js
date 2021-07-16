@@ -16,20 +16,10 @@ class ThumbView extends Component {
     return this.pxValue;
   }
 
-  setDirection(direction) {
-    this.direction = direction;
-  }
-
-  setSizeName(sizeName) {
-    this.sizeName = sizeName;
-  }
-
-  calcLimitSize(parentSize) {
-    const thumbSize = this.getSize(this.sizeName);
-    this.limitSize = parentSize - thumbSize;
-  }
-
-  calcUnit(range) {
+  calcUnit(parentSize, range) {
+    const thumbSize = this.getSize();
+    this.limitSize =
+      parentSize[ThumbView.sizeName] - thumbSize[ThumbView.sizeName];
     this.unit = this.limitSize / range;
   }
 
@@ -37,36 +27,36 @@ class ThumbView extends Component {
     return position * this.unit;
   }
 
-  setEl(position, mainDirection) {
+  setup(position) {
     const pxValue = this.positionToPxValue(position);
 
     this.setPxValue(pxValue);
-    this.setDirection(mainDirection);
 
     Object.values(directions).forEach(direction => {
-      if (direction === mainDirection) {
+      if (direction === ThumbView.direction) {
         this.el.style[direction] = `${pxValue}px`;
       } else {
         this.el.style[direction] = '';
       }
     });
-    console.log(this);
   }
 
-  handlerThumbDragStart(coords, e) {
-    const thumbBox = this.getBox();
-
-    const thumbCoords = {
-      x: thumbBox.left + window.pageXOffset,
-      y: thumbBox.top + window.pageYOffset,
+  calcLimitCoords() {
+    this.limitCoords = {
+      start: 0,
+      end: this.limitSize,
     };
+  }
+
+  handlerThumbDragStart(parentCoords, e) {
+    const thumbCoords = this.getCoords();
 
     this.shift = {
-      x: e.pageX - thumbCoords.x,
-      y: e.pageY - thumbCoords.y,
+      x: e.pageX - thumbCoords.left,
+      y: e.pageY - thumbCoords.top,
     };
 
-    const handlerThumbDrag = this.handlerThumbDrag.bind(this, coords);
+    const handlerThumbDrag = this.handlerThumbDrag.bind(this, parentCoords);
 
     const handlerThumbDragEnd = () => {
       document.removeEventListener('mousemove', handlerThumbDrag);
@@ -77,26 +67,27 @@ class ThumbView extends Component {
     document.addEventListener('mouseup', handlerThumbDragEnd);
   }
 
-  handlerThumbDrag(coords, e) {
+  handlerThumbDrag(parentCoords, e) {
     const newCoords = {
-      left: e.pageX - this.shift.x - coords.left,
-      top: e.pageY - this.shift.y - coords.top,
+      left: e.pageX - this.shift.x - parentCoords.left,
+      top: e.pageY - this.shift.y - parentCoords.top,
     };
 
-    let newValue = newCoords[this.direction];
+    let newValue = newCoords[ThumbView.direction];
+    this.calcLimitCoords();
 
-    if (newValue < coords.start) {
-      newValue = coords.start;
+    if (newValue < this.limitCoords.start) {
+      newValue = this.limitCoords.start;
     }
 
-    if (newValue > coords.end) {
-      newValue = coords.end;
+    if (newValue > this.limitCoords.end) {
+      newValue = this.limitCoords.end;
     }
 
-    this.el.style[this.direction] = `${newValue}px`;
+    this.el.style[ThumbView.direction] = `${newValue}px`;
 
     this.setPxValue(newValue);
-    // console.log(this.pxValue);
+    console.log(this.pxValue);
   }
 }
 
