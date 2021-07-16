@@ -1,4 +1,10 @@
+import { directions, size } from '../lib/constants';
+
 class Component {
+  direction = '';
+
+  sizeName = '';
+
   init(html) {
     this.el = document.createElement(html.tag);
     this.addClass(html.className);
@@ -26,10 +32,13 @@ class Component {
     return this.el.getBoundingClientRect();
   }
 
-  getSize(sizeName) {
+  getSize() {
     const box = this.getBox();
 
-    return box[sizeName];
+    return {
+      width: box.width,
+      height: box.height,
+    };
   }
 
   getCoords() {
@@ -39,6 +48,11 @@ class Component {
       left: box.left + window.pageXOffset,
       top: box.top + window.pageYOffset,
     };
+  }
+
+  static setDirection(isVertical) {
+    Component.direction = isVertical ? directions.TOP : directions.LEFT;
+    Component.sizeName = isVertical ? size.HEIGHT : size.WIDTH;
   }
 }
 
