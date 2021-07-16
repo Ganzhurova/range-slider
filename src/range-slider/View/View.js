@@ -1,15 +1,15 @@
-import RootView from './subViews/RootView';
-import LineView from './subViews/LineView';
-import ThumbView from './subViews/ThumbView';
-import { html, mix } from '../lib/html';
-import { size, directions } from '../lib/constants';
+import EventEmitter from '../EventEmitter';
+import Template from './Template';
+// import ThumbView from './subViews/ThumbView';
+import { html } from '../lib/html';
+import { positionIndex } from '../lib/constants';
 
-class View {
+class View extends EventEmitter {
   constructor(selector) {
+    super();
     this.el = document.querySelector(selector);
+    this.template = new Template(this.el);
     this.options = {};
-    this.direction = '';
-    this.sizeName = '';
 
     this.init();
   }
@@ -24,104 +24,30 @@ class View {
   }
 
   initSubViews() {
-    this.root = new RootView(this.el);
-    this.line = new LineView();
-    this.thumbs = [];
-
-    this.addDoubleElement(new ThumbView(), mix.from, this.thumbs);
-    this.root.addChild(this.line);
-  }
-
-  addDoubleElement(instance, modifier, arr) {
-    instance.addClass(modifier);
-    arr.push(instance);
-    this.line.addChild(instance);
-  }
-
-  removeDoubleElement(arr) {
-    const [instance] = arr.splice(1, 1);
-    this.line.removeChild(instance);
-  }
-
-  setDoubleElements({ isDouble }) {
-    if (this.options.isDouble === isDouble) return;
-
-    if (isDouble) {
-      this.addDoubleElement(new ThumbView(), mix.to, this.thumbs);
-    } else {
-      this.removeDoubleElement(this.thumbs);
-    }
-  }
-
-  setDirection(isVertical) {
-    this.direction = isVertical ? directions.TOP : directions.LEFT;
-  }
-
-  setSizeName(isVertical) {
-    this.sizeName = isVertical ? size.HEIGHT : size.WIDTH;
-  }
-
-  getSizeName() {
-    return this.sizeName;
-  }
-
-  calcLimitSize(sizeName) {
-    const sizePx = this.line.getSize(sizeName);
-    this.thumbs.forEach(thumb => {
-      thumb.setSizeName(sizeName);
-      thumb.calcLimitSize(sizePx);
-    });
-  }
-
-  calcUnit(min, max) {
-    const range = Math.abs(max - min);
-    this.thumbs.forEach(thumb => {
-      thumb.calcUnit(range);
-    });
-  }
-
-  correctPosition(position) {
-    return position - this.options.min;
+    const subViews = Object.fromEntries(this.template.getSubViews());
+    Object.assign(this, subViews);
   }
 
   getPosition(index) {
-    return index === 0 ? this.options.from : this.options.to;
+    const positionName = positionIndex[index];
+    return this.options[positionName];
   }
 
-  setThumbs() {
+  updatePosition() {
+    const range = Math.abs(this.options.max - this.options.min);
+    const correctPosition = position => position - this.options.min;
+
     this.thumbs.forEach((thumb, i) => {
-      thumb.setEl(this.correctPosition(this.getPosition(i)), this.direction);
+      thumb.calcUnit(this.line.getSize(), range);
+      thumb.setup(correctPosition(this.getPosition(i)));
     });
   }
 
-  updateDirection({ isVertical }) {
-    if (this.options.isVertical === isVertical) return;
-
-    this.setDirection(isVertical);
-    this.setSizeName(isVertical);
-    this.root.setDirection(isVertical);
-    this.calcLimitSize(this.getSizeName());
-  }
-
-  updateUnit({ isVertical, min, max }) {
-    if (
-      this.options.isVertical === isVertical &&
-      this.options.min === min &&
-      this.options.max === max
-    )
-      return;
-
-    this.calcUnit(min, max);
-  }
-
   update(options) {
-    this.setDoubleElements(options);
-    this.updateDirection(options);
-    this.updateUnit(options);
+    this.template.build(options);
 
     this.options = { ...options };
-
-    this.setThumbs();
+    this.updatePosition();
   }
 
   getLimitCoords(i) {
@@ -157,11 +83,11 @@ class View {
     e.preventDefault();
     if (!e.target.classList.contains(html.thumb.className)) return;
 
-    const children = [...e.target.parentElement.children];
-    const i = children.indexOf(e.target);
-    // const coords = this.getLimitCoords(i);
-
-    this.thumbs[i].handlerThumbDragStart(this.line.getCoords, e);
+    const i = [...e.target.parentElement.children].indexOf(e.target);
+    this.thumbs[i].handlerThumbDragStart(this.line.getCoords(), e);
+    const pxValue = this.thumbs[i].getPxValue();
+    console.log(pxValue);
+    // this.thumbs[i].emit('pxValueChanged');
   }
 }
 
