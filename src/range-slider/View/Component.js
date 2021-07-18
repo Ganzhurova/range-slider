@@ -1,9 +1,10 @@
+import EventEmitter from '../EventEmitter';
 import { directions, size } from '../lib/constants';
 
-class Component {
-  direction = '';
+class Component extends EventEmitter {
+  static direction = '';
 
-  sizeName = '';
+  static sizeName = '';
 
   init(html) {
     this.el = document.createElement(html.tag);
@@ -12,6 +13,10 @@ class Component {
 
   addClass(className) {
     this.el.classList.add(className);
+  }
+
+  removeClass(className) {
+    this.el.classList.remove(className);
   }
 
   addChild(child) {
