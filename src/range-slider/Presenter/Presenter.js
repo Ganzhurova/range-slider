@@ -5,32 +5,16 @@ class Presenter {
     this.model = model;
     this.view = view;
 
-    model.subscribe('initSlader', options => this.updateView(options));
+    view.subscribe('positionChanged', (position, index) =>
+      this.updatePosition(position, index)
+    );
     model.subscribe('updateState', options => this.updateView(options));
-
-    model.emit('initSlader', model.getState());
+    model.emit('updateState', model.getState());
   }
 
-  // initView() {
-  //   this.view.init();
-  // }
-
-  // getState() {
-  //   const state = this.model.getState();
-  //
-  //   return {
-  //     // решить за счет интерфейсов ?
-  //     isDouble: state.isDouble,
-  //     isVertical: state.isVertical,
-  //     isLabel: state.isLabel,
-  //     isScale: state.isScale,
-  //     min: state.min,
-  //     max: state.max,
-  //     from: state.from,
-  //     to: state.to,
-  //     scaleRange: state.scaleRange,
-  //   };
-  // }
+  updatePosition(position, index) {
+    this.model.setPosition(position, index);
+  }
 
   updateView(options) {
     this.view.update(options);
@@ -38,7 +22,6 @@ class Presenter {
 
   update(options) {
     this.model.update(options);
-    // this.view.update(this.getState());
   }
 }
 
