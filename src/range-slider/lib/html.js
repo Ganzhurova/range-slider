@@ -2,8 +2,7 @@ const root = 'range-slider';
 
 const mix = {
   direction: 'vertical',
-  from: 'from',
-  to: 'to',
+  selected: 'selected',
 };
 
 const html = {
