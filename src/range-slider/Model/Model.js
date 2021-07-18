@@ -1,6 +1,7 @@
 import EventEmitter from '../EventEmitter';
 import stateModel from './stateModel';
 import defaults from '../lib/defaults';
+import helpers from '../helpers/helpers';
 
 class Model extends EventEmitter {
   constructor(options) {
@@ -17,12 +18,18 @@ class Model extends EventEmitter {
     stateModel.set(newState);
 
     this.state = stateModel.get();
-    this.emit('updateState', this.state);
-    console.log(this.state);
+    this.emit('updateState', this.getState());
+    // console.log(this.state);
   }
 
   getState() {
     return this.state;
+  }
+
+  setPosition(position, index) {
+    const positionName = helpers.getPositionName(index);
+    this.state[positionName] = position;
+    console.log(`${positionName}: ${this.state[positionName]}`);
   }
 
   update(options) {
