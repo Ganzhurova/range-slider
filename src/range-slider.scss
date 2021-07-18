@@ -50,7 +50,6 @@ $ratio-height: $scale-height / 100%;
 .range-slider__thumb {
   position: absolute;
   top: calc((#{$thumb-height} - #{$line-thickness}) / -2);
-  // left: 45%;
   z-index: 1;
   box-sizing: border-box;
   width: $thumb-width;
@@ -73,12 +72,8 @@ $ratio-height: $scale-height / 100%;
     transform: translate(-50%, -50%);
   }
 
-  &.from {
-    left: calc(25% * #{$ratio-width});
-  }
-
-  &.to {
-    left: calc(75% * #{$ratio-width});
+  &.selected {
+    z-index: 2;
   }
 }
 
@@ -187,16 +182,7 @@ $ratio-height: $scale-height / 100%;
   }
 
   .range-slider__thumb {
-    // top: calc(50% * #{$ratio-height});
     left: calc((#{$thumb-width} - #{$line-thickness}) / -2);
-
-    &.from {
-      top: calc(25% * #{$ratio-height});
-    }
-
-    &.to {
-      top: calc(75% * #{$ratio-height});
-    }
   }
 
   .range-slider__label {
