@@ -1,19 +1,18 @@
 import Component from '../Component';
+import helpers from '../../helpers/helpers';
 import { html } from '../../lib/html';
 import { directions } from '../../lib/constants';
 
 class ThumbView extends Component {
   constructor() {
     super();
+    this.index = 0;
+
     this.init(html.thumb);
   }
 
-  setPxValue(pxValue) {
-    this.pxValue = pxValue;
-  }
-
-  getPxValue() {
-    return this.pxValue;
+  setIndex(index) {
+    helpers.setIndex.call(this, index);
   }
 
   calcUnit(parentSize, range) {
@@ -27,10 +26,12 @@ class ThumbView extends Component {
     return position * this.unit;
   }
 
+  pxValueToPosition(pxValue) {
+    return pxValue / this.unit;
+  }
+
   setup(position) {
     const pxValue = this.positionToPxValue(position);
-
-    this.setPxValue(pxValue);
 
     Object.values(directions).forEach(direction => {
       if (direction === ThumbView.direction) {
@@ -39,13 +40,25 @@ class ThumbView extends Component {
         this.el.style[direction] = '';
       }
     });
+
+    this.emit('valueChanged', pxValue, this.index);
   }
 
-  calcLimitCoords() {
-    this.limitCoords = {
-      start: 0,
-      end: this.limitSize,
-    };
+  calcLimitCoords(coords) {
+    console.log(coords);
+    if (this.index === 0) {
+      this.limitCoords = {
+        start: 0,
+        end: coords[1] || this.limitSize,
+      };
+    }
+
+    if (this.index === 1) {
+      this.limitCoords = {
+        start: coords[0],
+        end: this.limitSize,
+      };
+    }
   }
 
   handlerThumbDragStart(parentCoords, e) {
@@ -74,7 +87,6 @@ class ThumbView extends Component {
     };
 
     let newValue = newCoords[ThumbView.direction];
-    this.calcLimitCoords();
 
     if (newValue < this.limitCoords.start) {
       newValue = this.limitCoords.start;
@@ -86,8 +98,7 @@ class ThumbView extends Component {
 
     this.el.style[ThumbView.direction] = `${newValue}px`;
 
-    this.setPxValue(newValue);
-    console.log(this.pxValue);
+    this.emit('valueChanged', newValue, this.index);
   }
 }
 
