@@ -17,9 +17,7 @@ class EventEmitter {
   }
 
   emit(eventName, ...args) {
-    (this.events[eventName] || []).forEach(callback =>
-      callback.call(null, ...args)
-    );
+    (this.events[eventName] || []).forEach(callback => callback(...args));
   }
 }
 
