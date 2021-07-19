@@ -4,9 +4,9 @@ $green: #4eb7a8;
 $white: #fff;
 
 //Variables
-$line-thickness: 6px;
-$thumb-width: 20px;
-$thumb-height: 20px;
+$line-thickness: 20px;
+$thumb-width: 50px;
+$thumb-height: 50px;
 //при ширине линии 200px;
 $line-width: 200px;
 $thumb-width-percent: $thumb-width * 100% / $line-width;
@@ -33,8 +33,8 @@ $ratio-height: $scale-height / 100%;
   width: 100%;
   height: $line-thickness;
   background-color: $white;
-  border-radius: 3px;
-  box-shadow: inset 0 0 0 1px $grey;
+  border-radius: 12px;
+  box-shadow: inset 0 0 4px 1px $grey;
 }
 
 .range-slider__bar {
@@ -56,9 +56,9 @@ $ratio-height: $scale-height / 100%;
   height: $thumb-height;
   cursor: pointer;
   background-color: $green;
-  border: 2px solid $white;
+  border: 2px solid darken($green, 6.25%);
   border-radius: 50%;
-  opacity: 0.5;
+  opacity: 0.7;
 
   &::before {
     position: absolute;
