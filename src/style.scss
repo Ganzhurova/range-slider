@@ -5,16 +5,13 @@
 }
 
 .slider {
-  // display: flex;
-  // flex-wrap: wrap;
-  // justify-content: center;
   padding: 50px 0;
 
   &__example {
-    width: 200px;
-    height: 150px;
+    max-width: 800px;
+    height: 500px;
     padding: 20px;
-    margin-bottom: 30px;
+    margin: 0 auto 30px;
     background-color: #dcdcdc;
   }
 
