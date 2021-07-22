@@ -13,7 +13,7 @@ class Presenter {
   }
 
   updatePosition(position, index) {
-    this.model.setPosition(position, index);
+    this.model.updatePosition(position, index);
   }
 
   updateView(options) {
