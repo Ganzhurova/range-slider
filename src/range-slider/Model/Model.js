@@ -19,16 +19,18 @@ class Model extends EventEmitter {
 
     this.state = stateModel.get();
     this.emit('updateState', this.getState());
-    // console.log(this.state);
   }
 
   getState() {
     return this.state;
   }
 
-  setPosition(position, index) {
+  updatePosition(position, index) {
     const positionName = helpers.getPositionName(index);
-    this.state[positionName] = position;
+    this.state[positionName] = stateModel.toFixed(
+      position,
+      stateModel.getStepFractionLength()
+    );
     console.log(`${positionName}: ${this.state[positionName]}`);
   }
 
