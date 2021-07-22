@@ -4,6 +4,10 @@ import { html } from '../../lib/html';
 import { directions } from '../../lib/constants';
 
 class ThumbView extends Component {
+  static limitSize = 0;
+
+  static unit = 0;
+
   constructor() {
     super();
     this.index = 0;
@@ -15,23 +19,8 @@ class ThumbView extends Component {
     helpers.setIndex.call(this, index);
   }
 
-  calcUnit(parentSize, range) {
-    const thumbSize = this.getSize();
-    this.limitSize =
-      parentSize[ThumbView.sizeName] - thumbSize[ThumbView.sizeName];
-    this.unit = this.limitSize / range;
-  }
-
-  positionToPxValue(position) {
-    return position * this.unit;
-  }
-
-  pxValueToPosition(pxValue) {
-    return pxValue / this.unit;
-  }
-
   setup(position) {
-    const pxValue = this.positionToPxValue(position);
+    const pxValue = ThumbView.positionToPxValue(position);
 
     Object.values(directions).forEach(direction => {
       if (direction === ThumbView.direction) {
@@ -44,21 +33,25 @@ class ThumbView extends Component {
     this.emit('valueChanged', pxValue, this.index);
   }
 
-  calcLimitCoords(coords) {
-    console.log(coords);
-    if (this.index === 0) {
-      this.limitCoords = {
-        start: 0,
-        end: coords[1] || this.limitSize,
-      };
-    }
+  calcLimitCoords(pxValues) {
+    const START_COORD = 0;
+    const isFromThumb = () => this.index === 0;
+    const getCoord = index => {
+      let coord;
+      Object.keys(pxValues).forEach((key, i) => {
+        if (index !== i) {
+          coord = pxValues[key];
+        }
+      });
+      return coord;
+    };
 
-    if (this.index === 1) {
-      this.limitCoords = {
-        start: coords[0],
-        end: this.limitSize,
-      };
-    }
+    this.limitCoords = {
+      start: isFromThumb() ? START_COORD : getCoord(this.index),
+      end: isFromThumb()
+        ? getCoord(this.index) || ThumbView.limitSize
+        : ThumbView.limitSize,
+    };
   }
 
   handlerThumbDragStart(parentCoords, e) {
@@ -99,6 +92,20 @@ class ThumbView extends Component {
     this.el.style[ThumbView.direction] = `${newValue}px`;
 
     this.emit('valueChanged', newValue, this.index);
+  }
+
+  static calcUnit(parentSize, thumbSize, range) {
+    ThumbView.limitSize =
+      parentSize[ThumbView.sizeName] - thumbSize[ThumbView.sizeName];
+    ThumbView.unit = ThumbView.limitSize / range;
+  }
+
+  static positionToPxValue(position) {
+    return position * ThumbView.unit;
+  }
+
+  static pxValueToPosition(pxValue) {
+    return pxValue / ThumbView.unit;
   }
 }
 
