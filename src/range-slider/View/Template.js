@@ -3,6 +3,7 @@ import Component from './Component';
 import RootView from './subViews/RootView';
 import LineView from './subViews/LineView';
 import ThumbView from './subViews/ThumbView';
+import LabelView from './subViews/LabelView';
 import { positionIndex } from '../lib/constants';
 
 class Template extends EventEmitter {
@@ -12,6 +13,7 @@ class Template extends EventEmitter {
     this.root = new RootView(el);
     this.line = new LineView();
     this.thumbs = [];
+    this.labels = [];
 
     this.init();
   }
@@ -35,8 +37,6 @@ class Template extends EventEmitter {
   }
 
   setType(isDouble, arr, callback) {
-    if (this.compareOptions({ isDouble })) return;
-
     const total = {
       DOUBLE: 2,
       SINGLE: 1,
@@ -61,7 +61,21 @@ class Template extends EventEmitter {
   }
 
   renderThumbs({ isDouble }) {
+    if (this.compareOptions({ isDouble })) return;
     this.setType(isDouble, this.thumbs, Template.createThumb);
+  }
+
+  renderLabel({ isLabel, isDouble }) {
+    if (this.compareOptions({ isLabel, isDouble })) return;
+
+    if (isLabel) {
+      this.setType(isDouble, this.labels, Template.createLabel);
+    } else {
+      this.labels.forEach(label => {
+        this.line.removeChild(label);
+      });
+      this.labels.length = 0;
+    }
   }
 
   getSubViews() {
@@ -70,6 +84,10 @@ class Template extends EventEmitter {
 
   static createThumb() {
     return new ThumbView();
+  }
+
+  static createLabel() {
+    return new LabelView();
   }
 
   compareOptions(options) {
@@ -91,6 +109,7 @@ class Template extends EventEmitter {
   build(options) {
     this.setDirection(options);
     this.renderThumbs(options);
+    this.renderLabel(options);
     this.options = { ...options };
   }
 }
