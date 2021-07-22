@@ -1,11 +1,13 @@
+import EventEmitter from '../EventEmitter';
 import Component from './Component';
 import RootView from './subViews/RootView';
 import LineView from './subViews/LineView';
 import ThumbView from './subViews/ThumbView';
 import { positionIndex } from '../lib/constants';
 
-class Template {
+class Template extends EventEmitter {
   constructor(el) {
+    super();
     this.options = {};
     this.root = new RootView(el);
     this.line = new LineView();
@@ -24,6 +26,7 @@ class Template {
     instance.addClass(positionIndex[arr.length]);
     arr.push(instance);
     this.line.addChild(instance);
+    this.emit('newInstance', instance);
   }
 
   removeInstanceForDouble(arr) {
