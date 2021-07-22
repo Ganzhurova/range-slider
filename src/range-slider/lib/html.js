@@ -22,6 +22,10 @@ const html = {
     tag: 'div',
     className: `${root}__thumb`,
   },
+  label: {
+    tag: 'div',
+    className: `${root}__label`,
+  },
   scale: {
     tag: 'div',
     className: `${root}__scale`,
