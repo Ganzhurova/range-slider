@@ -144,6 +144,10 @@ const stateModel = {
     this.stepFractionLength = value;
   },
 
+  getStepFractionLength() {
+    return this.stepFractionLength;
+  },
+
   isInRange(value) {
     return value >= this.state.min && value <= this.state.max;
   },
