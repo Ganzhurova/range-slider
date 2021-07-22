@@ -82,8 +82,10 @@ class View extends EventEmitter {
   }
 
   setHandlers() {
+    const setPosition = this.setPosition.bind(this);
     this.handlerThumbDragStart = this.handlerThumbDragStart.bind(this);
 
+    window.addEventListener('resize', setPosition);
     this.el.addEventListener('mousedown', this.handlerThumbDragStart);
   }
 
