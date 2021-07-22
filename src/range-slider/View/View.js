@@ -2,7 +2,6 @@ import EventEmitter from '../EventEmitter';
 import Template from './Template';
 import ThumbView from './subViews/ThumbView';
 import { html, mix } from '../lib/html';
-// import { positionIndex } from '../lib/constants';
 import helpers from '../helpers/helpers';
 
 class View extends EventEmitter {
