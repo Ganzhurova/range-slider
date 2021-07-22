@@ -1,19 +1,21 @@
-import HTMLDefaults from '../HTMLDefaults';
-import DoubleHTMLElement from '../DoubleHTMLElement';
+import Component from '../Component';
+import helpers from '../../helpers/helpers';
+import { html } from '../../lib/html';
 
-class LabelView extends DoubleHTMLElement {
-  constructor(options) {
-    super(options);
-    this.isLabel = options.isLabel;
-    this.createEl({ className: `${HTMLDefaults.rootClass}__label` });
+class LabelView extends Component {
+  constructor() {
+    super();
+    this.index = 0;
+
+    this.init(html.label);
   }
 
-  getEl() {
-    if (!this.isLabel) {
-      return null;
-    }
+  setIndex(index) {
+    helpers.setIndex.call(this, index);
+  }
 
-    return super.getEl();
+  setup() {
+    console.log(this);
   }
 }
 
