@@ -1,6 +1,8 @@
 import EventEmitter from '../EventEmitter';
 import Template from './Template';
+import ThumbView from './subViews/ThumbView';
 import { html, mix } from '../lib/html';
+// import { positionIndex } from '../lib/constants';
 import helpers from '../helpers/helpers';
 
 class View extends EventEmitter {
@@ -19,6 +21,7 @@ class View extends EventEmitter {
     }
 
     this.initSubViews();
+    this.subscribeToEvents();
     this.setHandlers();
   }
 
@@ -36,52 +39,46 @@ class View extends EventEmitter {
     return this.correctPosition(this.options[positionName]);
   }
 
+  subscribeToEvents() {
+    this.template.subscribe('newInstance', instance => {
+      if (!(instance instanceof ThumbView)) return;
+      const thumb = instance;
+
+      thumb.subscribe('valueChanged', (pxValue, index) => {
+        this.updatePosition(pxValue, index);
+        this.setPxValues(pxValue, index);
+      });
+    });
+  }
+
   setPosition() {
     const range = Math.abs(this.options.max - this.options.min);
-    const limitCoords = {};
-    const addCoord = (pxValue, index) => {
-      limitCoords[index] = pxValue;
-    };
 
-    const updatePosition = (pxValue, index) => {
-      this.updatePosition(pxValue, index);
-    };
-
-    const calcLimitCoords = (pxValue, index) => {
-      addCoord(pxValue, index);
-      this.calcLimitCoords(limitCoords, index);
-    };
-
+    ThumbView.calcUnit(this.line.getSize(), this.thumbs[0].getSize(), range);
     this.thumbs.forEach((thumb, i) => {
       const position = this.getCorrectPosition(i);
-
-      thumb.calcUnit(this.line.getSize(), range);
-      thumb.unsubscribe('valueChanged', updatePosition);
-      thumb.unsubscribe('valueChanged', calcLimitCoords);
-      thumb.subscribe('valueChanged', updatePosition);
-      thumb.subscribe('valueChanged', calcLimitCoords);
-      console.log(thumb);
       thumb.setup(position);
     });
   }
 
   updatePosition(pxValue, index) {
     const correctPosition = position => position + this.options.min;
-    const position = correctPosition(
-      this.thumbs[index].pxValueToPosition(pxValue)
-    );
+    const position = correctPosition(ThumbView.pxValueToPosition(pxValue));
 
     this.emit('positionChanged', position, index);
   }
 
-  calcLimitCoords(coords, index) {
-    this.thumbs[index].calcLimitCoords(coords);
+  setPxValues(pxValue, index) {
+    this.pxValues[index] = pxValue;
+
+    this.thumbs[index].calcLimitCoords(this.pxValues);
   }
 
   update(options) {
     this.template.build(options);
 
     this.options = options;
+    this.pxValues = {};
     this.setPosition();
   }
 
@@ -99,10 +96,10 @@ class View extends EventEmitter {
 
     this.thumbs.forEach((thumb, i) => {
       if (index === i) {
-        this.thumbs[i].handlerThumbDragStart(this.line.getCoords(), e);
-        this.thumbs[i].addClass(mix.selected);
+        thumb.handlerThumbDragStart(this.line.getCoords(), e);
+        thumb.addClass(mix.selected);
       } else {
-        this.thumbs[i].removeClass(mix.selected);
+        thumb.removeClass(mix.selected);
       }
     });
   }
