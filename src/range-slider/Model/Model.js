@@ -19,6 +19,7 @@ class Model extends EventEmitter {
 
     this.state = stateModel.get();
     this.emit('updateState', this.getState());
+    console.log(this.state);
   }
 
   getState() {
@@ -29,7 +30,7 @@ class Model extends EventEmitter {
     const positionName = helpers.getPositionName(index);
     this.state[positionName] = stateModel.toFixed(
       position,
-      stateModel.getStepFractionLength()
+      this.state.fractionLength
     );
     console.log(`${positionName}: ${this.state[positionName]}`);
   }
