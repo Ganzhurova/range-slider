@@ -40,10 +40,7 @@ class Component extends EventEmitter {
   getSize() {
     const box = this.getBox();
 
-    return {
-      width: box.width,
-      height: box.height,
-    };
+    return box[Component.sizeName];
   }
 
   getCoords() {
