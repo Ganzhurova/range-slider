@@ -95,8 +95,7 @@ class ThumbView extends Component {
   }
 
   static calcUnit(parentSize, thumbSize, range) {
-    ThumbView.limitSize =
-      parentSize[ThumbView.sizeName] - thumbSize[ThumbView.sizeName];
+    ThumbView.limitSize = parentSize - thumbSize;
     ThumbView.unit = ThumbView.limitSize / range;
   }
 
