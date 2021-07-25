@@ -73,6 +73,10 @@ const stateModel = {
     }
 
     this.state.step = step;
+    this.state.fractionLength = Math.max(
+      this.limitFractionLength,
+      this.stepFractionLength
+    );
   },
 
   validatePos() {
@@ -142,10 +146,6 @@ const stateModel = {
 
   setStepFractionLength(value) {
     this.stepFractionLength = value;
-  },
-
-  getStepFractionLength() {
-    return this.stepFractionLength;
   },
 
   isInRange(value) {
