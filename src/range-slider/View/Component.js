@@ -24,7 +24,8 @@ class Component extends EventEmitter {
   }
 
   removeChild(child) {
-    if (child) {
+    const isChildNode = [...this.el.children].includes(child.getEl());
+    if (child && isChildNode) {
       this.el.removeChild(child.getEl());
     }
   }
