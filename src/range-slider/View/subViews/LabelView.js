@@ -22,17 +22,26 @@ class LabelView extends Component {
     const labelSize = this.getSize();
     const offset = (labelSize - size) / 2;
     this.pxValue = pxValue - offset;
+
+    this.el.style[LabelView.direction] = `${this.pxValue}px`;
   }
 
   getPxValue() {
     return this.pxValue;
   }
 
-  setup(pxValue, position, thumbSize) {
-    this.el.textContent = position;
-    this.setPxValue(pxValue, thumbSize);
+  setPositionText(positionText) {
+    this.positionText = positionText;
+    this.el.innerHTML = positionText;
+  }
 
-    this.el.style[LabelView.direction] = `${this.getPxValue()}px`;
+  getPositionText() {
+    return this.positionText;
+  }
+
+  setup(pxValue, positionText, thumbSize) {
+    this.setPositionText(positionText);
+    this.setPxValue(pxValue, thumbSize);
   }
 
   hidden() {
@@ -43,55 +52,38 @@ class LabelView extends Component {
     this.el.style.visibility = '';
   }
 
-  static checkOverlap(from, to, index) {
+  static checkOverlap(common, from, to) {
     const toStart = to ? to.getPxValue() : undefined;
 
     if (!toStart) return;
 
     const fromEnd = from.getPxValue() + from.getSize();
-    const isOverlap = () => fromEnd >= toStart;
-    const labels = [from, to];
-    const getActiveLabel = () => labels[index];
-    const getInertLabel = () =>
-      labels.find((label, i) => {
-        if (i !== index) {
-          return label;
-        }
-        return false;
-      });
-    // const getPxValue = () => (toStart - fromEnd) / 2 + fromEnd;
-    // const getPositionText = () =>
-    //   `${from.el.textContent} - ${to.el.textContent}`;
-    // const getOldPositionText = () => labels[index].textContent;
+    const isOverlap = fromEnd >= toStart;
 
-    const active = getActiveLabel();
-    const inert = getInertLabel();
-    let currIndex;
+    const pxValueCommon = (toStart - fromEnd) / 2 + fromEnd;
+    const getCommonText = () => {
+      const fromPos = from.getPositionText();
+      const toPos = to.getPositionText();
+      let posText;
 
-    // if (isOverlap()) {
-    //   inert.hidden();
-    //   active.show();
-    //
-    //   const positionText = getPositionText();
-    //   active.el.textContent = positionText;
-    //   // inert.el.textContent = getOldPositionText();
-    //
-    //   const labelPosition = getPxValue() - active.getSize() / 2;
-    //   active.el.style[LabelView.direction] = `${labelPosition}px`;
-    //   inert.el.style[LabelView.direction] = `${inert.getPxValue()}px`;
-    // } else {
-    //   inert.show();
-    // }
-
-    if (isOverlap()) {
-      if (currIndex === index) {
-        active.show();
-        console.log(currIndex);
+      if (fromPos !== toPos) {
+        posText = `${fromPos} &ndash; ${toPos}`;
       } else {
-        currIndex = index;
-        inert.hidden();
-        console.log(currIndex);
+        posText = `${fromPos}`;
       }
+      return posText;
+    };
+
+    common.setup(pxValueCommon, getCommonText(), 0);
+
+    if (isOverlap) {
+      from.hidden();
+      to.hidden();
+      common.show();
+    } else {
+      from.show();
+      to.show();
+      common.hidden();
     }
   }
 }
