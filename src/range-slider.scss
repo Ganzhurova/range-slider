@@ -71,27 +71,21 @@ $ratio-height: $scale-height / 100%;
     border-radius: 50%;
     transform: translate(-50%, -50%);
   }
-
-  &.selected {
-    z-index: 2;
-  }
 }
 
 .range-slider__label {
   position: absolute;
-  top: -40px;
-  left: calc(45% + #{$thumb-width-percent} / 2);
+  top: -52px;
   z-index: 1;
   box-sizing: border-box;
   min-width: 35px;
   padding: 5px 5px 6px;
-  font-size: 13px;
+  font-size: 16px;
   line-height: 1;
   color: $white;
   text-align: center;
   background-color: $green;
   border-radius: 3px;
-  transform: translateX(-50%);
 
   &::before {
     position: absolute;
@@ -102,14 +96,6 @@ $ratio-height: $scale-height / 100%;
     content: "";
     background-color: $green;
     transform: translateX(-50%) rotate(45deg);
-  }
-
-  &.from {
-    left: calc(25% * #{$ratio-width} + #{$thumb-width-percent} / 2);
-  }
-
-  &.to {
-    left: calc(75% * #{$ratio-width} + #{$thumb-width-percent} / 2);
   }
 }
 
@@ -186,22 +172,12 @@ $ratio-height: $scale-height / 100%;
   }
 
   .range-slider__label {
-    top: calc(50% * #{$ratio-height} + #{$thumb-height-percent} / 2);
-    left: 21px;
-    transform: translateX(0) translateY(-50%);
+    left: 45px;
 
     &::before {
       top: 50%;
       left: -4px;
       transform: translateX(0) translateY(-50%) rotate(45deg);
-    }
-
-    &.from {
-      top: calc(25% * #{$ratio-height} + #{$thumb-height-percent} / 2);
-    }
-
-    &.to {
-      top: calc(75% * #{$ratio-height} + #{$thumb-height-percent} / 2);
     }
   }
 
@@ -251,6 +227,10 @@ $ratio-height: $scale-height / 100%;
   .range-slider__scale-number {
     order: -1;
   }
+}
+
+.selected {
+  z-index: 2;
 }
 
 //данные для изменения при двойном слайдере
