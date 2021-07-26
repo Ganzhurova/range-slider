@@ -35,8 +35,12 @@ class View extends EventEmitter {
     return this.options[positionName];
   }
 
+  getPositionText(index) {
+    return this.getPosition(index).toFixed(this.options.fractionLength);
+  }
+
   correctDirection() {
-    const arr = [...this.thumbs, ...this.labels];
+    const arr = [...this.thumbs, ...this.labels, this.commonLable];
     arr.forEach(instance => {
       instance.correctDirection();
     });
@@ -83,13 +87,10 @@ class View extends EventEmitter {
     if (this.labels.length === 0) return;
 
     const thumbSize = this.thumbs[index].getSize();
-    const positionText = this.getPosition(index).toFixed(
-      this.options.fractionLength
-    );
+    const positionText = this.getPositionText(index);
 
     this.labels[index].setup(pxValue, positionText, thumbSize);
-
-    LabelView.checkOverlap(...this.labels, index);
+    LabelView.checkOverlap(this.commonLable, ...this.labels);
   }
 
   update(options) {
@@ -119,10 +120,8 @@ class View extends EventEmitter {
       if (index === i) {
         thumb.handlerThumbDragStart(this.line.getCoords(), e);
         thumb.addClass(mix.selected);
-        this.labels[i].addClass(mix.selected);
       } else {
         thumb.removeClass(mix.selected);
-        this.labels[i].removeClass(mix.selected);
       }
     });
   }
