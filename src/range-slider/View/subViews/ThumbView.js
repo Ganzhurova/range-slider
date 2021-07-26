@@ -1,7 +1,6 @@
 import Component from '../Component';
 import helpers from '../../helpers/helpers';
 import { html } from '../../lib/html';
-import { directions } from '../../lib/constants';
 
 class ThumbView extends Component {
   static limitSize = 0;
@@ -19,17 +18,14 @@ class ThumbView extends Component {
     helpers.setIndex.call(this, index);
   }
 
+  correctDirection() {
+    helpers.correctDirection.call(this, ThumbView.direction);
+  }
+
   setup(position) {
     const pxValue = ThumbView.positionToPxValue(position);
 
-    Object.values(directions).forEach(direction => {
-      if (direction === ThumbView.direction) {
-        this.el.style[direction] = `${pxValue}px`;
-      } else {
-        this.el.style[direction] = '';
-      }
-    });
-
+    this.el.style[ThumbView.direction] = `${pxValue}px`;
     this.emit('valueChanged', pxValue, this.index);
   }
 
