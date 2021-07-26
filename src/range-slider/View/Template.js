@@ -14,6 +14,7 @@ class Template extends EventEmitter {
     this.line = new LineView();
     this.thumbs = [];
     this.labels = [];
+    this.commonLable = Template.createLabel();
 
     this.init();
   }
@@ -75,6 +76,12 @@ class Template extends EventEmitter {
         this.line.removeChild(label);
       });
       this.labels.length = 0;
+    }
+
+    if (isLabel && isDouble) {
+      this.line.addChild(this.commonLable);
+    } else if (!isLabel || !isDouble) {
+      this.line.removeChild(this.commonLable);
     }
   }
 
