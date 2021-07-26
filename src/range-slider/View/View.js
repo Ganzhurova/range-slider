@@ -1,6 +1,7 @@
 import EventEmitter from '../EventEmitter';
 import Template from './Template';
 import ThumbView from './subViews/ThumbView';
+import LabelView from './subViews/LabelView';
 import { html, mix } from '../lib/html';
 import helpers from '../helpers/helpers';
 
@@ -29,13 +30,16 @@ class View extends EventEmitter {
     Object.assign(this, subViews);
   }
 
-  correctPosition(position) {
-    return position - this.options.min;
+  getPosition(index) {
+    const positionName = helpers.getPositionName(index);
+    return this.options[positionName];
   }
 
-  getCorrectPosition(index) {
-    const positionName = helpers.getPositionName(index);
-    return this.correctPosition(this.options[positionName]);
+  correctDirection() {
+    const arr = [...this.thumbs, ...this.labels];
+    arr.forEach(instance => {
+      instance.correctDirection();
+    });
   }
 
   subscribeToEvents() {
@@ -46,16 +50,18 @@ class View extends EventEmitter {
       thumb.subscribe('valueChanged', (pxValue, index) => {
         this.updatePosition(pxValue, index);
         this.setPxValues(pxValue, index);
+        this.updateLabels(pxValue, index);
       });
     });
   }
 
-  setPosition() {
+  setThumbs() {
     const range = Math.abs(this.options.max - this.options.min);
+    const correctPosition = position => position - this.options.min;
 
     ThumbView.calcUnit(this.line.getSize(), this.thumbs[0].getSize(), range);
     this.thumbs.forEach((thumb, i) => {
-      const position = this.getCorrectPosition(i);
+      const position = correctPosition(this.getPosition(i));
       thumb.setup(position);
     });
   }
@@ -73,19 +79,33 @@ class View extends EventEmitter {
     this.thumbs[index].calcLimitCoords(this.pxValues);
   }
 
+  updateLabels(pxValue, index) {
+    if (this.labels.length === 0) return;
+
+    const thumbSize = this.thumbs[index].getSize();
+    const positionText = this.getPosition(index).toFixed(
+      this.options.fractionLength
+    );
+
+    this.labels[index].setup(pxValue, positionText, thumbSize);
+
+    LabelView.checkOverlap(...this.labels, index);
+  }
+
   update(options) {
     this.template.build(options);
 
     this.options = options;
     this.pxValues = {};
-    this.setPosition();
+    this.correctDirection();
+    this.setThumbs();
   }
 
   setHandlers() {
-    const setPosition = this.setPosition.bind(this);
+    const setThumbs = this.setThumbs.bind(this);
     this.handlerThumbDragStart = this.handlerThumbDragStart.bind(this);
 
-    window.addEventListener('resize', setPosition);
+    window.addEventListener('resize', setThumbs);
     this.el.addEventListener('mousedown', this.handlerThumbDragStart);
   }
 
@@ -99,8 +119,10 @@ class View extends EventEmitter {
       if (index === i) {
         thumb.handlerThumbDragStart(this.line.getCoords(), e);
         thumb.addClass(mix.selected);
+        this.labels[i].addClass(mix.selected);
       } else {
         thumb.removeClass(mix.selected);
+        this.labels[i].removeClass(mix.selected);
       }
     });
   }
