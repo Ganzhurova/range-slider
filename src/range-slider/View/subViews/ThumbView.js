@@ -1,6 +1,7 @@
 import Component from '../Component';
 import helpers from '../../helpers/helpers';
 import { html } from '../../lib/html';
+import { positionIndex } from '../../lib/constants';
 
 class ThumbView extends Component {
   static limitSize = 0;
@@ -14,8 +15,12 @@ class ThumbView extends Component {
     this.init(html.thumb);
   }
 
-  setIndex(index) {
-    helpers.setIndex.call(this, index);
+  setIndex() {
+    Object.entries(positionIndex).forEach(([index, value]) => {
+      if (this.el.classList.contains(value)) {
+        this.index = +index;
+      }
+    });
   }
 
   correctDirection() {
@@ -23,6 +28,7 @@ class ThumbView extends Component {
   }
 
   setup(position) {
+    this.setIndex();
     const pxValue = ThumbView.positionToPxValue(position);
 
     this.el.style[ThumbView.direction] = `${pxValue}px`;
