@@ -3,6 +3,7 @@ import Template from './Template';
 import ThumbView from './subViews/ThumbView';
 import LabelView from './subViews/LabelView';
 import { html, mix } from '../lib/html';
+import { positionIndex } from '../lib/constants';
 import helpers from '../helpers/helpers';
 
 class View extends EventEmitter {
@@ -114,7 +115,13 @@ class View extends EventEmitter {
     e.preventDefault();
     if (!e.target.classList.contains(html.thumb.className)) return;
 
-    const index = [...e.target.parentElement.children].indexOf(e.target);
+    let index;
+
+    Object.entries(positionIndex).forEach(([key, value]) => {
+      if (e.target.classList.contains(value)) {
+        index = +key;
+      }
+    });
 
     this.thumbs.forEach((thumb, i) => {
       if (index === i) {
