@@ -11,12 +11,10 @@ $thumb-height: 50px;
 $line-width: 200px;
 $thumb-width-percent: $thumb-width * 100% / $line-width;
 $scale-width: 100% - $thumb-width-percent;
-$ratio-width: $scale-width / 100%;
 //при высоте линии 400px;
 $line-height: 400px;
 $thumb-height-percent: $thumb-height * 100% / $line-height;
 $scale-height: 100% - $thumb-height-percent;
-$ratio-height: $scale-height / 100%;
 
 .range-slider {
   display: flex;
@@ -39,12 +37,9 @@ $ratio-height: $scale-height / 100%;
 
 .range-slider__bar {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: calc(45% + #{$thumb-width-percent} / 2);
   height: 100%;
   background-color: $green;
-  border-radius: 3px;
+  border-radius: 12px;
 }
 
 .range-slider__thumb {
@@ -164,7 +159,6 @@ $ratio-height: $scale-height / 100%;
 
   .range-slider__bar {
     width: 100%;
-    height: calc(50% * #{$ratio-height} + #{$thumb-height-percent} / 2);
   }
 
   .range-slider__thumb {
@@ -231,22 +225,4 @@ $ratio-height: $scale-height / 100%;
 
 .selected {
   z-index: 2;
-}
-
-//данные для изменения при двойном слайдере
-#slider-22 .range-slider__bar {
-  left: calc(25% * #{$ratio-width} + #{$thumb-width-percent} / 2);
-  width: calc(
-    (75% * #{$ratio-width} + #{$thumb-width-percent} / 2) -
-      (25% * #{$ratio-width} + #{$thumb-width-percent} / 2)
-  );
-}
-
-//данные для изменения при двойном вертикальном слайдере
-#slider-44 .range-slider__bar {
-  top: calc(25% * #{$ratio-height} + #{$thumb-height-percent} / 2);
-  height: calc(
-    (75% * #{$ratio-height} + #{$thumb-height-percent} / 2) -
-      (25% * #{$ratio-height} + #{$thumb-height-percent} / 2)
-  );
 }
