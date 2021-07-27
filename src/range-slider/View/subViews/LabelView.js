@@ -50,7 +50,10 @@ class LabelView extends Component {
   static checkOverlap(common, from, to) {
     const toStart = to ? to.getPxValue() : undefined;
 
-    if (!toStart) return;
+    if (!toStart) {
+      from.show();
+      return;
+    }
 
     const fromEnd = from.getPxValue() + from.getSize();
     const isOverlap = fromEnd >= toStart;
