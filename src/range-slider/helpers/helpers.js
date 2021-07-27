@@ -5,10 +5,6 @@ const helpers = {
     return positionIndex[index];
   },
 
-  setIndex(index) {
-    this.index = index;
-  },
-
   correctDirection(mainDirection) {
     Object.values(directions).forEach(direction => {
       if (direction !== mainDirection) {
