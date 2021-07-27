@@ -4,6 +4,7 @@ import RootView from './subViews/RootView';
 import LineView from './subViews/LineView';
 import ThumbView from './subViews/ThumbView';
 import LabelView from './subViews/LabelView';
+import BarView from './subViews/BarView';
 import { positionIndex } from '../lib/constants';
 
 class Template extends EventEmitter {
@@ -15,11 +16,13 @@ class Template extends EventEmitter {
     this.thumbs = [];
     this.labels = [];
     this.commonLable = Template.createLabel();
+    this.bar = new BarView();
 
     this.init();
   }
 
   init() {
+    this.line.addChild(this.bar);
     this.root.addChild(this.line);
   }
 
