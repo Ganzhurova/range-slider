@@ -84,7 +84,6 @@ const stateModel = {
 
     const isFromInRange = this.isInRange(from);
     const isToInRange = this.isInRange(to) && to !== null;
-    const isIdenticalPos = () => this.state.isDouble && from === to;
     const isInvalidComparison = () => this.state.isDouble && from > to;
 
     const getDefaultFrom = () => this.state.min;
@@ -98,17 +97,12 @@ const stateModel = {
       to = getDefaultTo();
     }
 
-    if (isIdenticalPos()) {
-      from = getDefaultFrom();
-      to = getDefaultTo();
-    }
-
     if (isInvalidComparison()) {
       [from, to] = [to, from];
     }
 
     this.state.from = from;
-    this.state.to = this.state.isDouble ? to : null;
+    this.state.to = to;
   },
 
   calcScaleRange() {
