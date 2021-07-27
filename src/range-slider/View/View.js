@@ -41,10 +41,14 @@ class View extends EventEmitter {
   }
 
   correctDirection() {
-    const arr = [...this.thumbs, ...this.labels, this.commonLable];
+    const arr = [...this.thumbs, ...this.labels, this.commonLable, this.bar];
     arr.forEach(instance => {
       instance.correctDirection();
     });
+  }
+
+  correctSize() {
+    this.bar.correctSize();
   }
 
   subscribeToEvents() {
@@ -56,6 +60,7 @@ class View extends EventEmitter {
         this.updatePosition(pxValue, index);
         this.setPxValues(pxValue, index);
         this.updateLabels(pxValue, index);
+        this.updateBar();
       });
     });
   }
@@ -69,6 +74,11 @@ class View extends EventEmitter {
       const position = correctPosition(this.getPosition(i));
       thumb.setup(position);
     });
+  }
+
+  updateBar() {
+    const correctValue = this.thumbs[0].getSize() / 2;
+    this.bar.setup(correctValue, this.pxValues);
   }
 
   updatePosition(pxValue, index) {
@@ -100,6 +110,7 @@ class View extends EventEmitter {
     this.options = options;
     this.pxValues = {};
     this.correctDirection();
+    this.correctSize();
     this.setThumbs();
   }
 
