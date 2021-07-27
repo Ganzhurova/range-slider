@@ -25,7 +25,6 @@ class Template extends EventEmitter {
 
   createInstancesForDouble(callback, arr) {
     const instance = callback();
-    instance.setIndex(arr.length);
     instance.addClass(positionIndex[arr.length]);
     arr.push(instance);
     this.line.addChild(instance);
