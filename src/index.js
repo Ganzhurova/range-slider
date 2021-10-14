@@ -5,17 +5,31 @@ import Model from './range-slider/Model/Model';
 import View from './range-slider/View/View';
 import Presenter from './range-slider/Presenter/Presenter';
 
-const options1 = {
+const options = {
   type: 'double',
-  label: true,
-  scale: true,
+  // isVertical: true,
+  isLabel: true,
+  isScale: true,
+  // // step: -3.00000006,
+  // min: -100.8,
+  // max: 100,
+  min: 0,
+  max: 1,
+  step: 0.5,
+  // from: 0,
+  // to: 0,
+  // scaleStep: 100,
 };
 
-const options3 = {
-  vertical: true,
-  label: true,
-  scale: true,
-};
+const s = new Presenter(new Model(options), new View('#slider-1'));
 
-console.log(new Presenter(new View('#slider-1'), new Model(options1)));
-console.log(new Presenter(new View('#slider-3'), new Model(options3)));
+window.s = s;
+// console.log(s);
+
+// s.update({ isVertical: true });
+// s.update({ isVertical: false, type: 'double' });
+// s.update({ type: 'single', isVertical: true });
+// s.update({ type: 'single' });
+// s.update({ type: 'double' });
+// s.update({ isLabel: false });
+// s.update({ isLabel: true });

@@ -2,8 +2,6 @@ import { types } from '../lib/constants';
 
 const stateModel = {
   state: {},
-  limitFractionLength: 0,
-  stepFractionLength: 0,
 
   set(options) {
     Object.assign(this.state, options);
@@ -30,10 +28,11 @@ const stateModel = {
 
   validate() {
     this.validateLimits();
-    this.calcLimitFractionLength();
-    this.validateStep();
     this.validatePos();
-    this.calcScaleRange();
+    this.validateStep();
+    this.validateScaleStep();
+    this.calcLimitFractionLength();
+    // this.calcScaleRange();
   },
 
   validateLimits() {
@@ -51,39 +50,11 @@ const stateModel = {
     this.state.max = max;
   },
 
-  validateStep() {
-    let step = Math.abs(this.state.step);
-    const range = this.state.max - this.state.min;
-
-    this.setStepFractionLength(this.getFractionLength(step));
-
-    const isValidStep = step > 0 && step < this.state.max;
-
-    const getDefaultStep = () =>
-      this.toFixed(range * 0.1, this.stepFractionLength);
-
-    if (!isValidStep) {
-      this.setStepFractionLength(this.limitFractionLength);
-      step = getDefaultStep();
-
-      while (step === 0) {
-        this.stepFractionLength += 1;
-        step = getDefaultStep();
-      }
-    }
-
-    this.state.step = step;
-    this.state.fractionLength = Math.max(
-      this.limitFractionLength,
-      this.stepFractionLength
-    );
-  },
-
   validatePos() {
     let { from, to } = this.state;
 
     const isFromInRange = this.isInRange(from);
-    const isToInRange = this.isInRange(to) && to !== null;
+    const isToInRange = this.isInRange(to);
     const isInvalidComparison = () => this.state.isDouble && from > to;
 
     const getDefaultFrom = () => this.state.min;
@@ -105,42 +76,102 @@ const stateModel = {
     this.state.to = to;
   },
 
-  calcScaleRange() {
-    let { scaleRange } = this.state;
-    scaleRange = [];
-
-    const setScaleRange = () => {
-      this.state.scaleRange = scaleRange;
-    };
-
-    const { isScale, min, max, step } = this.state;
-
-    if (!isScale) {
-      setScaleRange();
-      return;
-    }
-
-    for (let i = min; i < max + step; i += step) {
-      i = i > max ? max : i;
-      scaleRange.push(i);
-    }
-
-    setScaleRange();
+  validateStep() {
+    let { step } = this.state;
+    step = step ? Math.abs(step) : 0;
+    this.state.step = step;
   },
+
+  validateScaleStep() {
+    let scaleStep = Math.abs(this.state.scaleStep);
+    const isValidScaleStep = scaleStep > 0 && scaleStep <= this.state.max;
+
+    if (!isValidScaleStep) {
+      const range = this.state.max - this.state.min;
+      scaleStep = this.toFixed(range * 0.1);
+    }
+
+    this.state.scaleStep = scaleStep;
+  },
+
+  // validateStep() {
+  //   let step = Math.abs(this.state.step);
+  //   const range = this.state.max - this.state.min;
+  //
+  //   this.setStepFractionLength(this.getFractionLength(step));
+  //
+  //   const isValidStep = step > 0 && step < this.state.max;
+  //
+  //   const getDefaultStep = () =>
+  //     this.toFixed(range * 0.1, this.stepFractionLength);
+  //
+  //   if (!isValidStep) {
+  //     this.setStepFractionLength(this.limitFractionLength);
+  //     step = getDefaultStep();
+  //
+  //     while (step === 0) {
+  //       this.stepFractionLength += 1;
+  //       step = getDefaultStep();
+  //     }
+  //   }
+  //
+  //   this.state.step = step;
+  //   this.state.fractionLength = Math.max(
+  //     this.limitFractionLength,
+  //     this.stepFractionLength
+  //   );
+  // },
 
   calcLimitFractionLength() {
-    const minLength = this.getFractionLength(this.state.min);
-    const maxLength = this.getFractionLength(this.state.max);
-    this.limitFractionLength = Math.max(minLength, maxLength);
+    const arr = [];
+    const { min, max, from, step, scaleStep } = this.state;
+    arr.push(min, max, from, step, scaleStep);
+
+    if (this.state.isDouble) {
+      const { to } = this.state;
+      arr.push(to);
+    }
+
+    const arrLength = arr.map(num => this.getFractionLength(num));
+    this.state.fractionLength = Math.max(...arrLength);
   },
+
+  // calcScaleRange() {
+  //   let { scaleRange } = this.state;
+  //   scaleRange = [];
+  //
+  //   const setScaleRange = () => {
+  //     this.state.scaleRange = scaleRange;
+  //   };
+  //
+  //   const { isScale, min, max, step } = this.state;
+  //
+  //   if (!isScale) {
+  //     setScaleRange();
+  //     return;
+  //   }
+  //
+  //   for (let i = min; i < max + step; i += step) {
+  //     i = i > max ? max : i;
+  //     scaleRange.push(i);
+  //   }
+  //
+  //   setScaleRange();
+  // },
+  //
+  // calcLimitFractionLength() {
+  //   const minLength = this.getFractionLength(this.state.min);
+  //   const maxLength = this.getFractionLength(this.state.max);
+  //   this.limitFractionLength = Math.max(minLength, maxLength);
+  // },
 
   setIsDouble() {
     this.state.isDouble = this.state.type === types.DOUBLE;
   },
 
-  setStepFractionLength(value) {
-    this.stepFractionLength = value;
-  },
+  // setStepFractionLength(value) {
+  //   this.stepFractionLength = value;
+  // },
 
   isInRange(value) {
     return value >= this.state.min && value <= this.state.max;

@@ -7,9 +7,8 @@ const defaults = {
   isScale: false,
   min: 0,
   max: 100,
-  step: 25,
-  scaleRange: [], // вынести в интерфейс
-  isDouble: false, // вынести в интерфейс для вида
+  // scaleRange: [], // вынести в интерфейс
+  // isDouble: false, // вынести в интерфейс для вида
 };
 
 export default defaults;

@@ -56,7 +56,7 @@ class ThumbView extends Component {
     };
   }
 
-  handlerThumbDragStart(parentCoords, e) {
+  handlerThumbDragStart(parentCoords, step, e) {
     const thumbCoords = this.getCoords();
 
     this.shift = {
@@ -64,7 +64,11 @@ class ThumbView extends Component {
       y: e.pageY - thumbCoords.top,
     };
 
-    const handlerThumbDrag = this.handlerThumbDrag.bind(this, parentCoords);
+    const handlerThumbDrag = this.handlerThumbDrag.bind(
+      this,
+      parentCoords,
+      step
+    );
 
     const handlerThumbDragEnd = () => {
       document.removeEventListener('mousemove', handlerThumbDrag);
@@ -75,10 +79,11 @@ class ThumbView extends Component {
     document.addEventListener('mouseup', handlerThumbDragEnd);
   }
 
-  handlerThumbDrag(parentCoords, e) {
+  handlerThumbDrag(parentCoords, step, e) {
+    const stepPxValue = ThumbView.positionToPxValue(step);
     const newCoords = {
-      left: e.pageX - this.shift.x - parentCoords.left,
-      top: e.pageY - this.shift.y - parentCoords.top,
+      left: e.pageX - this.shift.x - parentCoords.left + stepPxValue,
+      top: e.pageY - this.shift.y - parentCoords.top + stepPxValue,
     };
 
     let newValue = newCoords[ThumbView.direction];

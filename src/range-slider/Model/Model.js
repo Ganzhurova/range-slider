@@ -19,7 +19,7 @@ class Model extends EventEmitter {
 
     this.state = stateModel.get();
     this.emit('updateState', this.getState());
-    console.log(this.state);
+    // console.log(this.state);
   }
 
   getState() {
@@ -32,7 +32,7 @@ class Model extends EventEmitter {
       position,
       this.state.fractionLength
     );
-    console.log(`${positionName}: ${this.state[positionName]}`);
+    // console.log(`${positionName}: ${this.state[positionName]}`);
   }
 
   update(options) {

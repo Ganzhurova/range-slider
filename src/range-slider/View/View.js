@@ -136,7 +136,11 @@ class View extends EventEmitter {
 
     this.thumbs.forEach((thumb, i) => {
       if (index === i) {
-        thumb.handlerThumbDragStart(this.line.getCoords(), e);
+        thumb.handlerThumbDragStart(
+          this.line.getCoords(),
+          this.options.step,
+          e
+        );
         thumb.addClass(mix.selected);
       } else {
         thumb.removeClass(mix.selected);
