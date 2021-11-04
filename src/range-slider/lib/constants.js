@@ -13,9 +13,19 @@ const directions = {
   TOP: 'top',
 };
 
+const coordNames = {
+  X: 'x',
+  Y: 'y',
+};
+
 const positionIndex = {
   0: 'from',
   1: 'to',
 };
 
-export { types, size, directions, positionIndex };
+const dragDirections = {
+  FORWARD: 'forward',
+  BACKWARD: 'backward',
+};
+
+export { types, size, directions, coordNames, positionIndex, dragDirections };
