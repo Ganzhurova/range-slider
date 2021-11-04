@@ -1,8 +1,10 @@
 import EventEmitter from '../EventEmitter';
-import { directions, size } from '../lib/constants';
+import { directions, size, coordNames } from '../lib/constants';
 
 class Component extends EventEmitter {
   static direction = '';
+
+  static coordName = '';
 
   static sizeName = '';
 
@@ -56,6 +58,7 @@ class Component extends EventEmitter {
   static setDirection(isVertical) {
     Component.direction = isVertical ? directions.TOP : directions.LEFT;
     Component.sizeName = isVertical ? size.HEIGHT : size.WIDTH;
+    Component.coordName = isVertical ? coordNames.Y : coordNames.X;
   }
 }
 
