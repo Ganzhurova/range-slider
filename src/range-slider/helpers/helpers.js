@@ -12,5 +12,9 @@ const helpers = {
       }
     });
   },
+
+  getEvent(event) {
+    return event.type.search('touch') !== -1 ? event.touches[0] : event;
+  },
 };
 export default helpers;
