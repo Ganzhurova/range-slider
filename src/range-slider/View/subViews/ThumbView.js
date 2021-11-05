@@ -61,11 +61,12 @@ class ThumbView extends Component {
   }
 
   handlerThumbDragStart(parentCoords, step, e) {
+    const evt = helpers.getEvent(e);
     const thumbCoords = this.getCoords();
 
     const shift = {
-      x: e.pageX - thumbCoords.left,
-      y: e.pageY - thumbCoords.top,
+      x: evt.pageX - thumbCoords.left,
+      y: evt.pageY - thumbCoords.top,
     };
 
     const handlerThumbDrag = this.handlerThumbDrag.bind(
@@ -78,18 +79,23 @@ class ThumbView extends Component {
     const handlerThumbDragEnd = () => {
       document.removeEventListener('mousemove', handlerThumbDrag);
       document.removeEventListener('mouseup', handlerThumbDragEnd);
+      document.removeEventListener('touchmove', handlerThumbDrag);
+      document.removeEventListener('touchend', handlerThumbDragEnd);
     };
 
     document.addEventListener('mousemove', handlerThumbDrag);
     document.addEventListener('mouseup', handlerThumbDragEnd);
+    document.addEventListener('touchmove', handlerThumbDrag);
+    document.addEventListener('touchend', handlerThumbDragEnd);
   }
 
   handlerThumbDrag(parentCoords, step, shift, e) {
+    const evt = helpers.getEvent(e);
     const { coordName } = ThumbView;
     const pointerCoordName = `page${coordName.toUpperCase()}`;
 
     const dragDirection =
-      e[pointerCoordName] > this.oldDragCoords[coordName]
+      evt[pointerCoordName] > this.oldDragCoords[coordName]
         ? dragDirections.FORWARD
         : dragDirections.BACKWARD;
 
@@ -97,7 +103,7 @@ class ThumbView extends Component {
 
     const thumbCoord = this.getCoords()[ThumbView.direction];
     const pointerCoord =
-      e[pointerCoordName] -
+      evt[pointerCoordName] -
       shift[coordName] -
       parentCoords[ThumbView.direction];
 
@@ -107,14 +113,14 @@ class ThumbView extends Component {
 
     if (
       dragDirection === dragDirections.FORWARD &&
-      e[pointerCoordName] > thumbCoord + this.getSize()
+      evt[pointerCoordName] > thumbCoord + this.getSize()
     ) {
       newValue += stepPxValue;
     }
 
     if (
       dragDirection === dragDirections.BACKWARD &&
-      e[pointerCoordName] < thumbCoord
+      evt[pointerCoordName] < thumbCoord
     ) {
       newValue -= stepPxValue;
     }
@@ -129,8 +135,8 @@ class ThumbView extends Component {
 
     this.el.style[ThumbView.direction] = `${newValue}px`;
 
-    this.oldDragCoords.x = e.pageX;
-    this.oldDragCoords.y = e.pageY;
+    this.oldDragCoords.x = evt.pageX;
+    this.oldDragCoords.y = evt.pageY;
 
     this.emit('valueChanged', newValue, this.index);
   }
