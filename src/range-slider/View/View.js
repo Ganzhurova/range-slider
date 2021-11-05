@@ -120,6 +120,7 @@ class View extends EventEmitter {
 
     window.addEventListener('resize', setThumbs);
     this.el.addEventListener('mousedown', this.handlerThumbDragStart);
+    this.el.addEventListener('touchstart', this.handlerThumbDragStart);
   }
 
   handlerThumbDragStart(e) {
