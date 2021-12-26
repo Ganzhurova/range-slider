@@ -88,19 +88,19 @@ $thumb-height: 50px;
 
 .range-slider__scale {
   position: relative;
-  width: $scale-width;
-  height: 25px;
+  height: 35px;
   margin: 0 auto;
   background-color: green;
 }
 
-.range-slder__scale-value {
+.range-slider__division {
   position: absolute;
   display: flex;
   flex-direction: column;
   height: 100%;
-  font-size: 11px;
+  font-size: 14px;
   line-height: 1;
+  cursor: pointer;
   // color: $grey;
   background-color: red;
   opacity: 0.7;
@@ -129,14 +129,10 @@ $thumb-height: 50px;
 
 .range-slider__point {
   width: 1px;
-  height: 10px;
+  height: 15px;
   margin: 0 auto auto;
   // background-color: $grey;
   background-color: black;
-}
-
-.range-slider__scale-number {
-  cursor: pointer;
 }
 
 .range-slider.vertical {
@@ -171,11 +167,10 @@ $thumb-height: 50px;
     flex-wrap: nowrap;
     order: -1;
     width: auto;
-    height: $scale-height;
     margin: auto 0;
   }
 
-  .range-slder__scale-value {
+  .range-slider__division {
     right: 0;
     left: auto;
     flex-direction: row;
@@ -210,7 +205,7 @@ $thumb-height: 50px;
     margin: 0 0 0 4px;
   }
 
-  .range-slider__scale-number {
+  .range-slider__value {
     order: -1;
   }
 }
