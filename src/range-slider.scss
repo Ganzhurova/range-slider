@@ -7,14 +7,6 @@ $white: #fff;
 $line-thickness: 20px;
 $thumb-width: 50px;
 $thumb-height: 50px;
-//при ширине линии 200px;
-$line-width: 200px;
-$thumb-width-percent: $thumb-width * 100% / $line-width;
-$scale-width: 100% - $thumb-width-percent;
-//при высоте линии 400px;
-$line-height: 400px;
-$thumb-height-percent: $thumb-height * 100% / $line-height;
-$scale-height: 100% - $thumb-height-percent;
 
 .range-slider {
   display: flex;
