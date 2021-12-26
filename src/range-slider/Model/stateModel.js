@@ -30,7 +30,7 @@ const stateModel = {
     this.validateLimits();
     this.validatePos();
     this.validateStep();
-    this.validateScaleStep();
+    // this.validateScaleStep();
     this.calcLimitFractionLength();
     // this.calcScaleRange();
   },
@@ -82,17 +82,18 @@ const stateModel = {
     this.state.step = step;
   },
 
-  validateScaleStep() {
-    let scaleStep = Math.abs(this.state.scaleStep);
-    const isValidScaleStep = scaleStep > 0 && scaleStep <= this.state.max;
-
-    if (!isValidScaleStep) {
-      const range = this.state.max - this.state.min;
-      scaleStep = this.toFixed(range * 0.1);
-    }
-
-    this.state.scaleStep = scaleStep;
-  },
+  // validateScaleStep() {
+  //   let scaleStep = Math.abs(this.state.scaleStep);
+  //   const isValidScaleStep =
+  //     scaleStep > 0 && scaleStep < this.state.max - this.state.min;
+  //
+  //   if (!isValidScaleStep) {
+  //     const range = this.state.max - this.state.min;
+  //     scaleStep = this.toFixed(range * 0.1);
+  //   }
+  //
+  //   this.state.scaleStep = scaleStep;
+  // },
 
   // validateStep() {
   //   let step = Math.abs(this.state.step);
@@ -124,8 +125,8 @@ const stateModel = {
 
   calcLimitFractionLength() {
     const arr = [];
-    const { min, max, from, step, scaleStep } = this.state;
-    arr.push(min, max, from, step, scaleStep);
+    const { min, max, from, step } = this.state;
+    arr.push(min, max, from, step);
 
     if (this.state.isDouble) {
       const { to } = this.state;
