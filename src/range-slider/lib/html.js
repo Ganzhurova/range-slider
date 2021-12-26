@@ -30,6 +30,25 @@ const html = {
     tag: 'div',
     className: `${root}__scale`,
   },
+  scaleDivision: {
+    tag: 'div',
+    className: `${root}__division`,
+  },
+  scalePoint: {
+    tag: 'span',
+    className: `${root}__point`,
+  },
+  scaleValue: {
+    tag: 'span',
+    className: `${root}__value`,
+  },
 };
 
-export { html, mix };
+const scaleDivisionHtmlTemplate = `
+<div class="range-slder__division">
+  <span class="range-slider__point"></span>
+  <span class="range-slider__value">0</span>
+</div>
+`;
+
+export { html, mix, scaleDivisionHtmlTemplate };
