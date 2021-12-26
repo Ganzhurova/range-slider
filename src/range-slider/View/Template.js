@@ -5,6 +5,7 @@ import LineView from './subViews/LineView';
 import ThumbView from './subViews/ThumbView';
 import LabelView from './subViews/LabelView';
 import BarView from './subViews/BarView';
+import ScaleView from './subViews/ScaleView';
 import { positionIndex } from '../lib/constants';
 
 class Template extends EventEmitter {
@@ -17,6 +18,7 @@ class Template extends EventEmitter {
     this.labels = [];
     this.commonLable = Template.createLabel();
     this.bar = new BarView();
+    this.scale = new ScaleView();
 
     this.init();
   }
@@ -87,6 +89,16 @@ class Template extends EventEmitter {
     }
   }
 
+  renderScale({ isScale }) {
+    if (this.compareOptions({ isScale })) return;
+
+    if (isScale) {
+      this.root.addChild(this.scale);
+    } else {
+      this.root.removeChild(this.scale);
+    }
+  }
+
   getSubViews() {
     return Object.entries(this);
   }
@@ -119,6 +131,7 @@ class Template extends EventEmitter {
     this.setDirection(options);
     this.renderThumbs(options);
     this.renderLabel(options);
+    this.renderScale(options);
     this.options = { ...options };
   }
 }
