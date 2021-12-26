@@ -104,14 +104,37 @@ class View extends EventEmitter {
     LabelView.checkOverlap(this.commonLable, ...this.labels);
   }
 
+  updateScale() {
+    if (!this.options.isScale) return;
+
+    const sizes = {
+      line: this.line.getSize(),
+      thumb: this.thumbs[0].getSize(),
+    };
+    const limits = {
+      min: this.options.min,
+      max: this.options.max,
+    };
+    const settings = {
+      // step: this.options.scaleStep,
+      length: this.options.fractionLength,
+    };
+
+    this.scale.setup(sizes, limits, settings);
+  }
+
   update(options) {
     this.template.build(options);
 
     this.options = options;
     this.pxValues = {};
-    this.correctDirection();
-    this.correctSize();
-    this.setThumbs();
+
+    window.addEventListener('DOMContentLoaded', () => {
+      this.correctDirection();
+      this.correctSize();
+      this.setThumbs();
+      this.updateScale();
+    });
   }
 
   setHandlers() {
