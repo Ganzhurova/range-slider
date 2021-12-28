@@ -107,20 +107,9 @@ class View extends EventEmitter {
   updateScale() {
     if (!this.options.isScale) return;
 
-    const sizes = {
-      line: this.line.getSize(),
-      thumb: this.thumbs[0].getSize(),
-    };
-    const limits = {
-      min: this.options.min,
-      max: this.options.max,
-    };
-    const settings = {
-      // step: this.options.scaleStep,
-      length: this.options.fractionLength,
-    };
+    const size = this.line.getSize() - this.thumbs[0].getSize();
 
-    this.scale.setup(sizes, limits, settings);
+    this.scale.setup(size, this.options.values);
   }
 
   update(options) {
