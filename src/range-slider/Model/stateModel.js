@@ -31,6 +31,7 @@ const stateModel = {
     this.validatePos();
     this.validateStep();
     // this.validateScaleStep();
+    this.calcDefaultScaleValues();
     this.calcLimitFractionLength();
     // this.calcScaleRange();
   },
@@ -123,10 +124,30 @@ const stateModel = {
   //   );
   // },
 
+  calcDefaultScaleValues() {
+    const values = [];
+    const { min, max } = this.state;
+
+    this.scaleStep = this.getDefaultScaleStep();
+
+    for (let i = min; i <= max; i += this.scaleStep) {
+      values.push(this.toFixed(i));
+    }
+
+    this.state.values = values;
+  },
+
+  getDefaultScaleStep() {
+    const defaultParts = 4;
+    const { min, max } = this.state;
+
+    return (max - min) / defaultParts;
+  },
+
   calcLimitFractionLength() {
     const arr = [];
     const { min, max, from, step } = this.state;
-    arr.push(min, max, from, step);
+    arr.push(min, max, from, step, this.scaleStep);
 
     if (this.state.isDouble) {
       const { to } = this.state;
@@ -169,10 +190,6 @@ const stateModel = {
   setIsDouble() {
     this.state.isDouble = this.state.type === types.DOUBLE;
   },
-
-  // setStepFractionLength(value) {
-  //   this.stepFractionLength = value;
-  // },
 
   isInRange(value) {
     return value >= this.state.min && value <= this.state.max;
