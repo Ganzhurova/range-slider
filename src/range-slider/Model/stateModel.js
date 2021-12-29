@@ -128,18 +128,17 @@ const stateModel = {
     const values = [];
     const { min, max } = this.state;
 
-    this.scaleStep = this.getDefaultScaleStep();
+    this.scaleStep = this.getDefaultScaleStep(min, max);
 
-    for (let i = min; i <= max; i += this.scaleStep) {
-      values.push(this.toFixed(i));
+    for (let i = min; i <= max; i = this.toFixed(this.scaleStep + i)) {
+      values.push(i);
     }
 
     this.state.values = values;
   },
 
-  getDefaultScaleStep() {
+  getDefaultScaleStep(min, max) {
     const defaultParts = 4;
-    const { min, max } = this.state;
 
     return (max - min) / defaultParts;
   },
