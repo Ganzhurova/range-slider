@@ -55,6 +55,14 @@ class Component extends EventEmitter {
     };
   }
 
+  fixStyle(obj, currentStyleValue) {
+    Object.values(obj).forEach(value => {
+      if (value !== currentStyleValue) {
+        this.el.style[value] = '';
+      }
+    });
+  }
+
   static setDirection(isVertical) {
     Component.direction = isVertical ? directions.TOP : directions.LEFT;
     Component.sizeName = isVertical ? size.HEIGHT : size.WIDTH;
