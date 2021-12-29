@@ -40,17 +40,6 @@ class View extends EventEmitter {
     return this.getPosition(index).toFixed(this.options.fractionLength);
   }
 
-  correctDirection() {
-    const arr = [...this.thumbs, ...this.labels, this.commonLable, this.bar];
-    arr.forEach(instance => {
-      instance.correctDirection();
-    });
-  }
-
-  correctSize() {
-    this.bar.correctSize();
-  }
-
   subscribeToEvents() {
     this.template.subscribe('newInstance', instance => {
       if (!(instance instanceof ThumbView)) return;
@@ -118,12 +107,11 @@ class View extends EventEmitter {
     this.options = options;
     this.pxValues = {};
 
-    window.addEventListener('DOMContentLoaded', () => {
-      this.correctDirection();
-      this.correctSize();
-      this.setThumbs();
-      this.updateScale();
-    });
+    // window.addEventListener('DOMContentLoaded', () => {
+    // вызов слушателя перенести в оболочку jq ?
+    this.setThumbs();
+    this.updateScale();
+    // });
   }
 
   setHandlers() {
