@@ -1,7 +1,7 @@
 import Component from '../Component';
 import helpers from '../../helpers/helpers';
 import { html } from '../../lib/html';
-import { positionIndex, dragDirections } from '../../lib/constants';
+import { positionIndex, dragDirections, directions } from '../../lib/constants';
 
 class ThumbView extends Component {
   static limitSize = 0;
@@ -27,12 +27,10 @@ class ThumbView extends Component {
     });
   }
 
-  correctDirection() {
-    helpers.correctDirection.call(this, ThumbView.direction);
-  }
-
   setup(position) {
+    this.fixStyle(directions, ThumbView.direction);
     this.setIndex();
+
     const pxValue = ThumbView.positionToPxValue(position);
 
     this.el.style[ThumbView.direction] = `${pxValue}px`;

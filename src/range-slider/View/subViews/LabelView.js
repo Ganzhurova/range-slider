@@ -1,16 +1,12 @@
 import Component from '../Component';
-import helpers from '../../helpers/helpers';
 import { html } from '../../lib/html';
+import { directions } from '../../lib/constants';
 
 class LabelView extends Component {
   constructor() {
     super();
 
     this.init(html.label);
-  }
-
-  correctDirection() {
-    helpers.correctDirection.call(this, LabelView.direction);
   }
 
   setPxValue(pxValue, size) {
@@ -35,6 +31,7 @@ class LabelView extends Component {
   }
 
   setup(pxValue, positionText, thumbSize) {
+    this.fixStyle(directions, LabelView.direction);
     this.setPositionText(positionText);
     this.setPxValue(pxValue, thumbSize);
   }

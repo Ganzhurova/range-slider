@@ -1,7 +1,6 @@
 import Component from '../Component';
-import helpers from '../../helpers/helpers';
 import { html } from '../../lib/html';
-import { size } from '../../lib/constants';
+import { size, directions } from '../../lib/constants';
 
 class BarView extends Component {
   constructor() {
@@ -10,19 +9,10 @@ class BarView extends Component {
     this.init(html.bar);
   }
 
-  correctDirection() {
-    helpers.correctDirection.call(this, BarView.direction);
-  }
-
-  correctSize() {
-    Object.values(size).forEach(sizeName => {
-      if (sizeName !== BarView.sizeName) {
-        this.el.style[sizeName] = '';
-      }
-    });
-  }
-
   setup(correctValue, pxValues) {
+    this.fixStyle(size, BarView.sizeName);
+    this.fixStyle(directions, BarView.direction);
+
     const START_POSITION = 0;
     const isSingleType = Object.keys(pxValues).length === 1;
     const fromPos = pxValues[0] + correctValue;
