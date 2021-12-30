@@ -12,7 +12,7 @@ class ScaleView extends Component {
   setup(sizeValue, values) {
     this.fixStyle(size, ScaleView.sizeName);
     this.el.innerHTML = '';
-    this.el.style[ScaleView.sizeName] = `${sizeValue}px`;
+    this.updateSize(sizeValue);
 
     this.renderDivisions(values);
   }
@@ -25,6 +25,10 @@ class ScaleView extends Component {
       division.style[ScaleView.direction] = `${step * i}%`;
       this.el.append(division);
     });
+  }
+
+  updateSize(sizeValue) {
+    this.el.style[ScaleView.sizeName] = `${sizeValue}px`;
   }
 
   static getPercentageStep(values) {
