@@ -40,6 +40,10 @@ class View extends EventEmitter {
     return this.getPosition(index).toFixed(this.options.fractionLength);
   }
 
+  getLimitSize() {
+    return this.line.getSize() - this.thumbs[0].getSize();
+  }
+
   subscribeToEvents() {
     this.template.subscribe('newInstance', instance => {
       if (!(instance instanceof ThumbView)) return;
@@ -58,7 +62,7 @@ class View extends EventEmitter {
     const range = Math.abs(this.options.max - this.options.min);
     const correctPosition = position => position - this.options.min;
 
-    ThumbView.calcUnit(this.line.getSize(), this.thumbs[0].getSize(), range);
+    ThumbView.calcUnit(this.getLimitSize(), range);
     this.thumbs.forEach((thumb, i) => {
       const position = correctPosition(this.getPosition(i));
       thumb.setup(position);
@@ -96,9 +100,7 @@ class View extends EventEmitter {
   updateScale() {
     if (!this.options.isScale) return;
 
-    const size = this.line.getSize() - this.thumbs[0].getSize();
-
-    this.scale.setup(size, this.options.values);
+    this.scale.setup(this.getLimitSize(), this.options.values);
   }
 
   update(options) {
@@ -114,11 +116,16 @@ class View extends EventEmitter {
     // });
   }
 
+  updateOnResize() {
+    this.setThumbs();
+    this.scale.updateSize(this.getLimitSize());
+  }
+
   setHandlers() {
-    const setThumbs = this.setThumbs.bind(this);
+    this.updateOnResize = this.updateOnResize.bind(this);
     this.handlerThumbDragStart = this.handlerThumbDragStart.bind(this);
 
-    window.addEventListener('resize', setThumbs);
+    window.addEventListener('resize', this.updateOnResize);
     this.el.addEventListener('mousedown', this.handlerThumbDragStart);
     this.el.addEventListener('touchstart', this.handlerThumbDragStart);
   }
