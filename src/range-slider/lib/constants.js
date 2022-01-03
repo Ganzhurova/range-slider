@@ -14,8 +14,8 @@ const directions = {
 };
 
 const coordNames = {
-  X: 'x',
-  Y: 'y',
+  X: 'X',
+  Y: 'Y',
 };
 
 const positionIndex = {
@@ -23,9 +23,4 @@ const positionIndex = {
   1: 'to',
 };
 
-const dragDirections = {
-  FORWARD: 'forward',
-  BACKWARD: 'backward',
-};
-
-export { types, size, directions, coordNames, positionIndex, dragDirections };
+export { types, size, directions, coordNames, positionIndex };
