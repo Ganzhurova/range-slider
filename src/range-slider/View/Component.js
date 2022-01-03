@@ -8,6 +8,8 @@ class Component extends EventEmitter {
 
   static sizeName = '';
 
+  static unit = 0;
+
   init(html) {
     this.el = document.createElement(html.tag);
     this.addClass(html.className);
@@ -46,13 +48,16 @@ class Component extends EventEmitter {
     return box[Component.sizeName];
   }
 
-  getCoords() {
+  getCoord() {
     const box = this.getBox();
+    const pageOffset = `page${Component.coordName}Offset`;
 
-    return {
-      left: box.left + window.pageXOffset,
-      top: box.top + window.pageYOffset,
-    };
+    return box[Component.direction] + window[pageOffset];
+
+    // return {
+    //   left: box.left + window.pageXOffset,
+    //   top: box.top + window.pageYOffset,
+    // };
   }
 
   fixStyle(obj, currentStyleValue) {
