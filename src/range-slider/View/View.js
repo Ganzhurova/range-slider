@@ -51,9 +51,8 @@ class View extends EventEmitter {
         this.updatePosition(percentValue, index);
         this.setPercentValues(percentValue, index);
         this.calcLimitCoords(percentValue, index);
-
-        // this.updateLabels(pxValue, index);
-        // this.updateBar();
+        this.updateLabels(percentValue, index);
+        this.updateBar();
       });
     });
   }
@@ -121,7 +120,7 @@ class View extends EventEmitter {
 
   setThumbs() {
     this.thumbs.forEach((thumb, i) => {
-      thumb.setup(this.percentValues[i], i, this.percentUnit);
+      thumb.setup(this.percentValues[i], i);
     });
   }
 
@@ -143,19 +142,19 @@ class View extends EventEmitter {
     this.emit('positionChanged', position, index);
   }
 
-  updateLabels(pxValue, index) {
+  updateLabels(percentValue, index) {
     if (this.labels.length === 0) return;
 
-    const thumbSize = this.thumbs[index].getSize();
+    const thumbSize = this.thumbs[index].getSize() * this.percentUnit;
     const positionText = this.getPositionText(index);
 
-    this.labels[index].setup(pxValue, positionText, thumbSize);
+    this.labels[index].setup(percentValue, positionText, thumbSize);
     LabelView.checkOverlap(this.commonLable, ...this.labels);
   }
 
   updateBar() {
-    const correctValue = this.thumbs[0].getSize() / 2;
-    this.bar.setup(correctValue, this.pxValues);
+    const correctValue = (this.thumbs[0].getSize() / 2) * this.percentUnit;
+    this.bar.setup(correctValue, this.percentValues);
   }
 
   updateScale() {
@@ -190,6 +189,7 @@ class View extends EventEmitter {
   }
 
   handlerUpdateOnResize() {
+    this.makeBaseCalc();
     this.setThumbs();
     this.scale.updateSize(this.limitSize);
   }
