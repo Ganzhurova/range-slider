@@ -9,16 +9,16 @@ class LabelView extends Component {
     this.init(html.label);
   }
 
-  setPxValue(pxValue, size) {
-    const labelSize = this.getSize();
+  setPercentValue(percentValue, size) {
+    const labelSize = this.getSize() * Component.unit;
     const offset = (labelSize - size) / 2;
-    this.pxValue = pxValue - offset;
+    this.percentValue = percentValue - offset;
 
-    this.el.style[LabelView.direction] = `${this.pxValue}px`;
+    this.el.style[LabelView.direction] = `${this.percentValue}%`;
   }
 
-  getPxValue() {
-    return this.pxValue;
+  getPercentValue() {
+    return this.percentValue;
   }
 
   setPositionText(positionText) {
@@ -30,10 +30,10 @@ class LabelView extends Component {
     return this.positionText;
   }
 
-  setup(pxValue, positionText, thumbSize) {
+  setup(percentValue, positionText, thumbSize) {
     this.fixStyle(directions, LabelView.direction);
     this.setPositionText(positionText);
-    this.setPxValue(pxValue, thumbSize);
+    this.setPercentValue(percentValue, thumbSize);
   }
 
   hidden() {
@@ -45,17 +45,17 @@ class LabelView extends Component {
   }
 
   static checkOverlap(common, from, to) {
-    const toStart = to ? to.getPxValue() : undefined;
+    const toStart = to ? to.getPercentValue() : undefined;
 
     if (!toStart) {
       from.show();
       return;
     }
 
-    const fromEnd = from.getPxValue() + from.getSize();
+    const fromEnd = from.getPercentValue() + from.getSize() * Component.unit;
     const isOverlap = fromEnd >= toStart;
 
-    const pxValueCommon = (toStart - fromEnd) / 2 + fromEnd;
+    const percentValueCommon = (toStart - fromEnd) / 2 + fromEnd;
     const getCommonText = () => {
       const fromPos = from.getPositionText();
       const toPos = to.getPositionText();
@@ -69,7 +69,7 @@ class LabelView extends Component {
       return posText;
     };
 
-    common.setup(pxValueCommon, getCommonText(), 0);
+    common.setup(percentValueCommon, getCommonText(), 0);
 
     if (isOverlap) {
       from.hidden();
