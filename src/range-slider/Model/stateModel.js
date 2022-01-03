@@ -30,10 +30,8 @@ const stateModel = {
     this.validateLimits();
     this.validatePos();
     this.validateStep();
-    // this.validateScaleStep();
     this.calcDefaultScaleValues();
     this.calcLimitFractionLength();
-    // this.calcScaleRange();
   },
 
   validateLimits() {
@@ -83,47 +81,6 @@ const stateModel = {
     this.state.step = step;
   },
 
-  // validateScaleStep() {
-  //   let scaleStep = Math.abs(this.state.scaleStep);
-  //   const isValidScaleStep =
-  //     scaleStep > 0 && scaleStep < this.state.max - this.state.min;
-  //
-  //   if (!isValidScaleStep) {
-  //     const range = this.state.max - this.state.min;
-  //     scaleStep = this.toFixed(range * 0.1);
-  //   }
-  //
-  //   this.state.scaleStep = scaleStep;
-  // },
-
-  // validateStep() {
-  //   let step = Math.abs(this.state.step);
-  //   const range = this.state.max - this.state.min;
-  //
-  //   this.setStepFractionLength(this.getFractionLength(step));
-  //
-  //   const isValidStep = step > 0 && step < this.state.max;
-  //
-  //   const getDefaultStep = () =>
-  //     this.toFixed(range * 0.1, this.stepFractionLength);
-  //
-  //   if (!isValidStep) {
-  //     this.setStepFractionLength(this.limitFractionLength);
-  //     step = getDefaultStep();
-  //
-  //     while (step === 0) {
-  //       this.stepFractionLength += 1;
-  //       step = getDefaultStep();
-  //     }
-  //   }
-  //
-  //   this.state.step = step;
-  //   this.state.fractionLength = Math.max(
-  //     this.limitFractionLength,
-  //     this.stepFractionLength
-  //   );
-  // },
-
   calcDefaultScaleValues() {
     const values = [];
     const { min, max } = this.state;
@@ -156,35 +113,6 @@ const stateModel = {
     const arrLength = arr.map(num => this.getFractionLength(num));
     this.state.fractionLength = Math.max(...arrLength);
   },
-
-  // calcScaleRange() {
-  //   let { scaleRange } = this.state;
-  //   scaleRange = [];
-  //
-  //   const setScaleRange = () => {
-  //     this.state.scaleRange = scaleRange;
-  //   };
-  //
-  //   const { isScale, min, max, step } = this.state;
-  //
-  //   if (!isScale) {
-  //     setScaleRange();
-  //     return;
-  //   }
-  //
-  //   for (let i = min; i < max + step; i += step) {
-  //     i = i > max ? max : i;
-  //     scaleRange.push(i);
-  //   }
-  //
-  //   setScaleRange();
-  // },
-  //
-  // calcLimitFractionLength() {
-  //   const minLength = this.getFractionLength(this.state.min);
-  //   const maxLength = this.getFractionLength(this.state.max);
-  //   this.limitFractionLength = Math.max(minLength, maxLength);
-  // },
 
   setIsDouble() {
     this.state.isDouble = this.state.type === types.DOUBLE;
