@@ -1,75 +1,68 @@
 import Component from '../Component';
 import helpers from '../../helpers/helpers';
 import { html } from '../../lib/html';
-import { positionIndex, dragDirections, directions } from '../../lib/constants';
+import { directions } from '../../lib/constants';
 
 class ThumbView extends Component {
-  static limitSize = 0;
-
-  static unit = 0;
-
   constructor() {
     super();
     this.index = 0;
-    this.oldDragCoords = {
-      x: 0,
-      y: 0,
-    };
+    this.newCoord = 0;
+    this.oldCoord = 0;
 
     this.init(html.thumb);
   }
 
-  setIndex() {
-    Object.entries(positionIndex).forEach(([index, value]) => {
-      if (this.el.classList.contains(value)) {
-        this.index = +index;
-      }
-    });
+  setIndex(i) {
+    this.index = i;
   }
 
-  setup(position) {
+  setCoord(coord) {
+    this.newCoord = coord;
+  }
+
+  setLimitCoords(limitCoords) {
+    this.limitCoords = limitCoords;
+  }
+
+  setup(percentValue, i) {
     this.fixStyle(directions, ThumbView.direction);
-    this.setIndex();
+    this.setIndex(i);
+    this.setCoord(percentValue);
 
-    const pxValue = ThumbView.positionToPxValue(position);
-
-    this.el.style[ThumbView.direction] = `${pxValue}px`;
-    this.emit('valueChanged', pxValue, this.index);
+    this.el.style[ThumbView.direction] = `${percentValue}%`;
+    this.emit('percentChanged', percentValue, this.index);
   }
 
-  calcLimitCoords(pxValues) {
-    const START_COORD = 0;
-    const isFromThumb = () => this.index === 0;
-    const getCoord = index => {
-      let coord;
-      Object.keys(pxValues).forEach((key, i) => {
-        if (index !== i) {
-          coord = pxValues[key];
-        }
-      });
-      return coord;
-    };
-
-    this.limitCoords = {
-      start: isFromThumb() ? START_COORD : getCoord(this.index),
-      end: isFromThumb()
-        ? getCoord(this.index) || ThumbView.limitSize
-        : ThumbView.limitSize,
-    };
+  getValidCoord(coord) {
+    if (coord < this.limitCoords.start) {
+      return this.limitCoords.start;
+    }
+    if (coord > this.limitCoords.end) {
+      return this.limitCoords.end;
+    }
+    return coord;
   }
 
-  handlerThumbDragStart(parentCoords, step, e) {
-    const evt = helpers.getEvent(e);
-    const thumbCoords = this.getCoords();
+  getSteps(step) {
+    const steps = [];
 
-    const shift = {
-      x: evt.pageX - thumbCoords.left,
-      y: evt.pageY - thumbCoords.top,
-    };
+    const prevStep = this.getValidCoord(this.newCoord - step);
+    const nextStep = this.getValidCoord(this.newCoord + step);
+
+    steps.push(prevStep, nextStep);
+    return steps;
+  }
+
+  handlerThumbDragStart(parentCoord, step, e) {
+    const evtCoord = helpers.getEventCoord(e, ThumbView);
+    const thumbCoord = this.getCoord();
+
+    const shift = evtCoord - thumbCoord;
 
     const handlerThumbDrag = this.handlerThumbDrag.bind(
       this,
-      parentCoords,
+      parentCoord,
       step,
       shift
     );
@@ -87,69 +80,26 @@ class ThumbView extends Component {
     document.addEventListener('touchend', handlerThumbDragEnd);
   }
 
-  handlerThumbDrag(parentCoords, step, shift, e) {
-    const evt = helpers.getEvent(e);
-    const { coordName } = ThumbView;
-    const pointerCoordName = `page${coordName.toUpperCase()}`;
+  handlerThumbDrag(parentCoord, step, shift, e) {
+    const evtCoord = helpers.getEventCoord(e, ThumbView);
+    const coord = (evtCoord - shift - parentCoord) * Component.unit;
 
-    const dragDirection =
-      evt[pointerCoordName] > this.oldDragCoords[coordName]
-        ? dragDirections.FORWARD
-        : dragDirections.BACKWARD;
+    const stepOffset = step / 2;
+    const steps = this.getSteps(step);
 
-    const stepPxValue = ThumbView.positionToPxValue(step);
-
-    const thumbCoord = this.getCoords()[ThumbView.direction];
-    const pointerCoord =
-      evt[pointerCoordName] -
-      shift[coordName] -
-      parentCoords[ThumbView.direction];
-
-    let newValue = step
-      ? thumbCoord - parentCoords[ThumbView.direction]
-      : pointerCoord;
-
-    if (
-      dragDirection === dragDirections.FORWARD &&
-      evt[pointerCoordName] > thumbCoord + this.getSize()
+    if (!step) {
+      this.newCoord = this.getValidCoord(coord);
+    } else if (
+      coord > this.newCoord + stepOffset ||
+      coord < this.newCoord - stepOffset
     ) {
-      newValue += stepPxValue;
+      this.newCoord = steps.reduce((prev, curr) =>
+        Math.abs(curr - coord) < Math.abs(prev - coord) ? curr : prev
+      );
     }
 
-    if (
-      dragDirection === dragDirections.BACKWARD &&
-      evt[pointerCoordName] < thumbCoord
-    ) {
-      newValue -= stepPxValue;
-    }
-
-    if (newValue < this.limitCoords.start) {
-      newValue = this.limitCoords.start;
-    }
-
-    if (newValue > this.limitCoords.end) {
-      newValue = this.limitCoords.end;
-    }
-
-    this.el.style[ThumbView.direction] = `${newValue}px`;
-
-    this.oldDragCoords.x = evt.pageX;
-    this.oldDragCoords.y = evt.pageY;
-
-    this.emit('valueChanged', newValue, this.index);
-  }
-
-  static calcUnit(limitSize, range) {
-    ThumbView.limitSize = limitSize;
-    ThumbView.unit = ThumbView.limitSize / range;
-  }
-
-  static positionToPxValue(position) {
-    return position * ThumbView.unit;
-  }
-
-  static pxValueToPosition(pxValue) {
-    return pxValue / ThumbView.unit;
+    this.el.style[ThumbView.direction] = `${this.newCoord}%`;
+    this.emit('percentChanged', this.newCoord, this.index);
   }
 }
 
