@@ -1,9 +1,9 @@
 import EventEmitter from '../EventEmitter';
 import Template from './Template';
+import Component from './Component';
 import ThumbView from './subViews/ThumbView';
 import LabelView from './subViews/LabelView';
 import { html, mix } from '../lib/html';
-import { positionIndex } from '../lib/constants';
 import helpers from '../helpers/helpers';
 
 class View extends EventEmitter {
@@ -12,6 +12,8 @@ class View extends EventEmitter {
     this.el = document.querySelector(selector);
     this.template = new Template(this.el);
     this.options = {};
+    this.limitSize = 0;
+    this.unit = 0;
 
     this.init();
   }
@@ -40,51 +42,105 @@ class View extends EventEmitter {
     return this.getPosition(index).toFixed(this.options.fractionLength);
   }
 
-  getLimitSize() {
-    return this.line.getSize() - this.thumbs[0].getSize();
-  }
-
   subscribeToEvents() {
     this.template.subscribe('newInstance', instance => {
       if (!(instance instanceof ThumbView)) return;
       const thumb = instance;
 
-      thumb.subscribe('valueChanged', (pxValue, index) => {
-        this.updatePosition(pxValue, index);
-        this.setPxValues(pxValue, index);
-        this.updateLabels(pxValue, index);
-        this.updateBar();
+      thumb.subscribe('percentChanged', (percentValue, index) => {
+        this.updatePosition(percentValue, index);
+        this.setPercentValues(percentValue, index);
+        this.calcLimitCoords(percentValue, index);
+
+        // this.updateLabels(pxValue, index);
+        // this.updateBar();
       });
     });
   }
 
-  setThumbs() {
+  calcPercentUnit() {
+    this.percentUnit = 100 / this.line.getSize();
+    Component.unit = this.percentUnit;
+  }
+
+  calcLimitSize() {
+    this.limitSize =
+      (this.line.getSize() - this.thumbs[0].getSize()) * this.percentUnit;
+  }
+
+  calcUnit() {
     const range = Math.abs(this.options.max - this.options.min);
+
+    this.unit = this.limitSize / range;
+  }
+
+  positionToPercent(position) {
+    return position * this.unit;
+  }
+
+  percentToPosition(percent) {
+    return percent / this.unit;
+  }
+
+  setPercentValues(percentValue, index) {
+    this.percentValues[index] = percentValue;
+    console.log(this.percentValues);
+  }
+
+  calcLimitCoords(percentValue, i) {
+    const START_COORD = 0;
+    const END_COORD = this.limitSize;
+    const getStartIndex = index => index - 1;
+    const getEndIndex = index => index + 1;
+
+    const limitCoords = {
+      start: this.percentValues[getStartIndex(i)] || START_COORD,
+      end: this.percentValues[getEndIndex(i)] || END_COORD,
+    };
+
+    this.thumbs[i].setLimitCoords(limitCoords);
+  }
+
+  calcPercentValues() {
     const correctPosition = position => position - this.options.min;
 
-    ThumbView.calcUnit(this.getLimitSize(), range);
+    for (let i = 0; i < this.thumbs.length; i += 1) {
+      const percentValue = this.positionToPercent(
+        correctPosition(this.getPosition(i))
+      );
+      this.setPercentValues(percentValue, i);
+    }
+  }
+
+  makeBaseCalc() {
+    this.calcPercentUnit();
+    this.calcLimitSize();
+    this.calcUnit();
+    this.calcPercentValues();
+  }
+
+  setThumbs() {
     this.thumbs.forEach((thumb, i) => {
-      const position = correctPosition(this.getPosition(i));
-      thumb.setup(position);
+      thumb.setup(this.percentValues[i], i, this.percentUnit);
     });
   }
 
-  updateBar() {
-    const correctValue = this.thumbs[0].getSize() / 2;
-    this.bar.setup(correctValue, this.pxValues);
-  }
+  // setThumbs() {
+  //   const range = Math.abs(this.options.max - this.options.min);
+  //   const correctPosition = position => position - this.options.min;
+  //
+  //   ThumbView.calcUnit(this.getLimitSize(), range);
+  //   this.thumbs.forEach((thumb, i) => {
+  //     const position = correctPosition(this.getPosition(i));
+  //     thumb.setup(position);
+  //   });
+  // }
 
-  updatePosition(pxValue, index) {
+  updatePosition(percentValue, index) {
     const correctPosition = position => position + this.options.min;
-    const position = correctPosition(ThumbView.pxValueToPosition(pxValue));
+    const position = correctPosition(this.percentToPosition(percentValue));
 
     this.emit('positionChanged', position, index);
-  }
-
-  setPxValues(pxValue, index) {
-    this.pxValues[index] = pxValue;
-
-    this.thumbs[index].calcLimitCoords(this.pxValues);
   }
 
   updateLabels(pxValue, index) {
@@ -97,63 +153,77 @@ class View extends EventEmitter {
     LabelView.checkOverlap(this.commonLable, ...this.labels);
   }
 
+  updateBar() {
+    const correctValue = this.thumbs[0].getSize() / 2;
+    this.bar.setup(correctValue, this.pxValues);
+  }
+
   updateScale() {
     if (!this.options.isScale) return;
 
-    this.scale.setup(this.getLimitSize(), this.options.values);
+    this.scale.setup(this.limitSize, this.options.values);
   }
 
   update(options) {
     this.template.build(options);
 
     this.options = options;
-    this.pxValues = {};
+    this.percentValues = {};
 
     // window.addEventListener('DOMContentLoaded', () => {
     // вызов слушателя перенести в оболочку jq ?
+    this.makeBaseCalc();
     this.setThumbs();
     this.updateScale();
     // });
   }
 
-  updateOnResize() {
-    this.setThumbs();
-    this.scale.updateSize(this.getLimitSize());
-  }
-
   setHandlers() {
-    this.updateOnResize = this.updateOnResize.bind(this);
+    this.handlerUpdateOnResize = this.handlerUpdateOnResize.bind(this);
     this.handlerThumbDragStart = this.handlerThumbDragStart.bind(this);
+    this.handlerScaleDivisionClick = this.handlerScaleDivisionClick.bind(this);
 
-    window.addEventListener('resize', this.updateOnResize);
+    window.addEventListener('resize', this.handlerUpdateOnResize);
     this.el.addEventListener('mousedown', this.handlerThumbDragStart);
     this.el.addEventListener('touchstart', this.handlerThumbDragStart);
+    this.el.addEventListener('click', this.handlerScaleDivisionClick);
+  }
+
+  handlerUpdateOnResize() {
+    this.setThumbs();
+    this.scale.updateSize(this.limitSize);
   }
 
   handlerThumbDragStart(e) {
     e.preventDefault();
-    if (!e.target.classList.contains(html.thumb.className)) return;
 
-    let index;
+    const target = e.target.closest(`.${html.thumb.className}`);
 
-    Object.entries(positionIndex).forEach(([key, value]) => {
-      if (e.target.classList.contains(value)) {
-        index = +key;
-      }
-    });
+    if (!target) return;
 
-    this.thumbs.forEach((thumb, i) => {
-      if (index === i) {
-        thumb.handlerThumbDragStart(
-          this.line.getCoords(),
-          this.options.step,
-          e
-        );
+    const currentThumb = this.thumbs.find(thumb => thumb.el === target);
+
+    const stepPercentValue = this.positionToPercent(this.options.step);
+
+    currentThumb.handlerThumbDragStart(
+      this.line.getCoord(),
+      stepPercentValue,
+      e
+    );
+
+    this.thumbs.forEach(thumb => {
+      if (thumb === currentThumb) {
         thumb.addClass(mix.selected);
       } else {
         thumb.removeClass(mix.selected);
       }
     });
+  }
+
+  handlerScaleDivisionClick(e) {
+    if (!e.target.closest(`.${html.scaleDivision.className}`)) return;
+    const a = this.scale.getValue(e);
+    console.log(a);
   }
 }
 
