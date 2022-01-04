@@ -160,7 +160,7 @@ class View extends EventEmitter {
   updateScale() {
     if (!this.options.isScale) return;
 
-    this.scale.setup(this.limitSize, this.options.values);
+    this.scale.setup(this.limitSize, this.options.scaleValues);
   }
 
   update(options) {
