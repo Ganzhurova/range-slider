@@ -7,7 +7,7 @@ const stateModel = {
     Object.assign(this.state, options);
     this.setIsDouble();
     this.toFixedNumberOptions();
-    this.validate();
+    this.makeBaseOperations();
   },
 
   get() {
@@ -26,12 +26,13 @@ const stateModel = {
     );
   },
 
-  validate() {
+  makeBaseOperations() {
     this.validateLimits();
     this.validatePos();
     this.validateStep();
-    this.calcDefaultScaleValues();
+    this.validateScaleParts();
     this.calcLimitFractionLength();
+    this.calcScaleValues();
   },
 
   validateLimits() {
@@ -81,29 +82,16 @@ const stateModel = {
     this.state.step = step;
   },
 
-  calcDefaultScaleValues() {
-    const values = [];
-    const { min, max } = this.state;
-
-    this.scaleStep = this.getDefaultScaleStep(min, max);
-
-    for (let i = min; i <= max; i = this.toFixed(this.scaleStep + i)) {
-      values.push(i);
-    }
-
-    this.state.values = values;
-  },
-
-  getDefaultScaleStep(min, max) {
-    const defaultParts = 4;
-
-    return (max - min) / defaultParts;
+  validateScaleParts() {
+    let parts = this.state.scaleParts;
+    parts = Number.isInteger(parts) ? parts : Math.round(parts);
+    this.state.scaleParts = Math.abs(parts);
   },
 
   calcLimitFractionLength() {
     const arr = [];
     const { min, max, from, step } = this.state;
-    arr.push(min, max, from, step, this.scaleStep);
+    arr.push(min, max, from, step);
 
     if (this.state.isDouble) {
       const { to } = this.state;
@@ -112,6 +100,29 @@ const stateModel = {
 
     const arrLength = arr.map(num => this.getFractionLength(num));
     this.state.fractionLength = Math.max(...arrLength);
+  },
+
+  calcScaleValues() {
+    const values = [];
+    const { min, max, scaleParts, fractionLength } = this.state;
+    let value = min;
+
+    const scaleStep = this.getScaleStep(min, max);
+
+    for (let i = 0; i <= scaleParts; i += 1) {
+      values.push(this.toFixed(value, fractionLength));
+      value += scaleStep;
+    }
+
+    this.state.scaleValues = values;
+
+    console.log(this.state.scaleValues);
+  },
+
+  getScaleStep(min, max) {
+    const { scaleParts } = this.state;
+
+    return (max - min) / scaleParts;
   },
 
   setIsDouble() {
