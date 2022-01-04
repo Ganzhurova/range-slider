@@ -53,11 +53,6 @@ class Component extends EventEmitter {
     const pageOffset = `page${Component.coordName}Offset`;
 
     return box[Component.direction] + window[pageOffset];
-
-    // return {
-    //   left: box.left + window.pageXOffset,
-    //   top: box.top + window.pageYOffset,
-    // };
   }
 
   fixStyle(obj, currentStyleValue) {
@@ -72,6 +67,12 @@ class Component extends EventEmitter {
     Component.direction = isVertical ? directions.TOP : directions.LEFT;
     Component.sizeName = isVertical ? size.HEIGHT : size.WIDTH;
     Component.coordName = isVertical ? coordNames.Y : coordNames.X;
+  }
+
+  static createChildEl(html) {
+    const el = document.createElement(html.tag);
+    el.className = html.className;
+    return el;
   }
 }
 
