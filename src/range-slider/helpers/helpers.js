@@ -14,11 +14,5 @@ const helpers = {
     const pageCoordName = `page${instance.coordName}`;
     return evt[pageCoordName];
   },
-
-  createEl(html) {
-    const el = document.createElement(html.tag);
-    el.className = html.className;
-    return el;
-  },
 };
 export default helpers;
