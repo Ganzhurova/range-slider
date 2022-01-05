@@ -34,6 +34,14 @@ class Component extends EventEmitter {
     }
   }
 
+  hidden() {
+    this.el.style.visibility = 'hidden';
+  }
+
+  show() {
+    this.el.style.visibility = '';
+  }
+
   getEl() {
     return this.el;
   }

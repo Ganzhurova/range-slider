@@ -36,14 +36,6 @@ class LabelView extends Component {
     this.setPercentValue(percentValue, thumbSize);
   }
 
-  hidden() {
-    this.el.style.visibility = 'hidden';
-  }
-
-  show() {
-    this.el.style.visibility = '';
-  }
-
   static checkOverlap(common, from, to) {
     const toStart = to ? to.getPercentValue() : undefined;
 
