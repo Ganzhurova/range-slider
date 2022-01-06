@@ -90,30 +90,41 @@ $thumb-height: 50px;
   position: relative;
   height: 35px;
   margin: 0 auto;
+  font-size: 14px;
   background-color: green;
 }
 
-.range-slider__division {
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  padding: 2px;
-  font-size: 14px;
-  line-height: 1;
-  cursor: pointer;
-  // color: $grey;
-  background-color: red;
-  opacity: 0.7;
-  transform: translateX(-50%);
-}
+// .range-slider__division {
+//   position: absolute;
+//   display: flex;
+//   flex-direction: column;
+//   height: 100%;
+//   padding: 2px;
+//   font-size: 14px;
+//   line-height: 1;
+//   cursor: pointer;
+//   // color: $grey;
+//   background-color: red;
+//   opacity: 0.7;
+//   transform: translateX(-50%);
+// }
 
 .range-slider__point {
+  position: absolute;
   width: 1px;
   height: 15px;
-  margin: 0 auto auto;
   // background-color: $grey;
   background-color: black;
+}
+
+.range-slider__value {
+  position: absolute;
+  bottom: 0;
+  padding: 2px 4px;
+  cursor: pointer;
+  background-color: red;
+  opacity: 0.7;
+  transform: translateX(-50%); //elfkbnm
 }
 
 .range-slider.vertical {
@@ -147,27 +158,49 @@ $thumb-height: 50px;
   .range-slider__scale {
     flex-wrap: nowrap;
     order: -1;
+    // width: 35px;
     width: auto;
+    height: 450px; //elfkbnm
     margin: auto 0;
   }
 
-  .range-slider__division {
-    right: 0;
-    left: auto;
-    flex-direction: row;
-    height: auto;
-    transform: translateX(0) translateY(-50%);
-  }
+  // .range-slider__division {
+  //   right: 0;
+  //   left: auto;
+  //   flex-direction: row;
+  //   height: auto;
+  //   transform: translateX(0) translateY(-50%);
+  // }
 
   .range-slider__point {
-    align-self: center;
+    right: 0;
+    // align-self: center;
     width: 10px;
     height: 1px;
-    margin: 0 0 0 4px;
+    transform: translateX(0) translateY(-50%); //elfkbnm
+    // margin: 0 0 0 4px;
+
+    &:nth-child(1) {
+      top: 0%;
+    }
+
+    &:nth-child(2) {
+      top: 25%;
+    }
   }
 
   .range-slider__value {
-    order: -1;
+    right: 10px;
+    bottom: auto;
+    transform: translateX(0) translateY(-50%); //elfkbnm
+
+    &:nth-child(3) {
+      top: 0%;
+    }
+
+    &:nth-child(4) {
+      top: 25%;
+    }
   }
 }
 
