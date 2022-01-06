@@ -1,5 +1,4 @@
 import Component from '../Component';
-import ScaleDivisionView from './ScaleDivisionView';
 import { html } from '../../lib/html';
 // import helpers from '../../helpers/helpers';
 import { size } from '../../lib/constants';
@@ -8,28 +7,34 @@ class ScaleView extends Component {
   constructor() {
     super();
     this.init(html.scale);
-    this.divisions = [];
   }
 
-  setup(sizeValue, values) {
+  setup(sizeValue, valuesText) {
     this.fixStyle(size, ScaleView.sizeName);
     this.el.innerHTML = '';
     this.updateSize(sizeValue);
 
-    this.renderDivisions(values);
-    this.setVisibilityOfValues();
+    this.renderDivisions(valuesText);
+    // this.setVisibilityOfValues();
   }
 
-  renderDivisions(values) {
-    const step = ScaleView.getPercentageStep(values);
+  renderDivisions(textValues) {
+    this.values = [];
 
-    values.forEach((value, i) => {
-      const division = new ScaleDivisionView();
-      division.setup(value);
-      division.el.style[ScaleView.direction] = `${step * i}%`;
-      this.addChild(division);
-      this.divisions.push(division);
+    const step = ScaleView.getPercentageStep(textValues);
+
+    textValues.forEach((textValue, i) => {
+      const point = ScaleView.getComponent(html.scalePoint, step * i);
+      const value = ScaleView.getComponent(html.scaleValue, step * i);
+
+      value.el.textContent = textValue;
+
+      this.addChild(point);
+      this.addChild(value);
+
+      this.values.push(value);
     });
+    console.log(this.values);
   }
 
   updateSize(sizeValue) {
@@ -54,26 +59,30 @@ class ScaleView extends Component {
     const isOverlap = this.getOverlapDivisions();
     if (!isOverlap) return;
     console.log(isOverlap);
+
+    // for (let i = 1; i <= this.divisions.length; i += 2) {
+    //   const division = this.divisions[i];
+    //   division.hidden(division.valueEl);
+    // }
   }
 
   // getValue(e) {
   //   return this.values.indexOf(e.target);
   // }
 
-  static getPercentageStep(values) {
-    return 100 / (values.length - 1);
+  static getComponent(htmlValue, percent) {
+    const component = new Component();
+    component.init(htmlValue);
+
+    component.el.style[ScaleView.direction] = `${percent}%`;
+    component.el.style.transform = `translate${ScaleView.coordName}(-50%)`;
+
+    return component;
   }
 
-  // static createDivision(valueText) {
-  //   const division = helpers.createEl(html.scaleDivision);
-  //   const point = helpers.createEl(html.scalePoint);
-  //   const value = helpers.createEl(html.scaleValue);
-  //
-  //   value.textContent = valueText;
-  //
-  //   division.append(point, value);
-  //   return division;
-  // }
+  static getPercentageStep(textValues) {
+    return 100 / (textValues.length - 1);
+  }
 }
 
 export default ScaleView;
