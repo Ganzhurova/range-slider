@@ -76,12 +76,6 @@ class Component extends EventEmitter {
     Component.sizeName = isVertical ? size.HEIGHT : size.WIDTH;
     Component.coordName = isVertical ? coordNames.Y : coordNames.X;
   }
-
-  static createChildEl(html) {
-    const el = document.createElement(html.tag);
-    el.className = html.className;
-    return el;
-  }
 }
 
 export default Component;
