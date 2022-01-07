@@ -76,6 +76,15 @@ class Component extends EventEmitter {
     Component.sizeName = isVertical ? size.HEIGHT : size.WIDTH;
     Component.coordName = isVertical ? coordNames.Y : coordNames.X;
   }
+
+  static checkOverlay(componentA, componentB) {
+    if (!componentB) return false;
+
+    const componentAEndPx = componentA.getCoord() + componentA.getSize();
+    const componentBStartPx = componentB.getCoord();
+
+    return componentAEndPx >= componentBStartPx;
+  }
 }
 
 export default Component;
