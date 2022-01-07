@@ -36,34 +36,30 @@ class LabelView extends Component {
     this.setPercentValue(percentValue, thumbSize);
   }
 
-  static checkOverlap(common, from, to) {
-    const toStart = to ? to.getPercentValue() : undefined;
-
-    if (!toStart) {
+  static switchCommonLabel(common, from, to) {
+    if (!to) {
       from.show();
       return;
     }
 
-    const fromEnd = from.getPercentValue() + from.getSize() * Component.unit;
-    const isOverlap = fromEnd >= toStart;
-
-    const percentValueCommon = (toStart - fromEnd) / 2 + fromEnd;
     const getCommonText = () => {
       const fromPos = from.getPositionText();
       const toPos = to.getPositionText();
-      let posText;
 
-      if (fromPos !== toPos) {
-        posText = `${fromPos} &ndash; ${toPos}`;
-      } else {
-        posText = `${fromPos}`;
-      }
-      return posText;
+      return fromPos !== toPos ? `${fromPos} &ndash; ${toPos}` : `${fromPos}`;
     };
 
-    common.setup(percentValueCommon, getCommonText(), 0);
+    const getCommonPos = () => {
+      const fromEnd = from.getPercentValue() + from.getSize() * Component.unit;
+      const toStart = to.getPercentValue();
 
-    if (isOverlap) {
+      return (toStart - fromEnd) / 2 + fromEnd;
+    };
+
+    const isOverlay = LabelView.checkOverlay(from, to);
+
+    if (isOverlay) {
+      common.setup(getCommonPos(), getCommonText(), 0);
       from.hidden();
       to.hidden();
       common.show();
