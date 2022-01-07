@@ -149,7 +149,8 @@ class View extends EventEmitter {
     const positionText = this.getPositionText(index);
 
     this.labels[index].setup(percentValue, positionText, thumbSize);
-    LabelView.checkOverlap(this.commonLable, ...this.labels);
+
+    LabelView.switchCommonLabel(this.commonLable, ...this.labels);
   }
 
   updateBar() {
