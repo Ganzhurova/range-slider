@@ -9,13 +9,13 @@ class ScaleView extends Component {
     this.init(html.scale);
   }
 
-  setup(sizeValue, valuesText) {
+  setup(sizeValue, textValues) {
     this.fixStyle(size, ScaleView.sizeName);
     this.el.innerHTML = '';
     this.updateSize(sizeValue);
 
-    this.renderDivisions(valuesText);
-    // this.setVisibilityOfValues();
+    this.renderDivisions(textValues);
+    this.setVisibilityOfValues();
   }
 
   renderDivisions(textValues) {
@@ -33,36 +33,64 @@ class ScaleView extends Component {
       this.addChild(value);
 
       this.values.push(value);
+      this.allValuesVisible = true;
     });
-    console.log(this.values);
+    // console.log(this.values);
   }
 
   updateSize(sizeValue) {
     this.el.style[ScaleView.sizeName] = `${sizeValue}%`;
   }
 
-  getOverlapDivisions() {
-    const sumDivisionsSize = this.divisions
-      .map(division => division.getSize())
+  getOverlapValues() {
+    const sumSizes = this.values
+      .filter(value => !value.el.style.visibility)
+      .map(value => value.getSize())
       .reduce((total, amount) => total + amount);
 
     const scaleSize = this.getSize();
 
-    if (scaleSize > sumDivisionsSize) {
+    if (scaleSize > sumSizes) {
       return false;
     }
 
     return true;
   }
 
-  setVisibilityOfValues() {
-    const isOverlap = this.getOverlapDivisions();
-    if (!isOverlap) return;
-    console.log(isOverlap);
+  getIndexLargerValue() {
+    const startIndex = 1;
+    const endIndex = this.values.length - 2;
 
-    // for (let i = 1; i <= this.divisions.length; i += 2) {
-    //   const division = this.divisions[i];
-    //   division.hidden(division.valueEl);
+    return this.values[startIndex].getSize() > this.values[endIndex].getSize()
+      ? startIndex
+      : endIndex;
+  }
+
+  setVisibilityOfValues() {
+    const isOverlap = this.getOverlapValues();
+    if (!isOverlap) return;
+    // console.log(isOverlap);
+
+    for (let i = 0; i < this.values.length; i += 1) {
+      // console.log(i);
+      if (i === this.values.length - 1) break;
+
+      if (i % 2 !== 0) {
+        this.values[i].hidden();
+      }
+    }
+
+    // const k = this.getOverlapValues();
+    // console.log(k);
+
+    // if (this.values.length % 2 !== 0) {
+    //   for (let i = 1; i < this.values.length; i += 2) {
+    //     this.values[i].hidden();
+    //   }
+    // } else {
+    //   const f = this.getIndexLargerValue();
+    //   console.log(f);
+    //   this.values[this.getIndexLargerValue()].hidden();
     // }
   }
 
