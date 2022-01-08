@@ -91,15 +91,14 @@ $thumb-height: 50px;
   height: 35px;
   margin: 0 auto;
   font-size: 14px;
-  background-color: green;
+  color: $grey;
 }
 
 .range-slider__point {
   position: absolute;
   width: 1px;
   height: 15px;
-  // background-color: $grey;
-  background-color: black;
+  background-color: $grey;
 }
 
 .range-slider__value {
@@ -107,8 +106,6 @@ $thumb-height: 50px;
   bottom: 0;
   padding: 2px 4px;
   cursor: pointer;
-  background-color: red;
-  opacity: 0.7;
 }
 
 .range-slider.vertical {
