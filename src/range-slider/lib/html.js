@@ -30,10 +30,6 @@ const html = {
     tag: 'div',
     className: `${root}__scale`,
   },
-  scaleDivision: {
-    tag: 'div',
-    className: `${root}__division`,
-  },
   scalePoint: {
     tag: 'span',
     className: `${root}__point`,
