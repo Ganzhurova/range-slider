@@ -71,7 +71,7 @@ class ScaleView extends Component {
     }
   }
 
-  getIndex(evtTarget) {
+  getValueIndex(evtTarget) {
     return this.values.findIndex(value => value.el === evtTarget);
   }
 
