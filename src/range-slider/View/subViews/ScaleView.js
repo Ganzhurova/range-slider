@@ -71,9 +71,9 @@ class ScaleView extends Component {
     }
   }
 
-  // getValue(e) {
-  //   return this.values.indexOf(e.target);
-  // }
+  getIndex(evtTarget) {
+    return this.values.findIndex(value => value.el === evtTarget);
+  }
 
   static getComponent(htmlValue, percent) {
     const component = new Component();
