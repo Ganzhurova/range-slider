@@ -1,6 +1,5 @@
 import Component from '../Component';
 import { html } from '../../lib/html';
-// import helpers from '../../helpers/helpers';
 import { size } from '../../lib/constants';
 
 class ScaleView extends Component {
@@ -35,63 +34,37 @@ class ScaleView extends Component {
       this.values.push(value);
       this.allValuesVisible = true;
     });
-    // console.log(this.values);
   }
 
   updateSize(sizeValue) {
     this.el.style[ScaleView.sizeName] = `${sizeValue}%`;
   }
 
-  getOverlapValues() {
-    const sumSizes = this.values
-      .filter(value => !value.el.style.visibility)
-      .map(value => value.getSize())
-      .reduce((total, amount) => total + amount);
-
-    const scaleSize = this.getSize();
-
-    if (scaleSize > sumSizes) {
-      return false;
-    }
-
-    return true;
-  }
-
-  getIndexLargerValue() {
-    const startIndex = 1;
-    const endIndex = this.values.length - 2;
-
-    return this.values[startIndex].getSize() > this.values[endIndex].getSize()
-      ? startIndex
-      : endIndex;
-  }
-
   setVisibilityOfValues() {
-    const isOverlap = this.getOverlapValues();
-    if (!isOverlap) return;
-    // console.log(isOverlap);
+    let currIndex = 0;
+    let nextIndex = 1;
 
-    for (let i = 0; i < this.values.length; i += 1) {
-      // console.log(i);
-      if (i === this.values.length - 1) break;
+    for (let i = currIndex; i < this.values.length; i += 1) {
+      if (currIndex === this.values.length - 1) break;
 
-      if (i % 2 !== 0) {
-        this.values[i].hidden();
+      const isOverlay = ScaleView.checkOverlay(
+        this.values[currIndex],
+        this.values[nextIndex]
+      );
+
+      if (isOverlay) {
+        if (nextIndex === this.values.length - 1) {
+          this.values[currIndex].hidden();
+        } else {
+          this.values[nextIndex].hidden();
+          nextIndex += 1;
+        }
+      } else {
+        this.values[nextIndex].show();
+        currIndex = nextIndex;
+        nextIndex += 1;
       }
     }
-
-    // const k = this.getOverlapValues();
-    // console.log(k);
-
-    // if (this.values.length % 2 !== 0) {
-    //   for (let i = 1; i < this.values.length; i += 2) {
-    //     this.values[i].hidden();
-    //   }
-    // } else {
-    //   const f = this.getIndexLargerValue();
-    //   console.log(f);
-    //   this.values[this.getIndexLargerValue()].hidden();
-    // }
   }
 
   // getValue(e) {
