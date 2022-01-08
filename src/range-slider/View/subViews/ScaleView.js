@@ -19,6 +19,7 @@ class ScaleView extends Component {
 
   renderDivisions(textValues) {
     this.values = [];
+    this.points = [];
 
     const step = ScaleView.getPercentageStep(textValues);
 
@@ -32,7 +33,7 @@ class ScaleView extends Component {
       this.addChild(value);
 
       this.values.push(value);
-      this.allValuesVisible = true;
+      this.points.push(point);
     });
   }
 
@@ -55,12 +56,15 @@ class ScaleView extends Component {
       if (isOverlay) {
         if (nextIndex === this.values.length - 1) {
           this.values[currIndex].hidden();
+          this.points[currIndex].hidden();
         } else {
           this.values[nextIndex].hidden();
+          this.points[nextIndex].hidden();
           nextIndex += 1;
         }
       } else {
         this.values[nextIndex].show();
+        this.points[nextIndex].show();
         currIndex = nextIndex;
         nextIndex += 1;
       }
