@@ -8,7 +8,6 @@ class ThumbView extends Component {
     super();
     this.index = 0;
     this.newCoord = 0;
-    this.oldCoord = 0;
 
     this.init(html.thumb);
   }
@@ -21,7 +20,8 @@ class ThumbView extends Component {
     this.limitCoords = limitCoords;
   }
 
-  setPosition() {
+  setPosition(newPos) {
+    this.newCoord = newPos;
     this.el.style[ThumbView.direction] = `${this.newCoord}%`;
     this.emit('percentChanged', this.newCoord, this.index);
   }
@@ -29,8 +29,7 @@ class ThumbView extends Component {
   setup(percentValue, i) {
     this.fixStyle(directions, ThumbView.direction);
     this.setIndex(i);
-    this.newCoord = percentValue;
-    this.setPosition();
+    this.setPosition(percentValue);
   }
 
   getValidCoord(coord) {
@@ -86,18 +85,15 @@ class ThumbView extends Component {
     const stepOffset = step / 2;
     const steps = this.getSteps(step);
 
+    let { newCoord } = this;
+
     if (!step) {
-      this.newCoord = this.getValidCoord(coord);
-    } else if (
-      coord > this.newCoord + stepOffset ||
-      coord < this.newCoord - stepOffset
-    ) {
-      this.newCoord = steps.reduce((prev, curr) =>
-        Math.abs(curr - coord) < Math.abs(prev - coord) ? curr : prev
-      );
+      newCoord = this.getValidCoord(coord);
+    } else if (coord > newCoord + stepOffset || coord < newCoord - stepOffset) {
+      newCoord = helpers.getClosestValue(steps, coord);
     }
 
-    this.setPosition();
+    this.setPosition(newCoord);
   }
 }
 
