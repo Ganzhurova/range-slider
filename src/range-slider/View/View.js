@@ -192,7 +192,10 @@ class View extends EventEmitter {
   handlerUpdateOnResize() {
     this.makeBaseCalc();
     this.setThumbs();
-    this.scale.updateSize(this.limitSize);
+    if (this.options.isScale) {
+      this.scale.updateSize(this.limitSize);
+      this.scale.setVisibilityOfValues();
+    }
   }
 
   handlerThumbDragStart(e) {
