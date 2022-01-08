@@ -124,17 +124,6 @@ class View extends EventEmitter {
     });
   }
 
-  // setThumbs() {
-  //   const range = Math.abs(this.options.max - this.options.min);
-  //   const correctPosition = position => position - this.options.min;
-  //
-  //   ThumbView.calcUnit(this.getLimitSize(), range);
-  //   this.thumbs.forEach((thumb, i) => {
-  //     const position = correctPosition(this.getPosition(i));
-  //     thumb.setup(position);
-  //   });
-  // }
-
   updatePosition(percentValue, index) {
     const correctPosition = position => position + this.options.min;
     const position = correctPosition(this.percentToPosition(percentValue));
@@ -178,15 +167,22 @@ class View extends EventEmitter {
     // });
   }
 
+  getThumbIndex(newPos) {
+    const values = Object.values(this.percentValues);
+    const closestPos = helpers.getClosestValue(values, newPos);
+    return values.indexOf(closestPos);
+  }
+
   setHandlers() {
     this.handlerUpdateOnResize = this.handlerUpdateOnResize.bind(this);
     this.handlerThumbDragStart = this.handlerThumbDragStart.bind(this);
-    this.handlerScaleDivisionClick = this.handlerScaleDivisionClick.bind(this);
+    this.handlerScaleValueClick = this.handlerScaleValueClick.bind(this);
 
     window.addEventListener('resize', this.handlerUpdateOnResize);
     this.el.addEventListener('mousedown', this.handlerThumbDragStart);
     this.el.addEventListener('touchstart', this.handlerThumbDragStart);
-    this.el.addEventListener('click', this.handlerScaleDivisionClick);
+    this.el.addEventListener('click', this.handlerScaleValueClick);
+    this.el.addEventListener('touchstart', this.handlerScaleValueClick);
   }
 
   handlerUpdateOnResize() {
@@ -224,10 +220,18 @@ class View extends EventEmitter {
     });
   }
 
-  handlerScaleDivisionClick(e) {
-    if (!e.target.closest(`.${html.scaleDivision.className}`)) return;
-    const a = this.scale.getValue(e);
-    console.log(a);
+  handlerScaleValueClick(e) {
+    e.preventDefault();
+    console.log(1);
+
+    const target = e.target.closest(`.${html.scaleValue.className}`);
+
+    if (!target) return;
+
+    const valueIndex = this.scale.getValueIndex(target);
+    const thumbPos = (this.limitSize / this.options.scaleParts) * valueIndex;
+
+    this.thumbs[this.getThumbIndex(thumbPos)].setPosition(thumbPos);
   }
 }
 
