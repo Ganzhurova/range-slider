@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "sourceMap": true,
+    "noEmit": true,
+    "rootDir": "src",
+    "isolatedModules": true,
+    "removeComments": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true
+  },
+  "exclude": ["node_modules", "dist"]
+}
