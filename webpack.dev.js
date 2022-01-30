@@ -15,6 +15,7 @@ module.exports = merge(common, {
   devtool: 'inline-source-map',
   devServer: {
     contentBase: path.resolve(__dirname, './dist'),
+    port: 8080,
     overlay: {
       warnings: true,
       errors: true,
@@ -27,6 +28,7 @@ module.exports = merge(common, {
     }),
     new ESLintPlugin({
       context: path.resolve(__dirname, './src'),
+      extensions: ['.ts', '.js'],
     }),
   ],
 });
