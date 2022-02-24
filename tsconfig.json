@@ -5,8 +5,7 @@
     "rootDir": "src",
     "isolatedModules": true,
     "removeComments": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true
+    "strict": true
   },
   "exclude": ["node_modules", "dist"]
 }
