@@ -1,7 +1,7 @@
-import { types } from './constants';
+import type { IOptions } from './interfaces';
 
-const defaults = {
-  type: types.SINGLE,
+const DEFAULT_CONFIG: IOptions = {
+  type: 'single',
   isVertical: false,
   isLabel: false,
   isScale: false,
@@ -12,4 +12,4 @@ const defaults = {
   // isDouble: false, // вынести в интерфейс для вида
 };
 
-export default defaults;
+export default DEFAULT_CONFIG;
