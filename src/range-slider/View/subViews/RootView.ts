@@ -10,11 +10,11 @@ class RootView extends Component {
     this.init(HTML.rootEl);
   }
 
-  init(html: Key<typeof HTML>): void {
+  protected init(html: Key<typeof HTML>): void {
     this.addClass(html.className);
   }
 
-  setDirection(isVertical: boolean): void {
+  public setDirection(isVertical: boolean): void {
     this.el.classList.toggle(mix.direction, isVertical);
   }
 }
