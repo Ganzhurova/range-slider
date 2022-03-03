@@ -1,4 +1,4 @@
-interface IOptions {
+export interface IOptions {
   isDouble: boolean;
   isVertical: boolean;
   isLabel: boolean;
@@ -10,5 +10,3 @@ interface IOptions {
   step: number;
   scaleParts: number;
 }
-
-export default IOptions;
