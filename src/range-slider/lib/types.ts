@@ -1,3 +1,1 @@
-type ValidType = 'single' | 'double';
-
-export type { ValidType };
+export type Key<T> = T[keyof T];
