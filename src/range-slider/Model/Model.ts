@@ -1,4 +1,4 @@
-import IOptions from '../lib/interfaces';
+import type { IOptions } from '../lib/interfaces';
 import DEFAULT_CONFIG from '../lib/defaultConfig';
 
 class Model {
@@ -6,13 +6,12 @@ class Model {
 
   constructor(options: Partial<IOptions>) {
     this.updateState(options);
-
-    console.log(this.state);
   }
 
   public updateState(options: Partial<IOptions>): void {
     Object.assign(this.state, options);
     this.validate();
+    console.log(this.state);
   }
 
   public getState(): IOptions {
