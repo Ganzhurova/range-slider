@@ -1,4 +1,4 @@
-import IOptions from './interfaces';
+import { IOptions } from './interfaces';
 
 const DEFAULT_CONFIG: IOptions = {
   isDouble: false,
