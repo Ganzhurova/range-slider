@@ -1,10 +1,10 @@
 import Component from '../Component';
-import { html } from '../../lib/html';
+import { HTML } from '../../lib/html';
 
 class LineView extends Component {
   constructor() {
     super();
-    this.init(html.line);
+    this.init(HTML.line);
   }
 }
 
