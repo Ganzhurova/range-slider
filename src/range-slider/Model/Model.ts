@@ -1,10 +1,15 @@
 import type { IOptions } from '../lib/interfaces';
 import DEFAULT_CONFIG from '../lib/defaultConfig';
+import { Events } from '../lib/constants';
 
-class Model {
-  private state: IOptions = DEFAULT_CONFIG;
+import EventEmitter from '../EventEmitter';
+
+class Model extends EventEmitter {
+  private state: IOptions = { ...DEFAULT_CONFIG };
 
   constructor(options: Partial<IOptions>) {
+    super();
+    console.log(this);
     this.updateState(options);
   }
 
@@ -12,6 +17,7 @@ class Model {
     Object.assign(this.state, options);
     this.validate();
     console.log(this.state);
+    this.emit(Events.NEW_STATE, this.getState());
   }
 
   public getState(): IOptions {
