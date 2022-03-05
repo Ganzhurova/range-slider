@@ -1,4 +1,4 @@
-import type { Key } from '../../lib/types';
+import type { ObjValue } from '../../lib/types';
 
 import Component from '../Component';
 import { HTML, mix } from '../../lib/html';
@@ -10,7 +10,7 @@ class RootView extends Component {
     this.init(HTML.rootEl);
   }
 
-  protected init(html: Key<typeof HTML>): void {
+  protected init(html: ObjValue<typeof HTML>): void {
     this.addClass(html.className);
   }
 
