@@ -25,6 +25,14 @@ const HTML = {
     tag: 'div',
     className: `${root}__scale`,
   },
+  scalePoint: {
+    tag: 'span',
+    className: `${root}__point`,
+  },
+  scaleValue: {
+    tag: 'span',
+    className: `${root}__value`,
+  },
 };
 
 const mix = {
