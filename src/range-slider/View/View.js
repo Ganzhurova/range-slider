@@ -16,6 +16,7 @@ class View extends EventEmitter {
     this.unit = 0;
 
     this.init();
+    // console.log(this);
   }
 
   init() {
@@ -43,7 +44,7 @@ class View extends EventEmitter {
   }
 
   subscribeToEvents() {
-    this.template.subscribe('newInstance', instance => {
+    this.template.subscribe('newInstance', (instance) => {
       if (!(instance instanceof ThumbView)) return;
       const thumb = instance;
 
@@ -89,8 +90,8 @@ class View extends EventEmitter {
   calcLimitCoords(percentValue, i) {
     const START_COORD = 0;
     const END_COORD = this.limitSize;
-    const getStartIndex = index => index - 1;
-    const getEndIndex = index => index + 1;
+    const getStartIndex = (index) => index - 1;
+    const getEndIndex = (index) => index + 1;
 
     const limitCoords = {
       start: this.percentValues[getStartIndex(i)] || START_COORD,
@@ -101,7 +102,7 @@ class View extends EventEmitter {
   }
 
   calcPercentValues() {
-    const correctPosition = position => position - this.options.min;
+    const correctPosition = (position) => position - this.options.min;
 
     for (let i = 0; i < this.thumbs.length; i += 1) {
       const percentValue = this.positionToPercent(
@@ -125,7 +126,7 @@ class View extends EventEmitter {
   }
 
   updatePosition(percentValue, index) {
-    const correctPosition = position => position + this.options.min;
+    const correctPosition = (position) => position + this.options.min;
     const position = correctPosition(this.percentToPosition(percentValue));
 
     this.emit('positionChanged', position, index);
@@ -201,7 +202,7 @@ class View extends EventEmitter {
 
     if (!target) return;
 
-    const currentThumb = this.thumbs.find(thumb => thumb.el === target);
+    const currentThumb = this.thumbs.find((thumb) => thumb.el === target);
 
     const stepPercentValue = this.positionToPercent(this.options.step);
 
@@ -211,7 +212,7 @@ class View extends EventEmitter {
       e
     );
 
-    this.thumbs.forEach(thumb => {
+    this.thumbs.forEach((thumb) => {
       if (thumb === currentThumb) {
         thumb.addClass(mix.selected);
       } else {

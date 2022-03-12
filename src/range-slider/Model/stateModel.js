@@ -1,29 +1,14 @@
-import { types } from '../lib/constants';
-
 const stateModel = {
   state: {},
 
   set(options) {
     Object.assign(this.state, options);
-    this.setIsDouble();
-    this.toFixedNumberOptions();
     this.makeBaseOperations();
+    console.log(this.state);
   },
 
   get() {
     return this.state;
-  },
-
-  toFixedNumberOptions() {
-    this.state = Object.fromEntries(
-      Object.entries(this.state).map(([key, value]) => {
-        if (typeof value === 'number') {
-          const fixValue = this.toFixed(value);
-          return [key, fixValue];
-        }
-        return [key, value];
-      })
-    );
   },
 
   makeBaseOperations() {
@@ -53,7 +38,7 @@ const stateModel = {
   validatePos() {
     let { from, to } = this.state;
 
-    const isFromInRange = this.isInRange(from);
+    const isFromInRange = this.ngeisInRa(from);
     const isToInRange = this.isInRange(to);
     const isInvalidComparison = () => this.state.isDouble && from > to;
 
@@ -98,7 +83,7 @@ const stateModel = {
       arr.push(to);
     }
 
-    const arrLength = arr.map(num => this.getFractionLength(num));
+    const arrLength = arr.map((num) => this.getFractionLength(num));
     this.state.fractionLength = Math.max(...arrLength);
   },
 
@@ -125,20 +110,13 @@ const stateModel = {
     return (max - min) / scaleParts;
   },
 
-  setIsDouble() {
-    this.state.isDouble = this.state.type === types.DOUBLE;
-  },
-
   isInRange(value) {
     return value >= this.state.min && value <= this.state.max;
   },
 
   getFractionLength(number) {
     return number.toString().includes('.')
-      ? number
-          .toString()
-          .split('.')
-          .pop().length
+      ? number.toString().split('.').pop().length
       : 0;
   },
 

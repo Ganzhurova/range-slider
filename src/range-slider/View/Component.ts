@@ -1,11 +1,14 @@
 import type { ObjValue } from '../lib/types';
+import { IDirection } from '../lib/interfaces';
 import { HTML } from '../lib/html';
 import { directions } from '../lib/constants';
 
 import EventEmitter from '../EventEmitter';
 
 class Component extends EventEmitter {
-  protected static direction: ObjValue<typeof directions> = directions.LEFT;
+  protected static direction: IDirection = directions.LEFT;
+
+  public static percentPerPx: number;
 
   protected el!: HTMLElement;
 
@@ -30,8 +33,25 @@ class Component extends EventEmitter {
     this.el.remove();
   }
 
+  public hidden(): void {
+    this.el.style.visibility = 'hidden';
+  }
+
+  public show(): void {
+    this.el.style.visibility = '';
+  }
+
   public getEl(): HTMLElement {
     return this.el;
+  }
+
+  private getBox(): DOMRect {
+    return this.el.getBoundingClientRect();
+  }
+
+  public getSize(): number {
+    const box = this.getBox();
+    return <number>box[Component.direction.size];
   }
 
   public static setDirection(isVertical: boolean): void {

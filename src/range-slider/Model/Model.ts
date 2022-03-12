@@ -9,14 +9,13 @@ class Model extends EventEmitter {
 
   constructor(options: Partial<IOptions>) {
     super();
-    console.log(this);
     this.updateState(options);
   }
 
   public updateState(options: Partial<IOptions>): void {
     Object.assign(this.state, options);
     this.validate();
-    console.log(this.state);
+    // console.log(this.state);
     this.emit(Events.NEW_STATE, this.getState());
   }
 
