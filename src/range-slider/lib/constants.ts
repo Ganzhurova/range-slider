@@ -7,6 +7,7 @@ enum Events {
   DOUBLE_CHANGED = 'isDoubleChanged',
   LABEL_CHANGED = 'isLabelChanged',
   SCALE_CHANGED = 'isScaleChanged',
+  THUMB_SELECTED = 'thumbSelected',
 }
 
 const directions: IDirections = {
@@ -22,9 +23,4 @@ const directions: IDirections = {
   },
 };
 
-const positionIndex = {
-  0: 'from',
-  1: 'to',
-};
-
-export { Events, directions, positionIndex };
+export { Events, directions };
