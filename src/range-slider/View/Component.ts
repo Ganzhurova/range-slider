@@ -6,13 +6,13 @@ import { directions } from '../lib/constants';
 import EventEmitter from '../EventEmitter';
 
 class Component extends EventEmitter {
-  protected static direction: IDirection = directions.LEFT;
+  public static direction: IDirection = directions.LEFT;
 
   public static percentPerPx: number;
 
   protected el!: HTMLElement;
 
-  protected init(html: ObjValue<typeof HTML>): void {
+  public init(html: ObjValue<typeof HTML>): void {
     this.el = document.createElement(html.tag);
     this.addClass(html.className);
   }
@@ -54,8 +54,26 @@ class Component extends EventEmitter {
     return <number>box[Component.direction.size];
   }
 
+  public getCoord() {
+    const box = this.getBox();
+    const coordName = Component.direction.coord;
+    const pageOffset =
+      coordName === 'x' ? window.pageXOffset : window.pageYOffset;
+
+    return <number>box[Component.direction.name] + pageOffset;
+  }
+
   public static setDirection(isVertical: boolean): void {
     Component.direction = isVertical ? directions.TOP : directions.LEFT;
+  }
+
+  public static checkOverlay(componentA: Component, componentB: Component) {
+    if (!componentB) return false;
+
+    const componentAEndPx = componentA.getCoord() + componentA.getSize();
+    const componentBStartPx = componentB.getCoord();
+
+    return componentAEndPx >= componentBStartPx;
   }
 }
 
