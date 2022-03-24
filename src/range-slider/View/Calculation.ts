@@ -1,5 +1,6 @@
 import type View from './View';
 import Component from './Component';
+import { IOptions } from '../lib/interfaces';
 
 class Calculation {
   private view: View;
@@ -42,6 +43,23 @@ class Calculation {
 
   public percentToPosition(percent: number): number {
     return percent / this.percentPerPosition;
+  }
+
+  public static getFractionLength(options: IOptions): number {
+    const arr: number[] = [];
+    const { min, max, from, step } = options;
+    arr.push(min, max, from, step);
+
+    if (options.isDouble) {
+      const { to } = options;
+      arr.push(to);
+    }
+
+    const arrOfLengths = arr.map((num) =>
+      num.toString().includes('.') ? num.toString().split('.').pop()?.length : 0
+    );
+
+    return Math.max(...(<number[]>arrOfLengths));
   }
 }
 
