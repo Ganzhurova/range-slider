@@ -26,16 +26,18 @@ class Template {
     } else {
       this.view.toThumb.remove();
     }
-    this.setToLabel(isDouble, isLabel);
+    this.setOtherLabels(isDouble, isLabel);
   }
 
   public setLabel(isDouble: boolean, isLabel: boolean) {
     if (isLabel) {
       this.view.line.addChild(this.view.fromLabel);
+      this.view.fromLabel.setIsElExists(isLabel);
     } else {
       this.view.fromLabel.remove();
+      this.view.fromLabel.setIsElExists(isLabel);
     }
-    this.setToLabel(isDouble, isLabel);
+    this.setOtherLabels(isDouble, isLabel);
   }
 
   public setScale(isScale: boolean) {
@@ -46,11 +48,17 @@ class Template {
     }
   }
 
-  private setToLabel(isDouble: boolean, isLabel: boolean) {
+  private setOtherLabels(isDouble: boolean, isLabel: boolean) {
     if (isDouble && isLabel) {
+      this.view.line.addChild(this.view.commonLabel);
       this.view.line.addChild(this.view.toLabel);
+      this.view.toLabel.setIsElExists(isLabel);
+      this.view.commonLabel.setIsElExists(isLabel);
     } else {
+      this.view.commonLabel.remove();
+      this.view.toLabel.setIsElExists(false);
       this.view.toLabel.remove();
+      this.view.commonLabel.setIsElExists(false);
     }
   }
 }
