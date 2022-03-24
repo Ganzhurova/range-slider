@@ -26,3 +26,8 @@ export interface IDirections {
   LEFT: IDirection;
   TOP: IDirection;
 }
+
+export interface ILimitCoords {
+  start: number;
+  end: number;
+}
