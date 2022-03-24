@@ -1,24 +1,21 @@
-import { positionIndex } from '../lib/constants';
+import Component from '../View/Component';
 
 const helpers = {
-  getPositionName(index) {
-    return positionIndex[index];
+  getEventCoord(event: MouseEvent | TouchEvent): number {
+    const pageCoord = `page${Component.direction.coord.toUpperCase()}`;
+    const evt =
+      event.type.search('touch') !== -1
+        ? (<TouchEvent>event).touches[0]
+        : <MouseEvent>event;
+
+    return <number>evt[<keyof typeof evt>pageCoord];
   },
 
-  getEvent(event) {
-    return event.type.search('touch') !== -1 ? event.touches[0] : event;
-  },
-
-  getEventCoord(event, instance) {
-    const evt = helpers.getEvent(event);
-    const pageCoordName = `page${instance.coordName}`;
-    return evt[pageCoordName];
-  },
-
-  getClosestValue(arrValues, targetValue) {
-    return arrValues.reduce((prev, curr) =>
-      Math.abs(curr - targetValue) < Math.abs(prev - targetValue) ? curr : prev
+  getClosestValue(arrNumbers: number[], target: number) {
+    return arrNumbers.reduce((prev: number, current: number) =>
+      Math.abs(current - target) < Math.abs(prev - target) ? current : prev
     );
   },
 };
+
 export default helpers;
