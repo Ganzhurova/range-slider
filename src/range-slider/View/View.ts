@@ -1,4 +1,4 @@
-import type { IOptions } from '../lib/interfaces';
+import type { ILimitCoords, IOptions } from '../lib/interfaces';
 import type { ObjKey } from '../lib/types';
 import DEFAULT_CONFIG from '../lib/defaultConfig';
 import { Events } from '../lib/constants';
@@ -39,6 +39,8 @@ class View extends EventEmitter {
 
   public toLabel: LabelView;
 
+  public commonLabel: LabelView;
+
   public scale: ScaleView;
 
   constructor(selector: string) {
@@ -52,6 +54,7 @@ class View extends EventEmitter {
     this.toThumb = new ThumbView();
     this.fromLabel = new LabelView();
     this.toLabel = new LabelView();
+    this.commonLabel = new LabelView();
     this.scale = new ScaleView();
     this.template = new Template(this);
     this.calculation = new Calculation(this);
@@ -60,6 +63,7 @@ class View extends EventEmitter {
     this.subscribeToTemplateEvents();
     this.subscribeToThumbEvent('from');
     this.subscribeToThumbEvent('to');
+    this.addEventListeners();
   }
 
   private init(): void {
@@ -76,8 +80,6 @@ class View extends EventEmitter {
     });
     this.subscribe(Events.LABEL_CHANGED, () => {
       this.template.setLabel(this.options.isDouble, this.options.isLabel);
-      this.fromLabel.setIsElExists(this.options.isLabel);
-      this.toLabel.setIsElExists(this.options.isLabel);
     });
     this.subscribe(Events.SCALE_CHANGED, () => {
       this.template.setScale(this.options.isScale);
@@ -87,8 +89,16 @@ class View extends EventEmitter {
 
   private subscribeToThumbEvent(key: PositionKeys): void {
     const thumb: ThumbView = this[`${key}Thumb`];
+    const label: LabelView = this[`${key}Label`];
+    const position = this.options[key];
 
     thumb.subscribe(Events.NEW_PERCENT_POSITION, () => {
+      label.update(thumb.getPercentPosition(), `${position}`);
+      LabelView.switchCommonLabel(
+        this.commonLabel,
+        this.fromLabel,
+        this.toLabel
+      );
       this.bar.update(
         this.fromThumb.getPercentPosition(),
         this.toThumb.getPercentPosition()
@@ -116,54 +126,63 @@ class View extends EventEmitter {
 
     thumb.setup(this.calculation.positionToPercent(getValidPosition(position)));
     label.setup(this.fromThumb.getSize());
-    label.update(thumb.getPercentPosition(), position.toString());
+    label.update(thumb.getPercentPosition(), `${position}`);
   }
 
-  private getFractionLength(): number {
-    const arr: number[] = [];
-    const { min, max, from, step } = this.options;
-    arr.push(min, max, from, step);
-
-    if (this.options.isDouble) {
-      const { to } = this.options;
-      arr.push(to);
-    }
-
-    const arrOfLengths = arr.map((num) =>
-      num.toString().includes('.') ? num.toString().split('.').pop()?.length : 0
-    );
-
-    return Math.max(...(<number[]>arrOfLengths));
-  }
-
-  private getScaleValues(): number[] {
-    const values: number[] = [];
+  private getScaleValues(): string[] {
+    const values: string[] = [];
     const { min, max, scaleParts } = this.options;
     const step: number = (max - min) / scaleParts;
-    const fractionLength = this.getFractionLength();
+    const fractionLength = Calculation.getFractionLength(this.options);
 
     let value: number = min;
 
     for (let i = 0; i <= scaleParts; i += 1) {
-      values.push(+value.toFixed(fractionLength));
-      value += step;
+      values.push(value.toFixed(fractionLength));
+      value = +value + step;
     }
 
     return values;
+  }
+
+  getLimitCoords(key: PositionKeys): ILimitCoords {
+    const startCoord = 0;
+    const fromCoord = this.fromThumb.getPercentPosition();
+    const toCoord = this.toThumb.getPercentPosition();
+    const endCoord = this.calculation.percentageLimitSize;
+    const getFromEndCoord = () => (this.options.isDouble ? toCoord : endCoord);
+
+    return {
+      start: key === 'from' ? startCoord : fromCoord,
+      end: key === 'from' ? getFromEndCoord() : endCoord,
+    };
   }
 
   private setup(): void {
     this.calculation.makeBaseCalc(this.options.min, this.options.max);
     this.setThumbAndLabel('from');
     this.setThumbAndLabel('to');
+    LabelView.switchCommonLabel(this.commonLabel, this.fromLabel, this.toLabel);
     this.bar.setup(this.fromThumb.getSize());
     this.bar.update(
       this.fromThumb.getPercentPosition(),
       this.toThumb.getPercentPosition()
     );
     this.scale.setup(this.calculation.percentageLimitSize);
-    const g = this.getScaleValues();
-    console.log(g);
+  }
+
+  private addEventListeners(): void {
+    window.addEventListener('resize', () => {
+      this.setup();
+    });
+    this.el.addEventListener('mousedown', (e) => {
+      this.fromThumb.handlerThumbDragStart(e, this.getLimitCoords('from'));
+      this.toThumb.handlerThumbDragStart(e, this.getLimitCoords('to'));
+    });
+    this.el.addEventListener('touchstart', (e) => {
+      this.fromThumb.handlerThumbDragStart(e, this.getLimitCoords('from'));
+      this.toThumb.handlerThumbDragStart(e, this.getLimitCoords('to'));
+    });
   }
 
   public update(options: IOptions): void {
@@ -175,6 +194,7 @@ class View extends EventEmitter {
       this.emit(`${<OptionsKey>key}Changed`);
     });
 
+    this.scale.renderDivisions(this.getScaleValues());
     this.setup();
   }
 }
