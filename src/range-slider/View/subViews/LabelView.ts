@@ -22,12 +22,24 @@ class LabelView extends Component {
     this.percentPosition = thumbPosition - offset;
   }
 
+  private getPercentPosition(): number {
+    return this.percentPosition;
+  }
+
   private setText(positionText: string): void {
     this.text = positionText;
   }
 
+  private getText(): string {
+    return this.text;
+  }
+
   public setIsElExists(isElExists: boolean): void {
     this.isElExists = isElExists;
+  }
+
+  public getIsElExists(): boolean {
+    return this.isElExists;
   }
 
   public setup(thumbSize: number): void {
@@ -47,6 +59,45 @@ class LabelView extends Component {
       'style',
       `${LabelView.direction.name}:${this.percentPosition}%`
     );
+  }
+
+  public static switchCommonLabel(
+    commonLabel: LabelView,
+    fromLabel: LabelView,
+    toLabel: LabelView
+  ) {
+    if (!toLabel.getIsElExists()) {
+      fromLabel.show();
+      return;
+    }
+
+    const getCommonText = () => {
+      const fromText = fromLabel.getText();
+      const toText = toLabel.getText();
+      return fromText !== toText ? `${fromText} &ndash; ${toText}` : fromText;
+    };
+
+    const getCommonPosition = () => {
+      const fromEnd =
+        fromLabel.getPercentPosition() +
+        fromLabel.getSize() * LabelView.percentPerPx;
+      const toStart = toLabel.getPercentPosition();
+      return (toStart - fromEnd) / 2 + fromEnd;
+    };
+
+    const isOverlay = LabelView.checkOverlay(fromLabel, toLabel);
+
+    if (isOverlay) {
+      commonLabel.setup(0);
+      commonLabel.update(getCommonPosition(), getCommonText());
+      fromLabel.hidden();
+      toLabel.hidden();
+      commonLabel.show();
+    } else {
+      fromLabel.show();
+      toLabel.show();
+      commonLabel.hidden();
+    }
   }
 }
 
