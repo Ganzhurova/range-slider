@@ -85,6 +85,9 @@ class View extends EventEmitter {
       this.template.setScale(this.options.isScale);
       this.scale.setIsElExists(this.options.isScale);
     });
+    this.subscribe(Events.STEP_CHANGED, () => {
+      ThumbView.setStep(this.calculation.positionToPercent(this.options.step));
+    });
   }
 
   private subscribeToThumbEvent(key: PositionKeys): void {
@@ -159,7 +162,6 @@ class View extends EventEmitter {
   }
 
   private setup(): void {
-    this.calculation.makeBaseCalc(this.options.min, this.options.max);
     this.setThumbAndLabel('from');
     this.setThumbAndLabel('to');
     LabelView.switchCommonLabel(this.commonLabel, this.fromLabel, this.toLabel);
@@ -189,6 +191,7 @@ class View extends EventEmitter {
     const changedKeys = this.getChangedKeys(options);
 
     this.options = { ...options };
+    this.calculation.makeBaseCalc(this.options.min, this.options.max);
 
     changedKeys.forEach((key) => {
       this.emit(`${<OptionsKey>key}Changed`);
