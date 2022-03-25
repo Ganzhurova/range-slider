@@ -9,13 +9,22 @@ class ThumbView extends Component {
 
   private startPxCoord!: number;
 
-  private step = 0;
-
   private limitCoords!: ILimitCoords;
+
+  private static step = 0;
+
+  private static stepPxOffset = 0;
 
   constructor() {
     super();
     this.init(HTML.thumb);
+    this.subscribe(Events.THUMB_SELECTED, (target: HTMLElement) => {
+      if (target === this.el) {
+        this.addClass(mix.selected);
+      } else {
+        this.removeClass(mix.selected);
+      }
+    });
   }
 
   private setPercentPosition(percentPosition: number): void {
@@ -46,13 +55,6 @@ class ThumbView extends Component {
       'style',
       `${ThumbView.direction.name}:${this.percentPosition}%`
     );
-    this.subscribe(Events.THUMB_SELECTED, (target: HTMLElement) => {
-      if (target === this.el) {
-        this.addClass(mix.selected);
-      } else {
-        this.removeClass(mix.selected);
-      }
-    });
   }
 
   public handlerThumbDragStart(
@@ -71,10 +73,7 @@ class ThumbView extends Component {
 
     this.setLimitCoords(limitCoords);
 
-    const eventCoord = helpers.getEventCoord(event);
-    // const thumbCoord = this.getCoord();
-    // const shift = eventCoord - thumbCoord;
-    this.startPxCoord = eventCoord;
+    this.startPxCoord = helpers.getEventCoord(event);
 
     const handlerThumbDrag = this.handlerThumbDrag.bind(this);
 
@@ -91,29 +90,41 @@ class ThumbView extends Component {
     document.addEventListener('touchend', handlerThumbDragEnd);
   }
 
-  private handlerThumbDrag(event: MouseEvent | TouchEvent) {
-    // const startPxCoord = 0;
-    // console.log(this.startPxCoord);
-    console.log(this.getPercentPosition());
-
+  private handlerThumbDrag(event: MouseEvent | TouchEvent): void {
     const endPxCoord = helpers.getEventCoord(event);
     const delta = (this.startPxCoord - endPxCoord) * Component.percentPerPx;
+    const isRightBorder = () =>
+      Math.sign(delta) === -1 &&
+      endPxCoord > this.getCoord() + ThumbView.stepPxOffset;
+    const isLeftBorder = () =>
+      Math.sign(delta) === 1 &&
+      endPxCoord < this.getCoord() - ThumbView.stepPxOffset;
+
+    let shift = 0;
+
+    if (!ThumbView.step) {
+      shift = delta;
+    } else if (isRightBorder() || isLeftBorder()) {
+      shift = ThumbView.step * Math.sign(delta);
+    }
+
+    this.startPxCoord = endPxCoord;
+
     const percentPosition = this.getValidCoord(
-      this.getPercentPosition() - delta
+      this.getPercentPosition() - shift
     );
     this.setPercentPosition(percentPosition);
-    this.startPxCoord = endPxCoord;
-    console.log(delta);
-
-    // console.log(this.startPxCoord);
-
-    console.log(this.getPercentPosition());
 
     this.emit(Events.NEW_PERCENT_POSITION, this.percentPosition);
     this.el.setAttribute(
       'style',
       `${ThumbView.direction.name}:${this.percentPosition}%`
     );
+  }
+
+  public static setStep(step: number): void {
+    ThumbView.step = step;
+    ThumbView.stepPxOffset = step / 1.5 / Component.percentPerPx;
   }
 }
 
