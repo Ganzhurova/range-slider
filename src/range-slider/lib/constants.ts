@@ -7,6 +7,7 @@ enum Events {
   DOUBLE_CHANGED = 'isDoubleChanged',
   LABEL_CHANGED = 'isLabelChanged',
   SCALE_CHANGED = 'isScaleChanged',
+  STEP_CHANGED = 'stepChanged',
   THUMB_SELECTED = 'thumbSelected',
 }
 
