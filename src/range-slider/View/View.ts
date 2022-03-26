@@ -1,5 +1,5 @@
 import type { ILimitCoords, IOptions } from '../lib/interfaces';
-import type { ObjKey } from '../lib/types';
+import type { ObjKey, PositionKeys } from '../lib/types';
 import DEFAULT_CONFIG from '../lib/defaultConfig';
 import { Events } from '../lib/constants';
 
@@ -14,7 +14,6 @@ import LabelView from './subViews/LabelView';
 import ScaleView from './subViews/ScaleView';
 
 type OptionsKey = ObjKey<IOptions>;
-type PositionKeys = 'from' | 'to';
 
 class View extends EventEmitter {
   private options: IOptions = { ...DEFAULT_CONFIG };
@@ -93,10 +92,13 @@ class View extends EventEmitter {
   private subscribeToThumbEvent(key: PositionKeys): void {
     const thumb: ThumbView = this[`${key}Thumb`];
     const label: LabelView = this[`${key}Label`];
-    const position = this.options[key];
 
     thumb.subscribe(Events.NEW_PERCENT_POSITION, () => {
-      label.update(thumb.getPercentPosition(), `${position}`);
+      this.updatePosition(thumb.getPercentPosition(), key);
+      label.update(
+        thumb.getPercentPosition(),
+        this.options[key].toFixed(this.calculation.fractionLength)
+      );
       LabelView.switchCommonLabel(
         this.commonLabel,
         this.fromLabel,
@@ -121,6 +123,16 @@ class View extends EventEmitter {
     return changedKeys;
   }
 
+  private updatePosition(percentPosition: number, key: PositionKeys): void {
+    const getValidPosition = (value: number) => value + this.options.min;
+    const position = +getValidPosition(
+      this.calculation.percentToPosition(percentPosition)
+    ).toFixed(this.calculation.fractionLength);
+
+    this.options[key] = position;
+    this.emit(Events.NEW_POSITION, position, key);
+  }
+
   private setThumbAndLabel(key: PositionKeys): void {
     const thumb: ThumbView = this[`${key}Thumb`];
     const label: LabelView = this[`${key}Label`];
@@ -129,19 +141,21 @@ class View extends EventEmitter {
 
     thumb.setup(this.calculation.positionToPercent(getValidPosition(position)));
     label.setup(this.fromThumb.getSize());
-    label.update(thumb.getPercentPosition(), `${position}`);
+    label.update(
+      thumb.getPercentPosition(),
+      this.options[key].toFixed(this.calculation.fractionLength)
+    );
   }
 
   private getScaleValues(): string[] {
     const values: string[] = [];
     const { min, max, scaleParts } = this.options;
     const step: number = (max - min) / scaleParts;
-    const fractionLength = Calculation.getFractionLength(this.options);
 
     let value: number = min;
 
     for (let i = 0; i <= scaleParts; i += 1) {
-      values.push(value.toFixed(fractionLength));
+      values.push(value.toFixed(this.calculation.fractionLength));
       value = +value + step;
     }
 
@@ -191,7 +205,7 @@ class View extends EventEmitter {
     const changedKeys = this.getChangedKeys(options);
 
     this.options = { ...options };
-    this.calculation.makeBaseCalc(this.options.min, this.options.max);
+    this.calculation.makeBaseCalc(this.options);
 
     changedKeys.forEach((key) => {
       this.emit(`${<OptionsKey>key}Changed`);
