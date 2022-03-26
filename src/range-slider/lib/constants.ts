@@ -3,6 +3,7 @@ import { IDirections } from './interfaces';
 enum Events {
   NEW_STATE = 'newState',
   NEW_PERCENT_POSITION = 'newPercentPosition',
+  NEW_POSITION = 'newPosition',
   VERTICAL_CHANGED = 'isVerticalChanged',
   DOUBLE_CHANGED = 'isDoubleChanged',
   LABEL_CHANGED = 'isLabelChanged',
