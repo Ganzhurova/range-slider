@@ -9,6 +9,8 @@ class Calculation {
 
   private percentPerPosition!: number;
 
+  public fractionLength!: number;
+
   public percentageLimitSize!: number;
 
   constructor(view: View) {
@@ -26,26 +28,18 @@ class Calculation {
       this.percentPerPx;
   }
 
-  private calcPercentPerPosition(min: number, max: number): void {
+  private calcPercentPerPosition({
+    min,
+    max,
+  }: {
+    min: number;
+    max: number;
+  }): void {
     const range = Math.abs(max - min);
     this.percentPerPosition = this.percentageLimitSize / range;
   }
 
-  public makeBaseCalc(min: number, max: number): void {
-    this.convertLinePxToPercent();
-    this.calcLimitSizeOfLine();
-    this.calcPercentPerPosition(min, max);
-  }
-
-  public positionToPercent(position: number): number {
-    return position * this.percentPerPosition;
-  }
-
-  public percentToPosition(percent: number): number {
-    return percent / this.percentPerPosition;
-  }
-
-  public static getFractionLength(options: IOptions): number {
+  private calcFractionLength(options: IOptions): void {
     const arr: number[] = [];
     const { min, max, from, step } = options;
     arr.push(min, max, from, step);
@@ -59,7 +53,22 @@ class Calculation {
       num.toString().includes('.') ? num.toString().split('.').pop()?.length : 0
     );
 
-    return Math.max(...(<number[]>arrOfLengths));
+    this.fractionLength = Math.max(...(<number[]>arrOfLengths));
+  }
+
+  public makeBaseCalc(options: IOptions): void {
+    this.convertLinePxToPercent();
+    this.calcLimitSizeOfLine();
+    this.calcPercentPerPosition(options);
+    this.calcFractionLength(options);
+  }
+
+  public positionToPercent(position: number): number {
+    return position * this.percentPerPosition;
+  }
+
+  public percentToPosition(percent: number): number {
+    return percent / this.percentPerPosition;
   }
 }
 
