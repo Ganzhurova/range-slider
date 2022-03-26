@@ -1,4 +1,5 @@
 import type { IOptions } from '../lib/interfaces';
+import type { PositionKeys } from '../lib/types';
 import type Model from '../Model/Model';
 import type View from '../View/View';
 
@@ -13,6 +14,12 @@ class Presenter {
     this.model = model;
     this.view = view;
 
+    this.view.subscribe(
+      Events.NEW_POSITION,
+      (position: number, key: PositionKeys) => {
+        this.model.updatePosition(position, key);
+      }
+    );
     this.model.subscribe(Events.NEW_STATE, (options) =>
       this.view.update(options)
     );
