@@ -1,4 +1,5 @@
 import type { IOptions } from '../lib/interfaces';
+import type { PositionKeys } from '../lib/types';
 import DEFAULT_CONFIG from '../lib/defaultConfig';
 import { Events } from '../lib/constants';
 
@@ -21,6 +22,10 @@ class Model extends EventEmitter {
 
   public getState(): IOptions {
     return this.state;
+  }
+
+  public updatePosition(position: number, key: PositionKeys): void {
+    this.state[key] = position;
   }
 
   private validate(): void {
