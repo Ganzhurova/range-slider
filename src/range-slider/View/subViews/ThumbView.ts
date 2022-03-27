@@ -27,10 +27,6 @@ class ThumbView extends Component {
     });
   }
 
-  private setPercentPosition(percentPosition: number): void {
-    this.percentPosition = percentPosition;
-  }
-
   private setLimitCoords(limitCoords: ILimitCoords): void {
     this.limitCoords = limitCoords;
   }
@@ -43,6 +39,10 @@ class ThumbView extends Component {
       return this.limitCoords.end;
     }
     return coord;
+  }
+
+  public setPercentPosition(percentPosition: number): void {
+    this.percentPosition = percentPosition;
   }
 
   public getPercentPosition(): number {
