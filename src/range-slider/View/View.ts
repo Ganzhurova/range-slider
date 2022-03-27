@@ -1,6 +1,7 @@
 import type { ILimitCoords, IOptions } from '../lib/interfaces';
 import type { ObjKey, PositionKeys } from '../lib/types';
 import DEFAULT_CONFIG from '../lib/defaultConfig';
+import helpers from '../helpers/helpers';
 import { Events } from '../lib/constants';
 
 import EventEmitter from '../EventEmitter';
@@ -12,6 +13,7 @@ import BarView from './subViews/BarView';
 import ThumbView from './subViews/ThumbView';
 import LabelView from './subViews/LabelView';
 import ScaleView from './subViews/ScaleView';
+// import helpers from '../helpers/helpers';
 
 type OptionsKey = ObjKey<IOptions>;
 
@@ -62,6 +64,7 @@ class View extends EventEmitter {
     this.subscribeToTemplateEvents();
     this.subscribeToThumbEvent('from');
     this.subscribeToThumbEvent('to');
+    this.subscribeToScaleEvent();
     this.addEventListeners();
   }
 
@@ -107,6 +110,40 @@ class View extends EventEmitter {
       this.bar.update(
         this.fromThumb.getPercentPosition(),
         this.toThumb.getPercentPosition()
+      );
+    });
+  }
+
+  private subscribeToScaleEvent(): void {
+    this.scale.subscribe(Events.NEW_PERCENT_POSITION, (index) => {
+      const fromPosition = this.fromThumb.getPercentPosition();
+      const toPosition = this.toThumb.getPercentPosition();
+      const percentPosition =
+        (this.calculation.percentageLimitSize / this.options.scaleParts) *
+        index;
+
+      let closestThumb = this.fromThumb;
+
+      if (this.options.isDouble) {
+        if (percentPosition > toPosition) {
+          closestThumb = this.toThumb;
+        } else {
+          const closestPosition = helpers.getClosestValue(
+            [fromPosition, toPosition],
+            percentPosition
+          );
+          closestThumb = <ThumbView>(
+            [this.fromThumb, this.toThumb].find(
+              (thumb) => thumb.getPercentPosition() === closestPosition
+            )
+          );
+        }
+      }
+
+      closestThumb.setup(percentPosition);
+      closestThumb.emit(
+        Events.NEW_PERCENT_POSITION,
+        closestThumb.getPercentPosition()
       );
     });
   }
@@ -198,6 +235,10 @@ class View extends EventEmitter {
     this.el.addEventListener('touchstart', (e) => {
       this.fromThumb.handlerThumbDragStart(e, this.getLimitCoords('from'));
       this.toThumb.handlerThumbDragStart(e, this.getLimitCoords('to'));
+      this.scale.handlerScaleValueClick(e);
+    });
+    this.el.addEventListener('click', (e) => {
+      this.scale.handlerScaleValueClick(e);
     });
   }
 
