@@ -227,6 +227,7 @@ class View extends EventEmitter {
   private addEventListeners(): void {
     window.addEventListener('resize', () => {
       this.calculation.makeBaseCalc(this.options);
+      ThumbView.setStep(this.calculation.positionToPercent(this.options.step));
       this.setup();
     });
     this.el.addEventListener('mousedown', (e) => {
