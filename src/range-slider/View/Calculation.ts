@@ -39,7 +39,7 @@ class Calculation {
     this.percentPerPosition = this.percentageLimitSize / range;
   }
 
-  private calcFractionLength(options: IOptions): void {
+  public calcFractionLength(options: IOptions): void {
     const arr: number[] = [];
     const { min, max, from, step } = options;
     arr.push(min, max, from, step);
@@ -60,7 +60,6 @@ class Calculation {
     this.convertLinePxToPercent();
     this.calcLimitSizeOfLine();
     this.calcPercentPerPosition(options);
-    this.calcFractionLength(options);
   }
 
   public positionToPercent(position: number): number {

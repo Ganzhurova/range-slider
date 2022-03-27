@@ -253,6 +253,7 @@ class View extends EventEmitter {
       this.emit(`${<OptionsKey>key}Changed`);
     });
 
+    this.calculation.calcFractionLength(this.options);
     this.scale.renderDivisions(this.getScaleValues());
     this.setup();
   }
