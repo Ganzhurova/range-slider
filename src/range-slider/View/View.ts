@@ -226,6 +226,7 @@ class View extends EventEmitter {
 
   private addEventListeners(): void {
     window.addEventListener('resize', () => {
+      this.calculation.makeBaseCalc(this.options);
       this.setup();
     });
     this.el.addEventListener('mousedown', (e) => {
