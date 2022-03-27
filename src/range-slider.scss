@@ -99,6 +99,8 @@ $thumb-height: 50px;
   position: absolute;
   width: 1px;
   height: 15px;
+  touch-action: none;
+  cursor: pointer;
   background-color: $grey;
 }
 
