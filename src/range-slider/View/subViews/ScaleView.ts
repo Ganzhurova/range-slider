@@ -1,6 +1,7 @@
 import type { ObjValue } from '../../lib/types';
 import Component from '../Component';
 import { HTML } from '../../lib/html';
+import { Events } from '../../lib/constants';
 
 class ScaleView extends Component {
   private isElExists = false;
@@ -91,6 +92,17 @@ class ScaleView extends Component {
 
     this.el.setAttribute('style', `${ScaleView.direction.size}:${lineSize}%`);
     this.setVisibilityOfValues();
+  }
+
+  public handlerScaleValueClick(event: MouseEvent | TouchEvent) {
+    event.preventDefault();
+
+    const target = <HTMLElement>event.target;
+    if (!target.closest(`.${HTML.scaleValue.className}`)) return;
+
+    const index = this.values.findIndex((value) => value.getEl() === target);
+
+    this.emit(Events.NEW_PERCENT_POSITION, index);
   }
 }
 
