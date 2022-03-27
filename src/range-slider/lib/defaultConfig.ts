@@ -11,7 +11,6 @@ const DEFAULT_CONFIG: IOptions = {
   from: 25,
   to: 75,
   step: 0,
-  // scaleRange: [], // вынести в интерфейс
 };
 
 export default DEFAULT_CONFIG;

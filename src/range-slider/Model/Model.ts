@@ -16,7 +16,6 @@ class Model extends EventEmitter {
   public updateState(options: Partial<IOptions>): void {
     Object.assign(this.state, options);
     this.validate();
-    // console.log(this.state);
     this.emit(Events.NEW_STATE, this.getState());
   }
 

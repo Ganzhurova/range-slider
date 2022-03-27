@@ -9,10 +9,14 @@ import View from './range-slider/View/View';
 
 const options: Partial<IOptions> = {
   isLabel: true,
-  // isVertical: true,
+  isVertical: true,
   isScale: true,
   isDouble: true,
   // max: 18,
+  scaleParts: 100,
+  from: 22.52,
+  max: 200,
+  // step: 20,
 };
 
 const d = new Presenter(new Model(options), new View('#slider-1'));
@@ -25,5 +29,11 @@ console.log(d);
 // d.update({ isDouble: true });
 // // d.update({ isLabel: false });
 // d.update({ isVertical: false, isScale: false });
-// d.update({ isVertical: false });
-// d.update({ isScale: true });
+d.update({ isVertical: false });
+// d.update({ scaleParts: 5 });
+// //
+d.update({ isScale: false });
+d.update({ isScale: true });
+// d.update({ isVertical: true });
+// d.update({ scaleParts: 100 });
+// d.update({ from: 50 });
