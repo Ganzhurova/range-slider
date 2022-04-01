@@ -10,7 +10,7 @@ class RootView extends Component {
     this.init(HTML.rootEl);
   }
 
-  protected init(html: ObjValue<typeof HTML>): void {
+  public init(html: ObjValue<typeof HTML>): void {
     this.addClass(html.className);
   }
 
@@ -20,3 +20,4 @@ class RootView extends Component {
 }
 
 export default RootView;
+
