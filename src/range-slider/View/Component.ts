@@ -68,8 +68,6 @@ class Component extends EventEmitter {
   }
 
   public static checkOverlay(componentA: Component, componentB: Component) {
-    if (!componentB) return false;
-
     const componentAEndPx = componentA.getCoord() + componentA.getSize();
     const componentBStartPx = componentB.getCoord();
 
@@ -78,3 +76,4 @@ class Component extends EventEmitter {
 }
 
 export default Component;
+
