@@ -8,7 +8,7 @@ import { IOptions } from './lib/interfaces';
 
 (function ($) {
   // eslint-disable-next-line no-param-reassign
-  $.fn.rangeSlider = function (options?: IOptions) {
+  $.fn.rangeSlider = function (options?: Partial<IOptions>) {
     const key = 'rangeSlider';
     const settings = options || {};
 
