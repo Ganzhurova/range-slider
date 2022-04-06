@@ -87,7 +87,12 @@ class View extends EventEmitter {
       this.scale.setIsElExists(this.options.isScale);
     });
     this.subscribe(Events.STEP_CHANGED, () => {
-      ThumbView.setStep(this.calculation.positionToPercent(this.options.step));
+      this.fromThumb.setStep(
+        this.calculation.positionToPercent(this.options.step)
+      );
+      this.toThumb.setStep(
+        this.calculation.positionToPercent(this.options.step)
+      );
     });
   }
 

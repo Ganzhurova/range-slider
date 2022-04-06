@@ -11,9 +11,9 @@ class ThumbView extends Component {
 
   private limitCoords!: ILimitCoords;
 
-  private static step = 0;
+  private step = 0;
 
-  private static stepPxOffset = 0;
+  private stepPxOffset = 0;
 
   constructor() {
     super();
@@ -47,6 +47,12 @@ class ThumbView extends Component {
 
   public getPercentPosition(): number {
     return this.percentPosition;
+  }
+
+  public setStep(step: number): void {
+    this.step = step;
+    this.stepPxOffset = step / 1.5 / Component.percentPerPx;
+    console.log(this.step);
   }
 
   public setup(percentPosition: number): void {
@@ -95,17 +101,17 @@ class ThumbView extends Component {
     const delta = (this.startPxCoord - endPxCoord) * Component.percentPerPx;
     const isRightBorder = () =>
       Math.sign(delta) === -1 &&
-      endPxCoord > this.getCoord() + ThumbView.stepPxOffset;
+      endPxCoord > this.getCoord() + this.stepPxOffset;
     const isLeftBorder = () =>
       Math.sign(delta) === 1 &&
-      endPxCoord < this.getCoord() - ThumbView.stepPxOffset;
+      endPxCoord < this.getCoord() - this.stepPxOffset;
 
     let shift = 0;
 
-    if (!ThumbView.step) {
+    if (!this.step) {
       shift = delta;
     } else if (isRightBorder() || isLeftBorder()) {
-      shift = ThumbView.step * Math.sign(delta);
+      shift = this.step * Math.sign(delta);
     }
 
     this.startPxCoord = endPxCoord;
@@ -121,11 +127,7 @@ class ThumbView extends Component {
       `${ThumbView.direction.name}:${this.percentPosition}%`
     );
   }
-
-  public static setStep(step: number): void {
-    ThumbView.step = step;
-    ThumbView.stepPxOffset = step / 1.5 / Component.percentPerPx;
-  }
 }
 
 export default ThumbView;
+
