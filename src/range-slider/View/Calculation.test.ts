@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import { IOptions } from '../lib/interfaces';
 import Calculation from './Calculation';
 import View from './View';
@@ -23,7 +27,8 @@ beforeEach(() => {
   mockLineGetSize.mockClear();
   mockFromThumbGetSize.mockClear();
 
-  calculation = new Calculation(new View(''));
+  const el = document.createElement('div');
+  calculation = new Calculation(new View(el));
   options = {
     isDouble: true,
     isVertical: false,

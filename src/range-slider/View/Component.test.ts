@@ -139,12 +139,12 @@ test('Component: getCoord should return the coordinate of the element', () => {
   window.pageXOffset = pageXOffset;
 });
 
-test('Component: static setDirection should set the direction', () => {
-  Component.setDirection(true);
-  expect(Component.direction).toEqual(directions.TOP);
+test('Component: setDirection should set the direction', () => {
+  component.setDirection(true);
+  expect(component.direction).toEqual(directions.TOP);
 
-  Component.setDirection(false);
-  expect(Component.direction).toEqual(directions.LEFT);
+  component.setDirection(false);
+  expect(component.direction).toEqual(directions.LEFT);
 });
 
 describe('Component: static checkOverlay', () => {
