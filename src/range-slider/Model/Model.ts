@@ -8,9 +8,10 @@ import EventEmitter from '../EventEmitter';
 class Model extends EventEmitter {
   private state: IOptions = { ...DEFAULT_CONFIG };
 
-  constructor(options: Partial<IOptions>) {
+  constructor(options?: Partial<IOptions>) {
     super();
-    this.updateState(options);
+    const settings = options || {};
+    this.updateState(settings);
   }
 
   public updateState(options: Partial<IOptions>): void {
@@ -89,3 +90,4 @@ class Model extends EventEmitter {
 }
 
 export default Model;
+
