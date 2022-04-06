@@ -13,7 +13,6 @@ import BarView from './subViews/BarView';
 import ThumbView from './subViews/ThumbView';
 import LabelView from './subViews/LabelView';
 import ScaleView from './subViews/ScaleView';
-// import helpers from '../helpers/helpers';
 
 type OptionsKey = ObjKey<IOptions>;
 
@@ -44,9 +43,9 @@ class View extends EventEmitter {
 
   public scale: ScaleView;
 
-  constructor(selector: string) {
+  constructor(element: HTMLElement) {
     super();
-    this.el = <HTMLElement>document.querySelector(selector);
+    this.el = element;
 
     this.root = new RootView(this.el);
     this.line = new LineView();
@@ -261,3 +260,4 @@ class View extends EventEmitter {
 }
 
 export default View;
+
