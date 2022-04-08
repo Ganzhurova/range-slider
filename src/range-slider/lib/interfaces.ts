@@ -31,3 +31,17 @@ export interface ILimitCoords {
   start: number;
   end: number;
 }
+
+export interface IDataView {
+  direction: IDirection;
+  percentPerPx: number;
+  percentPerPosition: number;
+  percentageLimitSize: number;
+  fractionLength: number;
+}
+
+export interface Settings {
+  data: IDataView;
+  options: IOptions;
+}
+

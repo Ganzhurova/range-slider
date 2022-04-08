@@ -1,8 +1,9 @@
 import Component from '../Component';
 import { Events } from '../../lib/constants';
 import { HTML, mix } from '../../lib/html';
+import { Html, PositionKeys } from '../../lib/types';
 import helpers from '../../helpers/helpers';
-import { ILimitCoords } from '../../lib/interfaces';
+import { ILimitCoords, Settings } from '../../lib/interfaces';
 
 class ThumbView extends Component {
   private percentPosition!: number;
@@ -11,13 +12,13 @@ class ThumbView extends Component {
 
   private limitCoords!: ILimitCoords;
 
-  private step = 0;
+  private step = {
+    percent: 0,
+    pxOffset: 0,
+  };
 
-  private stepPxOffset = 0;
-
-  constructor() {
-    super();
-    this.init(HTML.thumb);
+  constructor(settings: Settings, html: Html) {
+    super(settings, html);
     this.subscribe(Events.THUMB_SELECTED, (target: HTMLElement) => {
       if (target === this.el) {
         this.addClass(mix.selected);
@@ -29,6 +30,14 @@ class ThumbView extends Component {
 
   private setLimitCoords(limitCoords: ILimitCoords): void {
     this.limitCoords = limitCoords;
+  }
+
+  private setPercentStep(): void {
+    this.step.percent = this.positionToPercent(this.options.step);
+
+    const stepPx = this.percentToPx(this.step.percent);
+    const ratio = 1.5;
+    this.step.pxOffset = stepPx / ratio;
   }
 
   private getValidCoord(coord: number): number {
@@ -49,17 +58,16 @@ class ThumbView extends Component {
     return this.percentPosition;
   }
 
-  public setStep(step: number): void {
-    this.step = step;
-    this.stepPxOffset = step / 1.5 / Component.percentPerPx;
-    console.log(this.step);
-  }
+  public setup(key: PositionKeys) {
+    const position = this.options[key];
+    const getValidPosition = (value: number) => value - this.options.min;
 
-  public setup(percentPosition: number): void {
-    this.setPercentPosition(percentPosition);
+    this.setPercentPosition(this.positionToPercent(getValidPosition(position)));
+    this.setPercentStep();
+
     this.el.setAttribute(
       'style',
-      `${ThumbView.direction.name}:${this.percentPosition}%`
+      `${this.data.direction.name}:${this.percentPosition}%`
     );
   }
 
@@ -67,8 +75,6 @@ class ThumbView extends Component {
     event: MouseEvent | TouchEvent,
     limitCoords: ILimitCoords
   ): void {
-    event.preventDefault();
-
     const target = (<HTMLElement>event.target).closest(
       `.${HTML.thumb.className}`
     );
@@ -77,9 +83,14 @@ class ThumbView extends Component {
     }
     if (target !== this.el) return;
 
+    event.preventDefault();
+
     this.setLimitCoords(limitCoords);
 
-    this.startPxCoord = helpers.getEventCoord(event);
+    this.startPxCoord = helpers.getEventCoord(
+      event,
+      this.data.direction.coord.toUpperCase()
+    );
 
     const handlerThumbDrag = this.handlerThumbDrag.bind(this);
 
@@ -97,21 +108,24 @@ class ThumbView extends Component {
   }
 
   private handlerThumbDrag(event: MouseEvent | TouchEvent): void {
-    const endPxCoord = helpers.getEventCoord(event);
-    const delta = (this.startPxCoord - endPxCoord) * Component.percentPerPx;
+    const endPxCoord = helpers.getEventCoord(
+      event,
+      this.data.direction.coord.toUpperCase()
+    );
+    const delta = this.pxToPercet(this.startPxCoord - endPxCoord);
     const isRightBorder = () =>
       Math.sign(delta) === -1 &&
-      endPxCoord > this.getCoord() + this.stepPxOffset;
+      endPxCoord > this.getCoord() + this.step.pxOffset;
     const isLeftBorder = () =>
       Math.sign(delta) === 1 &&
-      endPxCoord < this.getCoord() - this.stepPxOffset;
+      endPxCoord < this.getCoord() - this.step.pxOffset;
 
     let shift = 0;
 
-    if (!this.step) {
+    if (!this.step.percent) {
       shift = delta;
     } else if (isRightBorder() || isLeftBorder()) {
-      shift = this.step * Math.sign(delta);
+      shift = this.step.percent * Math.sign(delta);
     }
 
     this.startPxCoord = endPxCoord;
@@ -124,7 +138,7 @@ class ThumbView extends Component {
     this.emit(Events.NEW_PERCENT_POSITION, this.percentPosition);
     this.el.setAttribute(
       'style',
-      `${ThumbView.direction.name}:${this.percentPosition}%`
+      `${this.data.direction.name}:${this.percentPosition}%`
     );
   }
 }

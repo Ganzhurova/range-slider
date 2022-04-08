@@ -1,8 +1,6 @@
-import Component from '../View/Component';
-
 const helpers = {
-  getEventCoord(event: MouseEvent | TouchEvent): number {
-    const pageCoord = `page${Component.direction.coord.toUpperCase()}`;
+  getEventCoord(event: MouseEvent | TouchEvent, coordName: string): number {
+    const pageCoord = `page${coordName}`;
     const evt =
       event.type.search('touch') !== -1
         ? (<TouchEvent>event).touches[0]

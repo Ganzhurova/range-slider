@@ -1,51 +1,43 @@
 import type View from './View';
-import Component from './Component';
-import { IOptions } from '../lib/interfaces';
+import { IDataView, ILimitCoords, IOptions } from '../lib/interfaces';
+import { PositionKeys } from '../lib/types';
 
 class Calculation {
   private view: View;
 
-  private percentPerPx!: number;
+  private data: IDataView;
 
-  private percentPerPosition!: number;
-
-  public fractionLength!: number;
-
-  public percentageLimitSize!: number;
+  private options: IOptions;
 
   constructor(view: View) {
     this.view = view;
+    this.data = view.data;
+    this.options = view.options;
   }
 
   private convertLinePxToPercent(): void {
-    this.percentPerPx = 100 / <number>this.view.line.getSize();
-    Component.percentPerPx = this.percentPerPx;
+    this.data.percentPerPx = 100 / <number>this.view.line.getSize();
   }
 
   private calcLimitSizeOfLine(): void {
-    this.percentageLimitSize =
+    this.data.percentageLimitSize =
       (this.view.line.getSize() - this.view.fromThumb.getSize()) *
-      this.percentPerPx;
+      this.data.percentPerPx;
   }
 
-  private calcPercentPerPosition({
-    min,
-    max,
-  }: {
-    min: number;
-    max: number;
-  }): void {
+  private calcPercentPerPosition(): void {
+    const { min, max } = this.options;
     const range = Math.abs(max - min);
-    this.percentPerPosition = this.percentageLimitSize / range;
+    this.data.percentPerPosition = this.data.percentageLimitSize / range;
   }
 
-  public calcFractionLength(options: IOptions): void {
+  private calcFractionLength(): void {
     const arr: number[] = [];
-    const { min, max, from, step } = options;
+    const { min, max, from, step } = this.options;
     arr.push(min, max, from, step);
 
-    if (options.isDouble) {
-      const { to } = options;
+    if (this.options.isDouble) {
+      const { to } = this.options;
       arr.push(to);
     }
 
@@ -53,22 +45,29 @@ class Calculation {
       num.toString().includes('.') ? num.toString().split('.').pop()?.length : 0
     );
 
-    this.fractionLength = Math.max(...(<number[]>arrOfLengths));
+    this.data.fractionLength = Math.max(...(<number[]>arrOfLengths));
   }
 
-  public makeBaseCalc(options: IOptions): void {
+  public makeBaseCalc(): void {
     this.convertLinePxToPercent();
     this.calcLimitSizeOfLine();
-    this.calcPercentPerPosition(options);
+    this.calcPercentPerPosition();
+    this.calcFractionLength();
   }
 
-  public positionToPercent(position: number): number {
-    return position * this.percentPerPosition;
-  }
+  public getLimitCoords(key: PositionKeys): ILimitCoords {
+    const startCoord = 0;
+    const fromCoord = this.view.fromThumb.getPercentPosition();
+    const toCoord = this.view.toThumb.getPercentPosition();
+    const endCoord = this.data.percentageLimitSize;
+    const getFromEndCoord = () => (this.options.isDouble ? toCoord : endCoord);
 
-  public percentToPosition(percent: number): number {
-    return percent / this.percentPerPosition;
+    return {
+      start: key === 'from' ? startCoord : fromCoord,
+      end: key === 'from' ? getFromEndCoord() : endCoord,
+    };
   }
 }
 
 export default Calculation;
+

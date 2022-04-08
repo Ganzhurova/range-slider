@@ -1,7 +1,7 @@
 import type { IOptions } from '../lib/interfaces';
-import type { PositionKeys } from '../lib/types';
-import type Model from '../Model/Model';
-import type View from '../View/View';
+import type { OptionsKeys } from '../lib/types';
+import Model from '../Model/Model';
+import View from '../View/View';
 
 import { Events } from '../lib/constants';
 
@@ -10,25 +10,26 @@ class Presenter {
 
   private view: View;
 
-  constructor(model: Model, view: View) {
-    this.model = model;
-    this.view = view;
+  constructor(element: HTMLElement, options?: Partial<IOptions>) {
+    this.model = new Model();
+    this.view = new View(element, this.model.getState());
 
-    this.view.subscribe(
-      Events.NEW_POSITION,
-      (position: number, key: PositionKeys) => {
-        this.model.updatePosition(position, key);
-      }
+    // this.view.subscribe(
+    //   Events.NEW_POSITION,
+    //   (position: number, key: PositionKeys) => {
+    //     this.model.updatePosition(position, key);
+    //   }
+    // );
+    this.model.subscribe(Events.NEW_STATE, (keys: OptionsKeys[]) =>
+      this.view.update(keys)
     );
-    this.model.subscribe(Events.NEW_STATE, (options) =>
-      this.view.update(options)
-    );
-    this.model.emit(Events.NEW_STATE, this.model.getState());
+    this.update(options);
   }
 
-  update(options: Partial<IOptions>) {
+  update(options?: Partial<IOptions>) {
     this.model.updateState(options);
   }
 }
 
 export default Presenter;
+

@@ -1,19 +1,26 @@
-import type { ObjValue } from '../lib/types';
-import { IDirection } from '../lib/interfaces';
-import { HTML } from '../lib/html';
-import { directions } from '../lib/constants';
+import type { Html } from '../lib/types';
+import { IDataView, IOptions, Settings } from '../lib/interfaces';
 
 import EventEmitter from '../EventEmitter';
 
 class Component extends EventEmitter {
-  public static direction: IDirection = directions.LEFT;
+  protected data: IDataView;
 
-  public static percentPerPx: number;
+  protected options: IOptions;
 
   protected el!: HTMLElement;
 
-  public init(html: ObjValue<typeof HTML>): void {
-    this.el = document.createElement(html.tag);
+  protected isElExists = false;
+
+  constructor(settings: Settings, html: Html, el?: HTMLElement) {
+    super();
+    this.data = settings.data;
+    this.options = settings.options;
+    this.init(html, el);
+  }
+
+  public init(html: Html, el?: HTMLElement): void {
+    this.el = el || document.createElement(html.tag);
     this.addClass(html.className);
   }
 
@@ -51,20 +58,32 @@ class Component extends EventEmitter {
 
   public getSize(): number {
     const box = this.getBox();
-    return <number>box[Component.direction.size];
+    return <number>box[this.data.direction.size];
   }
 
   public getCoord() {
     const box = this.getBox();
-    const coordName = Component.direction.coord;
+    const coordName = this.data.direction.coord;
     const pageOffset =
       coordName === 'x' ? window.pageXOffset : window.pageYOffset;
 
-    return <number>box[Component.direction.name] + pageOffset;
+    return <number>box[this.data.direction.name] + pageOffset;
   }
 
-  public static setDirection(isVertical: boolean): void {
-    Component.direction = isVertical ? directions.TOP : directions.LEFT;
+  public positionToPercent(position: number): number {
+    return position * this.data.percentPerPosition;
+  }
+
+  public percentToPosition(percent: number): number {
+    return percent / this.data.percentPerPosition;
+  }
+
+  public percentToPx(percent: number): number {
+    return percent / this.data.percentPerPx;
+  }
+
+  public pxToPercet(px: number): number {
+    return px * this.data.percentPerPx;
   }
 
   public static checkOverlay(componentA: Component, componentB: Component) {

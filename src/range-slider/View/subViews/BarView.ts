@@ -1,39 +1,28 @@
 import Component from '../Component';
-import { HTML } from '../../lib/html';
 
 class BarView extends Component {
-  private isDouble = false;
-
   private correctValue!: number;
 
-  constructor() {
-    super();
-    this.init(HTML.bar);
-  }
-
   public setup(thumbSize: number) {
-    this.correctValue = (thumbSize / 2) * BarView.percentPerPx;
-  }
-
-  public setType(isDouble: boolean): void {
-    this.isDouble = isDouble;
+    this.correctValue = (thumbSize / 2) * this.data.percentPerPx;
   }
 
   public update(fromPosition: number, toPosition: number): void {
     const START_POSITION = 0;
 
-    const start = this.isDouble
+    const start = this.options.isDouble
       ? fromPosition + this.correctValue
       : START_POSITION;
-    const end = this.isDouble
+    const end = this.options.isDouble
       ? toPosition - fromPosition
       : fromPosition + this.correctValue;
 
     this.el.setAttribute(
       'style',
-      `${BarView.direction.name}:${start}%; ${BarView.direction.size}:${end}%`
+      `${this.data.direction.name}:${start}%; ${this.data.direction.size}:${end}%`
     );
   }
 }
 
 export default BarView;
+

@@ -1,5 +1,5 @@
 import type { IOptions } from '../lib/interfaces';
-import type { PositionKeys } from '../lib/types';
+import type { OptionsKeys, PositionKeys } from '../lib/types';
 import DEFAULT_CONFIG from '../lib/defaultConfig';
 import { Events } from '../lib/constants';
 
@@ -8,16 +8,18 @@ import EventEmitter from '../EventEmitter';
 class Model extends EventEmitter {
   private state: IOptions = { ...DEFAULT_CONFIG };
 
-  constructor(options?: Partial<IOptions>) {
-    super();
-    const settings = options || {};
-    this.updateState(settings);
-  }
+  public updateState(options?: Partial<IOptions>): void {
+    if (!options) return;
 
-  public updateState(options: Partial<IOptions>): void {
+    const oldState = { ...this.getState() };
+
     Object.assign(this.state, options);
     this.validate();
-    this.emit(Events.NEW_STATE, this.getState());
+
+    const changedKeys = this.getChangedKeys(oldState);
+    if (changedKeys.length > 0) {
+      this.emit(Events.NEW_STATE, changedKeys);
+    }
   }
 
   public getState(): IOptions {
@@ -26,6 +28,18 @@ class Model extends EventEmitter {
 
   public updatePosition(position: number, key: PositionKeys): void {
     this.state[key] = position;
+  }
+
+  private getChangedKeys(options: IOptions): OptionsKeys[] {
+    const changedKeys: OptionsKeys[] = [];
+
+    Object.keys(options).forEach((key) => {
+      if (options[<OptionsKeys>key] !== this.state[<OptionsKeys>key]) {
+        changedKeys.push(<OptionsKeys>key);
+      }
+    });
+
+    return changedKeys;
   }
 
   private validate(): void {
