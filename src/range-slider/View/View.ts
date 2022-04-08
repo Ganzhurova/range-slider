@@ -10,6 +10,7 @@ import LineView from './subViews/LineView';
 import { OptionsKeys, PositionKeys } from '../lib/types';
 import Calculation from './Calculation';
 import ThumbView from './subViews/ThumbView';
+import LabelView from './subViews/LabelView';
 
 class View extends EventEmitter {
   private el: HTMLElement;
@@ -38,6 +39,12 @@ class View extends EventEmitter {
 
   public toThumb: ThumbView;
 
+  public fromLabel: LabelView;
+
+  public toLabel: LabelView;
+
+  public commonLabel: LabelView;
+
   constructor(element: HTMLElement, options: IOptions) {
     super();
     this.el = element;
@@ -53,6 +60,9 @@ class View extends EventEmitter {
     this.bar = new BarView(settings, HTML.bar);
     this.fromThumb = new ThumbView(settings, HTML.thumb);
     this.toThumb = new ThumbView(settings, HTML.thumb);
+    this.fromLabel = new LabelView(settings, HTML.label);
+    this.toLabel = new LabelView(settings, HTML.label);
+    this.commonLabel = new LabelView(settings, HTML.label);
     this.template = new Template(this);
     this.calculation = new Calculation(this);
 
@@ -62,14 +72,16 @@ class View extends EventEmitter {
     this.setup();
   }
 
+  private updatePosition(position: number, key: PositionKeys) {
+    this.options[key] = position;
+  }
+
   private subscribeToThumbEvent(key: PositionKeys): void {
     const thumb: ThumbView = this[`${key}Thumb`];
 
     thumb.subscribe(Events.NEW_PERCENT_POSITION, () => {
-      this.bar.update(
-        this.fromThumb.getPercentPosition(),
-        this.toThumb.getPercentPosition()
-      );
+      this.updatePosition(thumb.getPosition(), key);
+      this.updateThumbPosition(key);
     });
   }
 
@@ -97,21 +109,32 @@ class View extends EventEmitter {
     this.el.addEventListener('touchstart', this.handlerThumbDragStart);
   }
 
-  private setupThumbAndLabel(key: PositionKeys): void {
-    const thumb: ThumbView = this[`${key}Thumb`];
-
-    thumb.setup(key);
+  private getPositionText(key: PositionKeys) {
+    return this.options[key].toFixed(this.data.fractionLength);
   }
 
-  private setup(): void {
-    this.calculation.makeBaseCalc();
-    this.setupThumbAndLabel('from');
-    this.setupThumbAndLabel('to');
-    this.bar.setup(this.fromThumb.getSize());
+  private updateThumbPosition(key: PositionKeys) {
+    const thumb: ThumbView = this[`${key}Thumb`];
+    const label: LabelView = this[`${key}Label`];
+
+    label.update(thumb.getPercentPosition(), this.getPositionText(key));
+    LabelView.switchCommonLabel(this.commonLabel, this.fromLabel, this.toLabel);
     this.bar.update(
       this.fromThumb.getPercentPosition(),
       this.toThumb.getPercentPosition()
     );
+  }
+
+  private setup(): void {
+    this.calculation.makeBaseCalc();
+    this.fromThumb.setup('from');
+    this.toThumb.setup('to');
+    this.fromLabel.setup(this.fromThumb.getSize());
+    this.toLabel.setup(this.fromThumb.getSize());
+    this.bar.setup(this.fromThumb.getSize());
+
+    this.updateThumbPosition('from');
+    this.updateThumbPosition('to');
   }
 
   public update(keys: OptionsKeys[]): void {

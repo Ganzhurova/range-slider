@@ -1,23 +1,15 @@
 import Component from '../Component';
-import { HTML } from '../../lib/html';
 
 class LabelView extends Component {
-  private isElExists = false;
-
-  private correctValue!: number;
+  private thumbSizePercent!: number;
 
   private percentPosition!: number;
 
   private text!: string;
 
-  constructor() {
-    super();
-    this.init(HTML.label);
-  }
-
   private setPercentPosition(thumbPosition: number): void {
-    const labelSize = this.getSize() * LabelView.percentPerPx;
-    const offset = (labelSize - this.correctValue) / 2;
+    const labelSizePercent = this.pxToPercent(this.getSize());
+    const offset = (labelSizePercent - this.thumbSizePercent) / 2;
 
     this.percentPosition = thumbPosition - offset;
   }
@@ -34,30 +26,23 @@ class LabelView extends Component {
     return this.text;
   }
 
-  public setIsElExists(isElExists: boolean): void {
-    this.isElExists = isElExists;
-  }
-
-  public getIsElExists(): boolean {
-    return this.isElExists;
-  }
-
   public setup(thumbSize: number): void {
     if (!this.isElExists) return;
 
-    this.correctValue = thumbSize * LabelView.percentPerPx;
+    this.thumbSizePercent = this.pxToPercent(thumbSize);
   }
 
-  public update(thumbPosition: number, positionText: string): void {
+  public update(thumbPosition: number, positionText: string) {
     if (!this.isElExists) return;
 
-    this.setPercentPosition(thumbPosition);
     this.setText(positionText);
 
     this.el.innerHTML = this.text;
+
+    this.setPercentPosition(thumbPosition);
     this.el.setAttribute(
       'style',
-      `${LabelView.direction.name}:${this.percentPosition}%`
+      `${this.data.direction.name}:${this.percentPosition}%`
     );
   }
 
@@ -66,7 +51,7 @@ class LabelView extends Component {
     fromLabel: LabelView,
     toLabel: LabelView
   ) {
-    if (!toLabel.getIsElExists()) {
+    if (!toLabel.isElExists) {
       fromLabel.show();
       return;
     }
@@ -80,7 +65,7 @@ class LabelView extends Component {
     const getCommonPosition = () => {
       const fromEnd =
         fromLabel.getPercentPosition() +
-        fromLabel.getSize() * LabelView.percentPerPx;
+        fromLabel.pxToPercent(fromLabel.getSize());
       const toStart = toLabel.getPercentPosition();
       return (toStart - fromEnd) / 2 + fromEnd;
     };
@@ -102,3 +87,4 @@ class LabelView extends Component {
 }
 
 export default LabelView;
+

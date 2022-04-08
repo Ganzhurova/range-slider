@@ -58,6 +58,13 @@ class ThumbView extends Component {
     return this.percentPosition;
   }
 
+  public getPosition(): number {
+    const getValidPosition = (value: number) => value + this.options.min;
+    return +getValidPosition(
+      this.percentToPosition(this.getPercentPosition())
+    ).toFixed(this.data.fractionLength);
+  }
+
   public setup(key: PositionKeys) {
     const position = this.options[key];
     const getValidPosition = (value: number) => value - this.options.min;
@@ -112,7 +119,7 @@ class ThumbView extends Component {
       event,
       this.data.direction.coord.toUpperCase()
     );
-    const delta = this.pxToPercet(this.startPxCoord - endPxCoord);
+    const delta = this.pxToPercent(this.startPxCoord - endPxCoord);
     const isRightBorder = () =>
       Math.sign(delta) === -1 &&
       endPxCoord > this.getCoord() + this.step.pxOffset;

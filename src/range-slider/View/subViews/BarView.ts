@@ -4,7 +4,7 @@ class BarView extends Component {
   private correctValue!: number;
 
   public setup(thumbSize: number) {
-    this.correctValue = (thumbSize / 2) * this.data.percentPerPx;
+    this.correctValue = this.pxToPercent(thumbSize / 2);
   }
 
   public update(fromPosition: number, toPosition: number): void {

@@ -2,8 +2,6 @@
 import './range-slider.scss';
 
 import Presenter from './Presenter/Presenter';
-import Model from './Model/Model';
-import View from './View/View';
 import { IOptions } from './lib/interfaces';
 
 (function ($) {
@@ -13,7 +11,7 @@ import { IOptions } from './lib/interfaces';
 
     return this.each(function () {
       if (!$.data(this, key)) {
-        $.data(this, key, new Presenter(new Model(options), new View(this)));
+        $.data(this, key, new Presenter(this, options));
       }
     });
   };

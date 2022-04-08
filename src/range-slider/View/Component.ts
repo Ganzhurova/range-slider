@@ -10,7 +10,7 @@ class Component extends EventEmitter {
 
   protected el!: HTMLElement;
 
-  protected isElExists = false;
+  public isElExists = false;
 
   constructor(settings: Settings, html: Html, el?: HTMLElement) {
     super();
@@ -33,11 +33,15 @@ class Component extends EventEmitter {
   }
 
   public addChild(child: Component): void {
-    this.el.append(child.getEl());
+    const childComponent = child;
+
+    this.el.append(childComponent.getEl());
+    childComponent.isElExists = true;
   }
 
   public remove(): void {
     this.el.remove();
+    this.isElExists = false;
   }
 
   public hidden(): void {
@@ -82,7 +86,7 @@ class Component extends EventEmitter {
     return percent / this.data.percentPerPx;
   }
 
-  public pxToPercet(px: number): number {
+  public pxToPercent(px: number): number {
     return px * this.data.percentPerPx;
   }
 

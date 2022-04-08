@@ -37,12 +37,32 @@ class Template extends EventEmitter {
     }
   }
 
+  private setLabel(isLabel: boolean) {
+    if (isLabel) {
+      this.view.line.addChild(this.view.fromLabel);
+      if (this.view.toThumb.isElExists) {
+        this.view.line.addChild(this.view.commonLabel);
+        this.view.line.addChild(this.view.toLabel);
+      } else {
+        this.view.commonLabel.remove();
+        this.view.toLabel.remove();
+      }
+    } else {
+      this.view.fromLabel.remove();
+      this.view.toLabel.remove();
+    }
+  }
+
   private subscribeToEvents(): void {
     this.subscribe(Events.VERTICAL_CHANGED, () => {
       this.setDirection(this.options.isVertical);
     });
     this.subscribe(Events.DOUBLE_CHANGED, () => {
       this.setType(this.options.isDouble);
+      this.setLabel(this.options.isLabel);
+    });
+    this.subscribe(Events.LABEL_CHANGED, () => {
+      this.setLabel(this.options.isLabel);
     });
   }
 

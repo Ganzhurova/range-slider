@@ -14,12 +14,6 @@ class Presenter {
     this.model = new Model();
     this.view = new View(element, this.model.getState());
 
-    // this.view.subscribe(
-    //   Events.NEW_POSITION,
-    //   (position: number, key: PositionKeys) => {
-    //     this.model.updatePosition(position, key);
-    //   }
-    // );
     this.model.subscribe(Events.NEW_STATE, (keys: OptionsKeys[]) =>
       this.view.update(keys)
     );
