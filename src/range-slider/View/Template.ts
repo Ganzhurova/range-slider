@@ -53,6 +53,14 @@ class Template extends EventEmitter {
     }
   }
 
+  public setScale(isScale: boolean) {
+    if (isScale) {
+      this.view.root.addChild(this.view.scale);
+    } else {
+      this.view.scale.remove();
+    }
+  }
+
   private subscribeToEvents(): void {
     this.subscribe(Events.VERTICAL_CHANGED, () => {
       this.setDirection(this.options.isVertical);
@@ -63,6 +71,9 @@ class Template extends EventEmitter {
     });
     this.subscribe(Events.LABEL_CHANGED, () => {
       this.setLabel(this.options.isLabel);
+    });
+    this.subscribe(Events.SCALE_CHANGED, () => {
+      this.setScale(this.options.isScale);
     });
   }
 
