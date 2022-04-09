@@ -17,8 +17,8 @@ class ThumbView extends Component {
     pxOffset: 0,
   };
 
-  constructor(settings: Settings, html: Html) {
-    super(settings, html);
+  constructor(html: Html, settings: Settings) {
+    super(html, settings);
     this.subscribe(Events.THUMB_SELECTED, (target: HTMLElement) => {
       if (target === this.el) {
         this.addClass(mix.selected);

@@ -11,6 +11,7 @@ import { OptionsKeys, PositionKeys } from '../lib/types';
 import Calculation from './Calculation';
 import ThumbView from './subViews/ThumbView';
 import LabelView from './subViews/LabelView';
+import ScaleView from './subViews/ScaleView';
 
 class View extends EventEmitter {
   private el: HTMLElement;
@@ -45,6 +46,8 @@ class View extends EventEmitter {
 
   public commonLabel: LabelView;
 
+  public scale: ScaleView;
+
   constructor(element: HTMLElement, options: IOptions) {
     super();
     this.el = element;
@@ -55,14 +58,15 @@ class View extends EventEmitter {
       options: this.options,
     };
 
-    this.root = new RootView(settings, HTML.rootEl, element);
-    this.line = new LineView(settings, HTML.line);
-    this.bar = new BarView(settings, HTML.bar);
-    this.fromThumb = new ThumbView(settings, HTML.thumb);
-    this.toThumb = new ThumbView(settings, HTML.thumb);
-    this.fromLabel = new LabelView(settings, HTML.label);
-    this.toLabel = new LabelView(settings, HTML.label);
-    this.commonLabel = new LabelView(settings, HTML.label);
+    this.root = new RootView(HTML.rootEl, settings, element);
+    this.line = new LineView(HTML.line, settings);
+    this.bar = new BarView(HTML.bar, settings);
+    this.fromThumb = new ThumbView(HTML.thumb, settings);
+    this.toThumb = new ThumbView(HTML.thumb, settings);
+    this.fromLabel = new LabelView(HTML.label, settings);
+    this.toLabel = new LabelView(HTML.label, settings);
+    this.commonLabel = new LabelView(HTML.label, settings);
+    this.scale = new ScaleView(HTML.scale, settings);
     this.template = new Template(this);
     this.calculation = new Calculation(this);
 

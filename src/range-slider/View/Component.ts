@@ -4,18 +4,20 @@ import { IDataView, IOptions, Settings } from '../lib/interfaces';
 import EventEmitter from '../EventEmitter';
 
 class Component extends EventEmitter {
-  protected data: IDataView;
+  protected data!: IDataView;
 
-  protected options: IOptions;
+  protected options!: IOptions;
 
   protected el!: HTMLElement;
 
   public isElExists = false;
 
-  constructor(settings: Settings, html: Html, el?: HTMLElement) {
+  constructor(html: Html, settings?: Settings, el?: HTMLElement) {
     super();
-    this.data = settings.data;
-    this.options = settings.options;
+    if (settings) {
+      this.data = settings.data;
+      this.options = settings.options;
+    }
     this.init(html, el);
   }
 
