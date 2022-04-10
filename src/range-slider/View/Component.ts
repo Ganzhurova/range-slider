@@ -12,12 +12,12 @@ class Component extends EventEmitter {
 
   public isElExists = false;
 
-  constructor(html: Html, settings?: Settings, el?: HTMLElement) {
+  constructor(html: Html, settings: Settings, el?: HTMLElement) {
     super();
-    if (settings) {
-      this.data = settings.data;
-      this.options = settings.options;
-    }
+
+    this.data = settings.data;
+    this.options = settings.options;
+
     this.init(html, el);
   }
 
@@ -92,7 +92,10 @@ class Component extends EventEmitter {
     return px * this.data.percentPerPx;
   }
 
-  public static checkOverlay(componentA: Component, componentB: Component) {
+  public static checkOverlay(
+    componentA: Component,
+    componentB: Component
+  ): boolean {
     const componentAEndPx = componentA.getCoord() + componentA.getSize();
     const componentBStartPx = componentB.getCoord();
 
