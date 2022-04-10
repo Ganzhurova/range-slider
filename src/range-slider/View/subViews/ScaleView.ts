@@ -61,6 +61,15 @@ class ScaleView extends Component {
     let currIndex = 0;
     let nextIndex = 1;
 
+    const hiddenElements = (index: number) => {
+      this.values[index].hidden();
+      this.points[index].hidden();
+    };
+    const showElements = (index: number) => {
+      this.values[index].show();
+      this.points[index].show();
+    };
+
     for (let i = currIndex; i < this.values.length - 1; i += 1) {
       const isOverlay = ScaleView.checkOverlay(
         this.values[currIndex],
@@ -80,47 +89,16 @@ class ScaleView extends Component {
           if (isLessOneThird()) {
             const offsetPercent = (offsetPX * 100) / lastValue.getSize();
             const transformPercent = -50 + offsetPercent;
-
             lastValue.getEl().style.transform = `translate${this.data.direction.coord.toUpperCase()}(${transformPercent}%)`;
-            console.log(transformPercent);
           } else {
-            this.values[currIndex].hidden();
-            this.points[currIndex].hidden();
+            hiddenElements(currIndex);
           }
-
-          // const direction = <'left' | 'top'>this.data.direction.name;
-          // const lastValue = this.values[nextIndex];
-          // const penultValue = this.values[currIndex];
-          // const penultPosition = parseInt(
-          //   penultValue.getEl().style[direction],
-          //   10
-          // );
-          // const penultSize = this.pxToPercent(penultValue.getSize());
-
-          // if (penultPosition + penultSize > 100) {
-          //   const offsetPx = this.percentToPx(
-          //     penultPosition + penultSize - 100
-          //   );
-          //   const offsetPercent = (100 * offsetPx) / lastValue.getSize();
-          //   console.log(offsetPercent);
-
-          //   lastValue.getEl().style.transform = `translate${this.data.direction.coord.toUpperCase()}(${
-          //     -50 + offsetPercent
-          //   }%)`;
-          // }
-
-          // const lastValuePosition = this.values[currIndex].getEl().style.left;
-
-          // this.values[nextIndex].show();
-          // this.points[nextIndex].show();
         } else {
-          this.values[nextIndex].hidden();
-          this.points[nextIndex].hidden();
+          hiddenElements(nextIndex);
           nextIndex += 1;
         }
       } else {
-        this.values[nextIndex].show();
-        this.points[nextIndex].show();
+        showElements(nextIndex);
         currIndex = nextIndex;
         nextIndex += 1;
       }
