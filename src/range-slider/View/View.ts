@@ -12,6 +12,7 @@ import Calculation from './Calculation';
 import ThumbView from './subViews/ThumbView';
 import LabelView from './subViews/LabelView';
 import ScaleView from './subViews/ScaleView';
+import helpers from '../helpers/helpers';
 
 class View extends EventEmitter {
   private el: HTMLElement;
@@ -72,6 +73,7 @@ class View extends EventEmitter {
 
     this.subscribeToThumbEvent('from');
     this.subscribeToThumbEvent('to');
+    this.subscribeToScaleEvent();
     this.addEventListeners();
     this.setup();
   }
@@ -86,6 +88,33 @@ class View extends EventEmitter {
     thumb.subscribe(Events.NEW_PERCENT_POSITION, () => {
       this.updatePosition(thumb.getPosition(), key);
       this.updateThumbPosition(key);
+    });
+  }
+
+  private subscribeToScaleEvent(): void {
+    this.scale.subscribe(Events.NEW_PERCENT_POSITION, (percentPosition) => {
+      let closestThumb = this.fromThumb;
+
+      if (this.options.isDouble) {
+        const fromPercentPosition = this.fromThumb.getPercentPosition();
+        const toPercentPosition = this.toThumb.getPercentPosition();
+        if (percentPosition > toPercentPosition) {
+          closestThumb = this.toThumb;
+        } else {
+          const closestPosition = helpers.getClosestValue(
+            [fromPercentPosition, toPercentPosition],
+            percentPosition
+          );
+          closestThumb = <ThumbView>(
+            [this.fromThumb, this.toThumb].find(
+              (thumb) => thumb.getPercentPosition() === closestPosition
+            )
+          );
+        }
+      }
+
+      closestThumb.setPercentPosition(percentPosition);
+      closestThumb.emit(Events.NEW_PERCENT_POSITION);
     });
   }
 
@@ -104,13 +133,20 @@ class View extends EventEmitter {
     );
   }
 
+  private handlerScaleValueClick(e: MouseEvent | TouchEvent): void {
+    this.scale.handlerScaleValueClick(e);
+  }
+
   private addEventListeners(): void {
     this.handlerUpdateOnResize = this.handlerUpdateOnResize.bind(this);
     this.handlerThumbDragStart = this.handlerThumbDragStart.bind(this);
+    this.handlerScaleValueClick = this.handlerScaleValueClick.bind(this);
 
     window.addEventListener('resize', this.handlerUpdateOnResize);
     this.el.addEventListener('mousedown', this.handlerThumbDragStart);
     this.el.addEventListener('touchstart', this.handlerThumbDragStart);
+    this.el.addEventListener('click', this.handlerScaleValueClick);
+    this.el.addEventListener('touchstart', this.handlerScaleValueClick);
   }
 
   private getPositionText(key: PositionKeys) {
@@ -121,6 +157,7 @@ class View extends EventEmitter {
     const thumb: ThumbView = this[`${key}Thumb`];
     const label: LabelView = this[`${key}Label`];
 
+    thumb.update();
     label.update(thumb.getPercentPosition(), this.getPositionText(key));
     LabelView.switchCommonLabel(this.commonLabel, this.fromLabel, this.toLabel);
     this.bar.update(

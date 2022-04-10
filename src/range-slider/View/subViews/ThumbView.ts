@@ -36,7 +36,7 @@ class ThumbView extends Component {
     this.step.percent = this.positionToPercent(this.options.step);
 
     const stepPx = this.percentToPx(this.step.percent);
-    const ratio = 1.5;
+    const ratio = 3;
     this.step.pxOffset = stepPx / ratio;
   }
 
@@ -71,7 +71,9 @@ class ThumbView extends Component {
 
     this.setPercentPosition(this.positionToPercent(getValidPosition(position)));
     this.setPercentStep();
+  }
 
+  public update(): void {
     this.el.setAttribute(
       'style',
       `${this.data.direction.name}:${this.percentPosition}%`
@@ -122,7 +124,7 @@ class ThumbView extends Component {
     const delta = this.pxToPercent(this.startPxCoord - endPxCoord);
     const isRightBorder = () =>
       Math.sign(delta) === -1 &&
-      endPxCoord > this.getCoord() + this.step.pxOffset;
+      endPxCoord > this.getCoord() + this.getSize() + this.step.pxOffset;
     const isLeftBorder = () =>
       Math.sign(delta) === 1 &&
       endPxCoord < this.getCoord() - this.step.pxOffset;
@@ -142,11 +144,8 @@ class ThumbView extends Component {
     );
     this.setPercentPosition(percentPosition);
 
-    this.emit(Events.NEW_PERCENT_POSITION, this.percentPosition);
-    this.el.setAttribute(
-      'style',
-      `${this.data.direction.name}:${this.percentPosition}%`
-    );
+    this.emit(Events.NEW_PERCENT_POSITION);
+    this.update();
   }
 }
 

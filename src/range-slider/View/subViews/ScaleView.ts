@@ -1,3 +1,4 @@
+import { Events } from '../../lib/constants';
 import { HTML } from '../../lib/html';
 import { Settings } from '../../lib/interfaces';
 import { Html } from '../../lib/types';
@@ -129,6 +130,19 @@ class ScaleView extends Component {
     );
 
     this.setVisibilityOfValues();
+  }
+
+  public handlerScaleValueClick(event: MouseEvent | TouchEvent): void {
+    const target = <HTMLElement>event.target;
+    if (!target.closest(`.${HTML.scaleValue.className}`)) return;
+
+    event.preventDefault();
+
+    const index = this.values.findIndex((value) => value.getEl() === target);
+    const percentPosition =
+      (this.data.percentageLimitSize / this.options.scaleParts) * index;
+
+    this.emit(Events.NEW_PERCENT_POSITION, percentPosition);
   }
 }
 
