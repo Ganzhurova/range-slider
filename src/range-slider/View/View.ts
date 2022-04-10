@@ -136,6 +136,8 @@ class View extends EventEmitter {
     this.fromLabel.setup(this.fromThumb.getSize());
     this.toLabel.setup(this.fromThumb.getSize());
     this.bar.setup(this.fromThumb.getSize());
+    this.scale.renderDivisions();
+    this.scale.setup();
 
     this.updateThumbPosition('from');
     this.updateThumbPosition('to');
