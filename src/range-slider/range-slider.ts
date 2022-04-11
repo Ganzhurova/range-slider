@@ -1,5 +1,4 @@
 /* eslint-disable func-names */
-import './range-slider.scss';
 
 import Presenter from './Presenter/Presenter';
 import { IOptions } from './lib/interfaces';
