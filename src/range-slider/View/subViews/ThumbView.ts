@@ -66,6 +66,8 @@ class ThumbView extends Component {
   }
 
   public setup(key: PositionKeys) {
+    if (!this.isElExists) return;
+
     const position = this.options[key];
     const getValidPosition = (value: number) => value - this.options.min;
 
@@ -74,6 +76,8 @@ class ThumbView extends Component {
   }
 
   public update(): void {
+    if (!this.isElExists) return;
+
     this.el.setAttribute(
       'style',
       `${this.data.direction.name}:${this.percentPosition}%`
