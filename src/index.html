@@ -12,7 +12,120 @@
         <div class="slider__example">
           <div id="slider-1"></div>
         </div>
-        <!-- <div class="slider__panel"></div> -->
+        <div class="slider__panel panel">
+          <form action="#" class="panel__form" autocomplete="off">
+            <div class="panel__list">
+              <p class="panel__item panel__item--checkbox">
+                <input
+                  class="panel__input panel__input--checkbox"
+                  type="checkbox"
+                  name="vertical"
+                  id="panel-vertical"
+                />
+                <label for="panel-vertical" class="panel__label">
+                  Вертикальный вид
+                </label>
+              </p>
+              <p class="panel__item panel__item--checkbox">
+                <input
+                  class="panel__input panel__input--checkbox"
+                  type="checkbox"
+                  name="double"
+                  id="panel-double"
+                />
+                <label for="panel-double" class="panel__label">
+                  Интервал
+                </label>
+              </p>
+              <p class="panel__item panel__item--checkbox">
+                <input
+                  class="panel__input panel__input--checkbox"
+                  type="checkbox"
+                  name="label"
+                  id="panel-label"
+                />
+                <label for="panel-label" class="panel__label">
+                  Показать метки
+                </label>
+              </p>
+              <p class="panel__item panel__item--checkbox">
+                <input
+                  class="panel__input panel__input--checkbox"
+                  type="checkbox"
+                  name="scale"
+                  id="panel-scale"
+                />
+                <label for="panel-scale" class="panel__label">
+                  Показать шкалу
+                </label>
+              </p>
+            </div>
+            <div class="panel__list">
+              <p class="panel__item panel__item--text">
+                <label for="panel-min" class="panel__label">Min</label>
+                <input
+                  class="panel__input panel__input--text"
+                  value=""
+                  type="text"
+                  name="min"
+                  id="panel-min"
+                />
+              </p>
+              <p class="panel__item panel__item--text">
+                <label for="panel-max" class="panel__label">Max</label>
+                <input
+                  class="panel__input panel__input--text"
+                  value=""
+                  type="text"
+                  name="max"
+                  id="panel-max"
+                />
+              </p>
+              <p class="panel__item panel__item--text">
+                <label for="panel-from" class="panel__label">От</label>
+                <input
+                  class="panel__input panel__input--text"
+                  value=""
+                  type="text"
+                  name="from"
+                  id="panel-from"
+                />
+              </p>
+              <p class="panel__item panel__item--text">
+                <label for="panel-to" class="panel__label">До</label>
+                <input
+                  class="panel__input panel__input--text"
+                  value=""
+                  type="text"
+                  name="to"
+                  id="panel-to"
+                />
+              </p>
+              <p class="panel__item panel__item--text">
+                <label for="panel-step" class="panel__label">Шаг</label>
+                <input
+                  class="panel__input panel__input--text"
+                  value=""
+                  type="text"
+                  name="step"
+                  id="panel-step"
+                />
+              </p>
+              <p class="panel__item panel__item--text">
+                <label for="panel-parts" class="panel__label">
+                  Разделить шкалу на
+                </label>
+                <input
+                  class="panel__input panel__input--text"
+                  value=""
+                  type="text"
+                  name="parts"
+                  id="panel-parts"
+                />
+              </p>
+            </div>
+          </form>
+        </div>
       </div>
       <div class="slider">
         <div class="slider__example">
@@ -21,6 +134,7 @@
         <!-- <div class="slider__panel"></div> -->
       </div>
     </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   </body>
 </html>
 
