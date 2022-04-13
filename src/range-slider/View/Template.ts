@@ -1,13 +1,13 @@
 import EventEmitter from '../EventEmitter';
 import { directions, Events } from '../lib/constants';
-import { IOptions } from '../lib/interfaces';
+import { IStateModel } from '../lib/interfaces';
 import { OptionsKeys } from '../lib/types';
 import type View from './View';
 
 class Template extends EventEmitter {
   private view: View;
 
-  private options: IOptions;
+  private options: IStateModel;
 
   constructor(view: View) {
     super();

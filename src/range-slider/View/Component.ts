@@ -1,12 +1,12 @@
 import type { Html } from '../lib/types';
-import { IDataView, IOptions, Settings } from '../lib/interfaces';
+import { IDataView, IStateModel, Settings } from '../lib/interfaces';
 
 import EventEmitter from '../EventEmitter';
 
 class Component extends EventEmitter {
   protected data!: IDataView;
 
-  protected options!: IOptions;
+  protected options!: IStateModel;
 
   protected el!: HTMLElement;
 

@@ -1,5 +1,5 @@
 import type View from './View';
-import { IDataView, ILimitCoords, IOptions } from '../lib/interfaces';
+import { IDataView, ILimitCoords, IStateModel } from '../lib/interfaces';
 import { PositionKeys } from '../lib/types';
 
 class Calculation {
@@ -7,7 +7,7 @@ class Calculation {
 
   private data: IDataView;
 
-  private options: IOptions;
+  private options: IStateModel;
 
   constructor(view: View) {
     this.view = view;
