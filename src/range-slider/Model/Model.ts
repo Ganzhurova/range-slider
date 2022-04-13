@@ -1,4 +1,4 @@
-import type { IOptions } from '../lib/interfaces';
+import type { IStateModel } from '../lib/interfaces';
 import type { OptionsKeys } from '../lib/types';
 import DEFAULT_CONFIG from '../lib/defaultConfig';
 import { Events } from '../lib/constants';
@@ -6,11 +6,9 @@ import { Events } from '../lib/constants';
 import EventEmitter from '../EventEmitter';
 
 class Model extends EventEmitter {
-  private state: IOptions = { ...DEFAULT_CONFIG };
+  private state: IStateModel = { ...DEFAULT_CONFIG };
 
-  public updateState(options?: Partial<IOptions>): void {
-    if (!options) return;
-
+  public updateState(options: Partial<IStateModel>): void {
     const oldState = { ...this.getState() };
 
     Object.assign(this.state, options);
@@ -22,11 +20,11 @@ class Model extends EventEmitter {
     }
   }
 
-  public getState(): IOptions {
+  public getState(): IStateModel {
     return this.state;
   }
 
-  private getChangedKeys(options: IOptions): OptionsKeys[] {
+  private getChangedKeys(options: IStateModel): OptionsKeys[] {
     const changedKeys: OptionsKeys[] = [];
 
     Object.keys(options).forEach((key) => {

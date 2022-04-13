@@ -1,4 +1,4 @@
-import { IDataView, IOptions, Settings } from '../lib/interfaces';
+import { IDataView, IStateModel, Settings } from '../lib/interfaces';
 import { directions, Events } from '../lib/constants';
 import { HTML } from '../lib/html';
 
@@ -21,7 +21,7 @@ class View extends EventEmitter {
 
   private calculation: Calculation;
 
-  public options: IOptions;
+  public options: IStateModel;
 
   public data: IDataView = {
     direction: directions.LEFT,
@@ -49,7 +49,7 @@ class View extends EventEmitter {
 
   public scale: ScaleView;
 
-  constructor(element: HTMLElement, options: IOptions) {
+  constructor(element: HTMLElement, options: IStateModel) {
     super();
     this.el = element;
     this.options = options;
@@ -88,6 +88,7 @@ class View extends EventEmitter {
     thumb.subscribe(Events.NEW_PERCENT_POSITION, () => {
       this.updatePosition(thumb.getPosition(), key);
       this.updateThumbPosition(key);
+      this.emit(Events.NEW_POSITION);
     });
   }
 

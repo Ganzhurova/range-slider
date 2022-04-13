@@ -1,6 +1,6 @@
-import { IOptions } from './interfaces';
+import { IStateModel } from './interfaces';
 
-const DEFAULT_CONFIG: IOptions = {
+const DEFAULT_CONFIG: IStateModel = {
   isDouble: false,
   isVertical: false,
   isLabel: false,
@@ -14,3 +14,4 @@ const DEFAULT_CONFIG: IOptions = {
 };
 
 export default DEFAULT_CONFIG;
+
