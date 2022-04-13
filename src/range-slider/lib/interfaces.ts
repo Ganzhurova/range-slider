@@ -1,17 +1,21 @@
-export interface ITemplateOptions {
+type CallbackOption = (data: Readonly<IStateModel>) => void;
+
+export interface IStateModel {
   isDouble: boolean;
   isVertical: boolean;
   isLabel: boolean;
   isScale: boolean;
-}
-
-export interface IOptions extends ITemplateOptions {
   min: number;
   max: number;
   from: number;
   to: number;
   step: number;
   scaleParts: number;
+}
+
+export interface IOptions extends IStateModel {
+  onStart: CallbackOption;
+  onChange: CallbackOption;
 }
 
 type DOMRectKey = keyof DOMRect;
@@ -41,7 +45,7 @@ export interface IDataView {
 }
 
 export interface Settings {
-  data: IDataView;
-  options: IOptions;
+  data: Readonly<IDataView>;
+  options: Readonly<IStateModel>;
 }
 
