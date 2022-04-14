@@ -1,5 +1,18 @@
 @import "./normalize.css";
 
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(100%);
+  white-space: nowrap;
+  border: 0;
+}
+
 .container {
   width: 80%;
   margin: 0 auto;
@@ -28,30 +41,85 @@
   background-color: #dcdcdce3;
   border-radius: 10px;
 
+  & * {
+    box-sizing: border-box;
+  }
+
   &__form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 40px;
     padding: 20px;
   }
 
-  &__list {
+  &__list--checkbox {
+    padding-left: 40px;
+  }
+
+  &__list--text {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    place-items: start start;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    column-gap: 20px;
   }
 
   &__item {
-    margin: 10px 0;
+    display: grid;
+    margin-bottom: 10px;
+    cursor: pointer;
   }
 
   &__item--text {
-    display: grid;
-    grid-auto-flow: column;
+    grid-template-columns: 90px 70px;
   }
 
-  &__label {
-    margin-right: 10px;
+  &__item--checkbox {
+    position: relative;
+    place-items: center start;
+    min-height: 20px;
+    padding-left: 30px;
   }
 
-  &__input--text {
-    width: 60px;
+  &__item--checkbox span {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 20px;
+    height: 20px;
+    background-color: white;
+    border-radius: 3px;
+    box-shadow: 0 0 15px 4px rgba(0, 0, 0, 0.06);
+  }
+
+  &__item--checkbox span::after {
+    position: absolute;
+    top: 2px;
+    left: 6px;
+    display: none;
+    width: 4px;
+    height: 10px;
+    content: "";
+    border: solid rgb(86, 123, 141);
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+  }
+
+  &__item--checkbox:hover span {
+    outline: 1px solid #aaa;
+  }
+
+  &__input[type="checkbox"]:checked ~ span::after {
+    display: block;
+  }
+
+  &__input[type="text"] {
+    padding: 5px 10px;
+    border: 0;
+    border-radius: 5px;
+    box-shadow: 0 0 15px 4px rgba(0, 0, 0, 0.06);
+  }
+
+  &__input[type="text"]:hover,
+  &__input[type="text"]:focus {
+    outline: 1px solid #aaa;
   }
 }
