@@ -5,40 +5,41 @@ import View from '../View/View';
 
 import { Events } from '../lib/constants';
 
+type CallbackNames = 'onStart' | 'onChange';
+
 class Presenter {
   private model: Model;
 
   private view: View;
 
+  private options: Partial<IOptions> = {};
+
   constructor(element: HTMLElement, options?: Partial<IOptions>) {
     this.model = new Model();
     this.view = new View(element, this.model.getState());
 
-    this.init(options);
+    this.init();
     this.update(options);
   }
 
-  private init(options?: Partial<IOptions>): void {
+  private init(): void {
     this.model.subscribe(Events.NEW_STATE, (keys: OptionsKeys[]) =>
       this.view.update(keys)
     );
     this.view.subscribe(Events.NEW_POSITION, () => {
-      this.callOnChange(options);
+      this.callCallback('onChange');
     });
   }
 
-  private callOnStart(options?: Partial<IOptions>): void {
-    if (!options?.onStart) return;
-    options.onStart(this.model.getState());
-  }
-
-  private callOnChange(options?: Partial<IOptions>): void {
-    if (!options?.onChange) return;
-    options.onChange(this.model.getState());
+  private callCallback(callbackName: CallbackNames) {
+    if (!this.options[callbackName]) return;
+    this.options[callbackName]?.(this.model.getState());
   }
 
   public update(options?: Partial<IOptions>): void {
     if (!options) return;
+
+    Object.assign(this.options, options);
 
     const getStateOptions = ({
       onStart,
@@ -47,7 +48,7 @@ class Presenter {
     }: Partial<IOptions>) => state;
 
     this.model.updateState(getStateOptions(options));
-    this.callOnStart(options);
+    this.callCallback('onStart');
   }
 }
 
