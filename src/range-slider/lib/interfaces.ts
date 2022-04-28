@@ -1,4 +1,4 @@
-type CallbackOption = (data: Readonly<IStateModel>) => void;
+export type CallbackOption = (data: Readonly<IStateModel>) => void;
 
 export interface IStateModel {
   isDouble: boolean;
