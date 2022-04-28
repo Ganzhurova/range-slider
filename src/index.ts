@@ -1,39 +1,25 @@
-import './range-slider.scss';
 import './style.scss';
 
-import { IOptions } from './range-slider/lib/interfaces';
+import './range-slider/range-slider.scss';
+import './range-slider/range-slider';
+import Demo from './demo/Demo';
 
-import Presenter from './range-slider/Presenter/Presenter';
-import Model from './range-slider/Model/Model';
-import View from './range-slider/View/View';
-
-const options: Partial<IOptions> = {
-  isLabel: true,
-  isVertical: true,
-  isScale: true,
+const firstOptions = {};
+const secondOptions = { isVertical: true, isLabel: true, isScale: true };
+const thirdOptions = {
   isDouble: true,
-  // max: 18,
-  scaleParts: 100,
-  from: 22.52,
-  max: 200,
-  // step: 20,
+  isScale: true,
+  isLabel: true,
+  min: 50,
+  from: 60,
+  to: 90,
+  scaleParts: 5,
+  step: 10,
 };
+const options = [firstOptions, secondOptions, thirdOptions];
 
-const d = new Presenter(new Model(options), new View('#slider-1'));
-console.log(d);
-
-// d.update({ isLabel: true, isVertical: false, isDouble: false });
-// d.update({ isDouble: true });
-// // d.update({ isLabel: true });
-// d.update({ isDouble: false });
-// d.update({ isDouble: true });
-// // d.update({ isLabel: false });
-// d.update({ isVertical: false, isScale: false });
-d.update({ isVertical: false });
-// d.update({ scaleParts: 5 });
-// //
-d.update({ isScale: false });
-d.update({ isScale: true });
-// d.update({ isVertical: true });
-// d.update({ scaleParts: 100 });
-// d.update({ from: 50 });
+$('.js-slider-example').each(function initDemo(index) {
+  $(this).rangeSlider(options[index]);
+  const instance = $(this).data('rangeSlider');
+  (() => new Demo(instance, index))();
+});
