@@ -50,6 +50,10 @@ class Presenter {
     this.model.updateState(getStateOptions(options));
     this.callCallback('onStart');
   }
+
+  public destroy() {
+    this.view.destroy();
+  }
 }
 
 export default Presenter;

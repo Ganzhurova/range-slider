@@ -150,6 +150,14 @@ class View extends EventEmitter {
     this.el.addEventListener('touchstart', this.handlerScaleValueClick);
   }
 
+  private removeEventListeners(): void {
+    window.removeEventListener('resize', this.handlerUpdateOnResize);
+    this.el.removeEventListener('mousedown', this.handlerThumbDragStart);
+    this.el.removeEventListener('touchstart', this.handlerThumbDragStart);
+    this.el.removeEventListener('click', this.handlerScaleValueClick);
+    this.el.removeEventListener('touchstart', this.handlerScaleValueClick);
+  }
+
   private getPositionText(key: PositionKeys) {
     return this.options[key].toFixed(this.data.fractionLength);
   }
@@ -184,6 +192,11 @@ class View extends EventEmitter {
   public update(keys: OptionsKeys[]): void {
     this.template.update(keys);
     this.setup();
+  }
+
+  public destroy(): void {
+    this.root.clear();
+    this.removeEventListeners();
   }
 }
 
