@@ -89,7 +89,6 @@ $thumb-height: 30px;
 
 .range-slider__scale {
   position: relative;
-  height: 35px;
   margin: 0 auto;
   font-size: 14px;
   color: $grey;
@@ -106,14 +105,14 @@ $thumb-height: 30px;
 
 .range-slider__value {
   position: absolute;
-  bottom: 0;
+  top: 15px;
   padding: 2px;
   touch-action: none;
   cursor: pointer;
 }
 
 .range-slider.vertical {
-  align-items: stretch;
+  flex-wrap: nowrap;
   width: auto;
   height: 100%;
 
