@@ -1,11 +1,8 @@
-/**
- * @jest-environment jsdom
- */
-
 import Component from './Component';
-// import windowCopy from '../window';
 import { HTML } from '../lib/html';
 import { directions } from '../lib/constants';
+import { Settings } from '../lib/interfaces';
+import DEFAULT_CONFIG from '../lib/defaultConfig';
 
 type Modified<T> = {
   -readonly [P in keyof T]+?: T[P];
@@ -14,17 +11,23 @@ type Modified<T> = {
 let component: Component;
 let element: HTMLElement;
 
+const settings: Settings = {
+  data: {
+    direction: directions.LEFT,
+    percentPerPx: 2,
+    percentPerPosition: 5,
+    percentageLimitSize: 0,
+    fractionLength: 0,
+  },
+  options: { ...DEFAULT_CONFIG },
+};
+
 beforeEach(() => {
-  component = new Component();
-  component.init(HTML.rootEl);
+  component = new Component(HTML.rootEl, settings);
   element = component.getEl();
 });
 
 describe('Component: init', () => {
-  beforeEach(() => {
-    element = component.getEl();
-  });
-
   test('should create an element', () => {
     expect(element).toBeTruthy();
   });
@@ -49,8 +52,7 @@ describe('Tests for child elements', () => {
   let child: Component;
 
   beforeEach(() => {
-    child = new Component();
-    child.init(HTML.line);
+    child = new Component(HTML.line, settings);
     component.addChild(child);
   });
 
@@ -139,21 +141,13 @@ test('Component: getCoord should return the coordinate of the element', () => {
   window.pageXOffset = pageXOffset;
 });
 
-test('Component: setDirection should set the direction', () => {
-  component.setDirection(true);
-  expect(component.direction).toEqual(directions.TOP);
-
-  component.setDirection(false);
-  expect(component.direction).toEqual(directions.LEFT);
-});
-
 describe('Component: static checkOverlay', () => {
   let componentA: Component;
   let componentB: Component;
 
   beforeEach(() => {
-    componentA = new Component();
-    componentB = new Component();
+    componentA = new Component(HTML.label, settings);
+    componentB = new Component(HTML.label, settings);
 
     componentA.getCoord = jest.fn(() => 100);
     componentA.getSize = jest.fn(() => 50);
@@ -172,4 +166,32 @@ describe('Component: static checkOverlay', () => {
     const isOverlay = Component.checkOverlay(componentA, componentB);
     expect(isOverlay).toBe(false);
   });
+});
+
+test('Component: positionToPercent should return the correct value', () => {
+  const position = 5;
+  const result = position * settings.data.percentPerPosition;
+  const percent = component.positionToPercent(position);
+  expect(percent).toBe(result);
+});
+
+test('Component: percentToPosition should return the correct value', () => {
+  const percent = 15;
+  const result = percent / settings.data.percentPerPosition;
+  const position = component.percentToPosition(percent);
+  expect(position).toBe(result);
+});
+
+test('Component: percentToPx should return the correct value', () => {
+  const percent = 10;
+  const result = percent / settings.data.percentPerPx;
+  const px = component.percentToPx(percent);
+  expect(px).toBe(result);
+});
+
+test('Component: pxToPercent should return the correct value', () => {
+  const px = 10;
+  const result = px * settings.data.percentPerPx;
+  const percent = component.pxToPercent(px);
+  expect(percent).toBe(result);
 });
