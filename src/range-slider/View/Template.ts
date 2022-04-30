@@ -53,7 +53,7 @@ class Template extends EventEmitter {
     }
   }
 
-  public setScale(isScale: boolean) {
+  private setScale(isScale: boolean) {
     if (isScale) {
       this.view.root.addChild(this.view.scale);
     } else {
