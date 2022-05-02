@@ -6,16 +6,9 @@ import helpers from '../../helpers/helpers';
 import { ILimitCoords, Settings } from '../../lib/interfaces';
 
 class ThumbView extends Component {
-  private percentPosition!: number;
-
-  private startPxCoord!: number;
+  private percentPosition = 0;
 
   private limitCoords!: ILimitCoords;
-
-  private step = {
-    percent: 0,
-    pxOffset: 0,
-  };
 
   constructor(html: Html, settings: Settings) {
     super(html, settings);
@@ -32,15 +25,15 @@ class ThumbView extends Component {
     this.limitCoords = limitCoords;
   }
 
-  private setPercentStep(): void {
-    this.step.percent = this.positionToPercent(this.options.step);
-
-    const stepPx = this.percentToPx(this.step.percent);
-    const ratio = 3;
-    this.step.pxOffset = stepPx / ratio;
+  private calcPercentPositionWithStep(percent: number): number {
+    const stepPercent = this.positionToPercent(this.options.step);
+    if (stepPercent) {
+      return Math.round(percent / stepPercent) * stepPercent;
+    }
+    return percent;
   }
 
-  private getValidCoord(coord: number): number {
+  private getValidPercentCoord(coord: number): number {
     if (coord < this.limitCoords.start) {
       return this.limitCoords.start;
     }
@@ -72,7 +65,6 @@ class ThumbView extends Component {
     const getValidPosition = (value: number) => value - this.options.min;
 
     this.setPercentPosition(this.positionToPercent(getValidPosition(position)));
-    this.setPercentStep();
   }
 
   public update(): void {
@@ -100,12 +92,14 @@ class ThumbView extends Component {
 
     this.setLimitCoords(limitCoords);
 
-    this.startPxCoord = helpers.getEventCoord(
+    const eventDragStartPxCoord = helpers.getEventCoord(
       event,
       this.data.direction.coord.toUpperCase()
     );
 
-    const handlerThumbDrag = this.handlerThumbDrag.bind(this);
+    const shiftPx = eventDragStartPxCoord - this.getCoord();
+
+    const handlerThumbDrag = this.handlerThumbDrag.bind(this, shiftPx);
 
     const handlerThumbDragEnd = () => {
       document.removeEventListener('mousemove', handlerThumbDrag);
@@ -120,34 +114,22 @@ class ThumbView extends Component {
     document.addEventListener('touchend', handlerThumbDragEnd);
   }
 
-  private handlerThumbDrag(event: MouseEvent | TouchEvent): void {
-    const endPxCoord = helpers.getEventCoord(
+  private handlerThumbDrag(
+    shiftPx: number,
+    event: MouseEvent | TouchEvent
+  ): void {
+    const eventDragPxCoord = helpers.getEventCoord(
       event,
       this.data.direction.coord.toUpperCase()
     );
-    const delta = this.pxToPercent(this.startPxCoord - endPxCoord);
-    const isRightBorder = () =>
-      Math.sign(delta) === -1 &&
-      endPxCoord > this.getCoord() + this.getSize() + this.step.pxOffset;
-    const isLeftBorder = () =>
-      Math.sign(delta) === 1 &&
-      endPxCoord < this.getCoord() - this.step.pxOffset;
-
-    let shift = 0;
-
-    if (!this.step.percent) {
-      shift = delta;
-    } else if (isRightBorder() || isLeftBorder()) {
-      shift = this.step.percent * Math.sign(delta);
-    }
-
-    this.startPxCoord = endPxCoord;
-
-    const percentPosition = this.getValidCoord(
-      this.getPercentPosition() - shift
+    const currCoordPx = eventDragPxCoord - shiftPx;
+    const deltaPercent = this.pxToPercent(this.getCoord() - currCoordPx);
+    const percent = this.getPercentPosition() - deltaPercent;
+    const percentPosition = this.getValidPercentCoord(
+      this.calcPercentPositionWithStep(percent)
     );
-    this.setPercentPosition(percentPosition);
 
+    this.setPercentPosition(percentPosition);
     this.emit(Events.NEW_PERCENT_POSITION);
     this.update();
   }
