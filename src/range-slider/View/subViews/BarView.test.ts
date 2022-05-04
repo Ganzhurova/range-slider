@@ -36,6 +36,7 @@ test('BarView: setup should call pxToPercent method', () => {
   bar.setup(thumbSize);
   expect(spyPxToPercent).toBeCalled();
   expect(spyPxToPercent).toBeCalledWith(thumbSize / 2);
+  spyPxToPercent.mockRestore();
 });
 
 describe('BarView: update', () => {
