@@ -31,23 +31,23 @@ class View extends EventEmitter {
     fractionLength: 0,
   };
 
-  public root: RootView;
+  public readonly root: RootView;
 
-  public line: LineView;
+  public readonly line: LineView;
 
-  public bar: BarView;
+  public readonly bar: BarView;
 
-  public fromThumb: ThumbView;
+  public readonly fromThumb: ThumbView;
 
-  public toThumb: ThumbView;
+  public readonly toThumb: ThumbView;
 
-  public fromLabel: LabelView;
+  public readonly fromLabel: LabelView;
 
-  public toLabel: LabelView;
+  public readonly toLabel: LabelView;
 
-  public commonLabel: LabelView;
+  public readonly commonLabel: LabelView;
 
-  public scale: ScaleView;
+  public readonly scale: ScaleView;
 
   constructor(element: HTMLElement, options: IStateModel) {
     super();
