@@ -1,6 +1,5 @@
 import './style.scss';
 
-import './range-slider/range-slider.scss';
 import './range-slider/range-slider';
 import Demo from './demo/Demo';
 
