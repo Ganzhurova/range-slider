@@ -5,6 +5,12 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 module.exports = {
   entry: {
     main: './src/index',
+    'range-slider': {
+      import: [
+        './src/range-slider/range-slider.scss',
+        './src/range-slider/range-slider',
+      ],
+    },
   },
   output: {
     filename: '[name].js',
