@@ -145,7 +145,7 @@ $(".slider").rangeSlider({
 
 **onChange** вызывается при каждом движении ползунка.
 
-### **Пример использования** - привязка значения ползунка к внешнему полю ввода
+#### **Пример использования** - привязка значения ползунка к внешнему полю ввода
 
 ```
 const $slider = $("#slider");
@@ -172,5 +172,202 @@ $input.on("change", function() {
         from: value,
     });
 });
+
+```
+
+## Диаграмма классов UML
+
+```mermaid
+classDiagram
+  EventEmitter <|-- Model
+  EventEmitter <|-- View
+  EventEmitter <|-- Component
+  EventEmitter <|-- Template
+
+  Model --* Presenter
+  Presenter *-- View
+
+  Template --* View
+  Calculation --* View
+  BarView --* View
+  LabelView --* View
+  LineView --* View
+  RootView --* View
+  ScaleView --* View
+  ThumbView --* View
+
+  Component <|-- BarView
+  Component <|-- LabelView
+  Component <|-- LineView
+  Component <|-- RootView
+  Component <|-- ScaleView
+  Component <|-- ThumbView
+
+  class EventEmitter{
+    -events: Events
+    +constructor()
+    +subscribe(eventName: string, callback: FunctionType)
+    +unsubscribe(eventName: string, callback: FunctionType)
+    +emit(eventName: string, ...args: any[])
+  }
+
+  class Presenter{
+    -model: Model
+    -view: View
+    -options: Partial~IOptions~
+    +constructor(element: HTMLElement, options?: Partial~IOptions~)
+    -init()
+    -callCallback(callbackName: CallbackNames)
+    +update(options?: Partial~IOptions~)
+    +destroy()
+  }
+
+  class Model{
+    -state: IStateModel
+    +updateState(options: Partial~IStateModel~)
+    +getState() IStateModel
+    -getChangedKeys(options: IStateModel) OptionsKeys[]
+    -validate()
+    -validateLimits()
+    -validatePos()
+    -validateStep()
+    -validateScaleParts()
+  }
+
+  class View{
+    -el: HTMLElement
+    -template: Template
+    -calculation: Calculation
+    +options: IStateModel
+    +data: IDataView
+    +root: RootView
+    +line: LineView
+    +bar: BarView
+    +fromThumb: ThumbView
+    +toThumb: ThumbView
+    +fromLabel: LabelView
+    +toLabel: LabelView
+    +commonLabel: LabelView
+    +scale: ScaleView
+    +constructor(element: HTMLElement, options: IStateModel)
+    -updatePosition(position: number, key: PositionKeys)
+    -subscribeToThumbEvent(key: PositionKeys)
+    -subscribeToScaleEvent()
+    -handlerUpdateOnResize()
+    -handlerThumbDragStart(e: MouseEvent | TouchEvent)
+    -handlerScaleValueClick(e: MouseEvent | TouchEvent)
+    -addEventListeners()
+    -removeEventListeners()
+    -getPositionText(key: PositionKeys)
+    -updateThumbPosition(key: PositionKeys)
+    -setup()
+    +update(keys: OptionsKeys[])
+    +destroy()
+  }
+
+  class Calculation{
+    -view: View
+    -data: IDataView
+    -options: IStateModel
+    +constructor(view: View)
+    -convertLinePxToPercent()
+    -calcLimitSizeOfLine()
+    -calcPercentPerPosition()
+    -calcFractionLength()
+    +makeBaseCalc()
+    +getLimitCoords(key: PositionKeys) ILimitCoords
+  }
+
+  class Template{
+    -view: View
+    -options: IStateModel
+    +constructor(view: View)
+    -init()
+    -setDirection(isVertical: boolean)
+    -setType(isDouble: boolean)
+    -setLabel(isLabel: boolean)
+    -setScale(isScale: boolean)
+    -subscribeToEvents()
+    +update(keys: OptionsKeys[])
+  }
+
+  class Component{
+    #data: IDataView
+    #options: IStateModel
+    #el: HTMLElement
+    +isElExists: boolean
+    +constructor(html: Html, settings: Settings, el?: HTMLElement)
+    +init(html: Html, el?: HTMLElement)
+    +addClass(className: string)
+    +removeClass(className: string)
+    +addChild(child: Component)
+    +remove()
+    +hidden()
+    +show()
+    +getEl()
+    -getBox()
+    +getSize()
+    +getCoord()
+    +positionToPercent(position: number) number
+    +percentToPosition(percent: number) number
+    +percentToPx(percent: number) number
+    +pxToPercent(px: number) number
+    +checkOverlay(componentA: Component, componentB: Component) boolean
+  }
+
+  class BarView{
+    -correctValue: number
+    +setup(thumbSize: number)
+    +update(fromPosition: number, toPosition: number)
+  }
+
+  class LabelView{
+    -thumbSizePercent: number
+    -percentPosition: number
+    -text: string
+    -setPercentPosition(thumbPosition: number)
+    -getPercentPosition() number
+    -setText(positionText: string)
+    -getText() string
+    +setup(thumbSize: number)
+    +update(thumbPosition: number, positionText: string)
+    +switchCommonLabel(commonLabel: LabelView,
+    fromLabel: LabelView, toLabel: LabelView)
+  }
+
+  class LineView
+
+  class RootView{
+    +setDirection(isVertical: boolean)
+    +clear()
+  }
+
+  class ScaleView{
+    -values: Component[]
+    -points: Component[]
+    -getScaleValues() string[]
+    -createComponent(html: Html, text?: string) Component
+    -renderComponent(html: Html, percentPosition: number, array: Component[], text?: string)
+    -setVisibilityOfValues()
+    +renderDivisions()
+    +setup()
+    +handlerScaleValueClick(event: MouseEvent | TouchEvent)
+  }
+
+  class ThumbView{
+    -percentPosition: number
+    -limitCoords: ILimitCoords
+    +constructor(html: Html, settings: Settings)
+    -setLimitCoords(limitCoords: ILimitCoords)
+    -calcPercentPositionWithStep(percent: number) number
+    -getValidPercentCoord(coord: number) number
+    +setPercentPosition(percentPosition: number)
+    +getPercentPosition() number
+    +getPosition() number
+    +setup(key: PositionKeys)
+    +update()
+    +handlerThumbDragStart(event: MouseEvent | TouchEvent, limitCoords: ILimitCoords)
+    -handlerThumbDrag(shiftPx: number, event: MouseEvent | TouchEvent)
+  }
 
 ```
